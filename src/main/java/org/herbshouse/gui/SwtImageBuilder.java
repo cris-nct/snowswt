@@ -18,7 +18,7 @@ public class SwtImageBuilder implements AutoCloseable {
         originalGC = gc;
     }
 
-    public Image createImage(SnowGenerator snowGenerator, boolean flipImage) {
+    public Image createImage(SnowGenerator snowGenerator, boolean flipImage, boolean debug) {
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
@@ -37,15 +37,18 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.fillRectangle(0, 0, totalArea.width, totalArea.height);
 
-        //Draw house
-        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
-        gcImage.fillRectangle(0, totalArea.height - 100, totalArea.width, 1);
+        //Draw test
+        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
+        String text = "Happy New Year!";
+        gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
+        Point textSize = gcImage.stringExtent(text);
+        gcImage.drawText(text, (totalArea.width-textSize.x)/2, (totalArea.height-textSize.y)/2, true);
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
             GuiUtils.drawSnowflake(gcImage, snowflake);
-            if (SnowingApplication.DEBUG_PATH) {
+            if (debug) {
                 for (Point2D loc : snowflake.getHistoryLocations()) {
                     GuiUtils.drawSnowflake(gcImage, snowflake, loc);
                 }

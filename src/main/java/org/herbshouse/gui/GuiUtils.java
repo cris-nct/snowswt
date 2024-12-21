@@ -23,15 +23,11 @@ public final class GuiUtils {
 
 
     public static void drawSnowflake(GC gc, Snowflake snowflake){
-        gc.fillOval(
-                (int) snowflake.getLocation().x - snowflake.getSize() / 2,
-                (int) snowflake.getLocation().y - snowflake.getSize() / 2,
-                snowflake.getSize(),
-                snowflake.getSize()
-        );
+        drawSnowflake(gc, snowflake, snowflake.getLocation());
     }
 
     public static void drawSnowflake(GC gc, Snowflake snowflake, Point2D loc){
+        gc.setBackground(SWTResourceManager.getColor(snowflake.getColor()));
         gc.fillOval(
                 (int) loc.x - snowflake.getSize() / 2,
                 (int) loc.y - snowflake.getSize() / 2,

@@ -1,5 +1,7 @@
 package org.herbshouse.logic;
 
+import org.eclipse.swt.graphics.RGB;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -8,6 +10,7 @@ public class Snowflake {
     private int size;
     private double speed = 1;
     private boolean freezed = false;
+    private RGB color = new RGB(255,255,255);
 
     public double getSpeed() {
         return speed;
@@ -21,6 +24,14 @@ public class Snowflake {
 
     public void setLocation(Point2D location) {
         this.location = location;
+    }
+
+    public void setColor(RGB color) {
+        this.color = color;
+    }
+
+    public RGB getColor() {
+        return color;
     }
 
     public void setSize(int size) {
@@ -46,7 +57,7 @@ public class Snowflake {
     public void setFreezed() {
         if (!freezed) {
             freezed = true;
-            size *= 2;
+            color = new RGB(0,255,255);
         }
     }
 

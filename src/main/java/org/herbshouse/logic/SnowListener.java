@@ -13,4 +13,10 @@ public interface SnowListener {
 
     void freezeSnowflakes(List<Snowflake> snowflakes);
 
+    void switchDisplayBigBalls();
+
+    void switchDebug();
+
+    void switchHeavySnowing();
+
 }

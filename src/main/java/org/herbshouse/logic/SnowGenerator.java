@@ -2,7 +2,6 @@ package org.herbshouse.logic;
 
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.SnowingApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +24,12 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     private boolean normalWind = false;
 
+    private boolean bigBalls;
+
+    private boolean heavySnowing;
+
+    private boolean debug;
+
     private final Map<Snowflake, HappyWindSnowFlakeData> happyWindSnowData = new HashMap<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
 
@@ -38,18 +43,11 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     @Override
     public void run() {
-        if (SnowingApplication.DEBUG_PATH) {
-            this.generateNewSnowflake(20, 0.5);
-        }
-
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
-                if (!SnowingApplication.DEBUG_PATH) {
-                    this.generateNewSnowflake();
-                    if (SnowingApplication.HEAVY_SNOWING) {
-                        for (int i = 0; i < 3; i++) {
-                            this.generateNewSnowflake();
-                        }
+                if (!debug) {
+                    for (int i = 0; i < (heavySnowing ? 4: 1); i++) {
+                        this.generateNewSnowflake();
                     }
                 }
 
@@ -78,7 +76,7 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     private void move(Snowflake snowflake) {
-        if (SnowingApplication.DEBUG_PATH) {
+        if (debug) {
             snowflake.registerHistoryLocation();
         }
         Point2D newLoc = snowflake.getLocation().clone();
@@ -102,15 +100,16 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     private Snowflake generateNewSnowflake() {
-        int size = 1 + (int) (Math.random() * 4);
-        Snowflake snowflake = generateNewSnowflake(
+        final int size;
+        if (bigBalls){
+            size = 12 + (int) (Math.random() * 10);
+        } else {
+            size = 1 + (int) (Math.random() * 4);
+        }
+        return generateNewSnowflake(
                 size,
                 Utils.linearInterpolation(size, 1, 1, 4, 2)
         );
-        if (happyWind) {
-            initializeSnowFlakeHappyWind(snowflake);
-        }
-        return snowflake;
     }
 
     private Snowflake generateNewSnowflake(int size, double speed) {
@@ -118,6 +117,9 @@ public class SnowGenerator extends Thread implements SnowListener {
         snowflake.setLocation(new Point2D(Math.random() * drawingSurface.width, 0));
         snowflake.setSize(size);
         snowflake.setSpeed(speed);
+        if (happyWind) {
+            initializeSnowFlakeHappyWind(snowflake);
+        }
         snowflakes.add(snowflake);
         return snowflake;
     }
@@ -143,7 +145,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowFlakeData());
         HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
         data.setOrigLocation(snowflake.getLocation().clone());
-        if (SnowingApplication.DEBUG_PATH) {
+        if (debug) {
             data.setAngleIncrease(0.03);
             data.setAreaToMove(50);
         } else {
@@ -188,6 +190,33 @@ public class SnowGenerator extends Thread implements SnowListener {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void switchDisplayBigBalls() {
+        this.bigBalls = !bigBalls;
+    }
+
+    @Override
+    public void switchDebug() {
+        this.debug = !debug;
+        if (debug) {
+            try {
+                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                    snowflakes.clear();
+                    happyWindSnowData.clear();
+                    this.generateNewSnowflake(20, 0.5);
+                    lockSnowflakes.unlock();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void switchHeavySnowing() {
+        heavySnowing = !heavySnowing;
     }
 
     public void shutdown() {

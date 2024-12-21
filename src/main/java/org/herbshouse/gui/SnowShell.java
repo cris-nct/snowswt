@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.SnowListener;
 import org.herbshouse.logic.Snowflake;
@@ -17,14 +18,14 @@ import org.herbshouse.logic.Snowflake;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SnowShell extends Shell implements PaintListener {
-    private static final int FPS = 120;
+public class SnowShell extends Shell implements PaintListener{
     private final Canvas canvas;
     private final SnowGenerator snowGenerator;
     private boolean normalWind;
     private boolean happyWind;
     private boolean imageRotation;
     private final List<SnowListener> listeners = new ArrayList<>();
+    private boolean debug;
 
     public SnowShell(SnowGenerator snowGenerator) {
         this.snowGenerator = snowGenerator;
@@ -63,6 +64,13 @@ public class SnowShell extends Shell implements PaintListener {
                     imageRotation = !imageRotation;
                 } else if (e.character == 'P' || e.character == 'p') {
                     listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
+                } else if (e.character == 'B' || e.character == 'b') {
+                    listeners.forEach(SnowListener::switchDisplayBigBalls);
+                } else if (e.character == 'D' || e.character == 'd') {
+                    debug = !debug;
+                    listeners.forEach(SnowListener::switchDebug);
+                } else if (e.character == 'H' || e.character == 'h') {
+                    listeners.forEach(SnowListener::switchHeavySnowing);
                 }
             }
         });
@@ -80,7 +88,7 @@ public class SnowShell extends Shell implements PaintListener {
                 canvas.redraw();
                 canvas.update();
                 if (!isDisposed()) {
-                    Display.getDefault().timerExec(1000 / FPS, this);
+                    Display.getDefault().timerExec(1000 / SnowingApplication.FPS, this);
                 }
             }
         });
@@ -90,7 +98,7 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(paintEvent.gc)) {
-            Image image = imageBuilder.createImage(snowGenerator, imageRotation);
+            Image image = imageBuilder.createImage(snowGenerator, imageRotation, debug);
             paintEvent.gc.drawImage(image, 0, 0);
 
             ImageData imageData = image.getImageData();
@@ -114,12 +122,14 @@ public class SnowShell extends Shell implements PaintListener {
         );
         colors.add(pixelColorRight);
 
-        for (int i = 0; i < 5; i++) {
-            RGB pixelColorBottom = GuiUtils.getPixelColor(imageData,
-                    (int) snowflake.getLocation().x,
-                    (int) snowflake.getLocation().y + snowflake.getSize() / 2 + i
-            );
-            colors.add(pixelColorBottom);
+        for (int i = 0; i < 3; i++) {
+            for (int j = -2; j < 3; j++) {
+                RGB pixelColorBottom = GuiUtils.getPixelColor(imageData,
+                        (int) snowflake.getLocation().x + j,
+                        (int) snowflake.getLocation().y + snowflake.getSize() / 2 + i
+                );
+                colors.add(pixelColorBottom);
+            }
         }
         return colors.stream().anyMatch(p -> p.equals(new RGB(255, 255, 0)));
     }
@@ -128,5 +138,6 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     protected void checkSubclass() {
     }
+
 
 }
