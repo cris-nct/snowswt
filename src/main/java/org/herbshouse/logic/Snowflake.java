@@ -7,7 +7,6 @@ public class Snowflake {
     private Point2D location;
     private int size;
     private double speed = 1;
-
     private boolean freezed = false;
 
     public double getSpeed() {

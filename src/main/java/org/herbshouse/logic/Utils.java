@@ -18,106 +18,15 @@ public class Utils {
     return value;
   }
 
-
-  /**
-   * Map type from a string.
-   * 
-   * By example:
-   * 
-   * <code>
-   *    GraphicalElementTypes type = mapTypeFromString("STACK", GraphicalElementTypes.class);
-   *    
-   *    --> In this case  type will be GraphicalElementTypes.STACK
-   *    
-   * </code>
-   * 
-   * @param <T>
-   * @param str
-   * @param enumType
-   * @return <T> or null
-   */
-  public static <T extends Enum<T>> T mapTypeFromString(String str, Class<T> enumType) {
-    try {
-      T ret = Enum.valueOf(enumType, str);
-      return ret;
-    } catch (Throwable e) {
-      // Logger.error(0, "", e);
-    }
-    return null;
-  }
-
-  /**
-   * E.g use:
-   * 
-   * Vehicles vhType = getEnumerationFromEnum(1, Vehicles.class);
-   * 
-   * vhType will be Vehicles.RS
-   * 
-   * 
-   * @param <T>
-   *          an enumeration
-   * @param index
-   *          a number from 0 to number of enumerations from enumType - 1
-   * @param enumType
-   *          an enum type
-   * @return the enumeration with index <index> from enum enumType
-   */
-  public static <T extends Enum<T>> T getEnumerationFromEnum(int index, Class<T> enumType) {
-    try {
-      EnumSet<T> list = EnumSet.allOf(enumType);
-      Iterator<T> iterator = list.iterator();
-
-      int counter = 0;
-      while (iterator.hasNext()) {
-        T obj = iterator.next();
-        if (counter == index) {
-          return obj;
-        }
-        counter++;
-      }
-
-      return null;
-    } catch (Throwable e) {
-      // Logger.error(0, "", e);
-    }
-    return null;
-  }
-
-  /**
-   * @param val
-   * @return true if val can be converted to double
-   */
-  public static boolean isDouble(String val) {
-    try {
-      Double.parseDouble(val);
-      return true;
-    } catch (Throwable e) {
-      return false;
-    }
-  }
-
-  /**
-   * @param val
-   * @return true if the value can be converted to long
-   */
-  public static boolean isLong(String val) {
-    try {
-      Long.parseLong(val);
-      return true;
-    } catch (Throwable e) {
-      return false;
-    }
-  }
-
   public static String getPCIdentifier() {
-    StringBuffer cpuChecksum = new StringBuffer();
-    cpuChecksum.append("CPU: ");
-    cpuChecksum.append(System.getenv("PROCESSOR_REVISION"));
-    cpuChecksum.append(",");
-    cpuChecksum.append(System.getenv("PROCESSOR_IDENTIFIER"));
-    cpuChecksum.append("|MOTHERBOARD: ");
-    cpuChecksum.append(getMotherboardSN());
-    return cpuChecksum.toString();
+    StringBuffer cpuid = new StringBuffer();
+    cpuid.append("CPU: ");
+    cpuid.append(System.getenv("PROCESSOR_REVISION"));
+    cpuid.append(",");
+    cpuid.append(System.getenv("PROCESSOR_IDENTIFIER"));
+    cpuid.append("|MOTHERBOARD: ");
+    cpuid.append(getMotherboardSN());
+    return cpuid.toString();
   }
 
   public static String getMotherboardSN() {

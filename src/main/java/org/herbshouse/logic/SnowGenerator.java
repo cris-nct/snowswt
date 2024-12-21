@@ -14,18 +14,18 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SnowGenerator extends Thread implements SnowListener {
 
-    private volatile List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
+    private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
 
     private final List<Snowflake> toRemove = new ArrayList<>();
-    private volatile boolean shutdown = false;
+    private boolean shutdown = false;
 
     private final Rectangle drawingSurface;
 
-    private volatile boolean happyWind = false;
+    private boolean happyWind = false;
 
-    private volatile boolean normalWind = false;
+    private boolean normalWind = false;
 
-    private final Map<Snowflake, HappyWindSnowData> happyWindSnowData = new HashMap<>();
+    private final Map<Snowflake, HappyWindSnowFlakeData> happyWindSnowData = new HashMap<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
 
     public SnowGenerator(Rectangle drawingSurface) {
@@ -73,11 +73,7 @@ public class SnowGenerator extends Thread implements SnowListener {
                 lockSnowflakes.unlock();
             }
 
-            try {
-                Thread.sleep(7);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            Utils.sleep(7);
         }
     }
 
@@ -87,7 +83,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         }
         Point2D newLoc = snowflake.getLocation().clone();
         if (happyWind) {
-            HappyWindSnowData data = happyWindSnowData.get(snowflake);
+            HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
             newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
             data.increaseAngle();
         } else if (normalWind) {
@@ -96,11 +92,12 @@ public class SnowGenerator extends Thread implements SnowListener {
             if (newLoc.y > startCriticalArea && newLoc.y < endCriticalArea) {
                 newLoc.x += Utils.linearInterpolation(newLoc.x, 1, 4, drawingSurface.width, 0);
             } else if (newLoc.y > endCriticalArea) {
+                //noinspection SuspiciousNameCombination
                 newLoc.x += Utils.linearInterpolation(newLoc.y, endCriticalArea, 2, drawingSurface.height, 0);
             }
         }
-        newLoc.y += snowflake.getSpeed();
         newLoc.x = Math.min(newLoc.x, drawingSurface.width);
+        newLoc.y += snowflake.getSpeed();
         snowflake.setLocation(newLoc);
     }
 
@@ -143,8 +140,8 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     private void initializeSnowFlakeHappyWind(Snowflake snowflake) {
-        happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowData());
-        HappyWindSnowData data = happyWindSnowData.get(snowflake);
+        happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowFlakeData());
+        HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
         data.setOrigLocation(snowflake.getLocation().clone());
         if (SnowingApplication.DEBUG_PATH) {
             data.setAngleIncrease(0.03);
@@ -196,6 +193,5 @@ public class SnowGenerator extends Thread implements SnowListener {
     public void shutdown() {
         shutdown = true;
     }
-
 
 }
