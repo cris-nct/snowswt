@@ -33,8 +33,8 @@ public final class GuiUtils {
 
     public static void drawSnowflake(GC gc, Snowflake snowflake, Point2D loc){
         gc.fillOval(
-                (int) loc.x + snowflake.getSize() / 2,
-                (int) loc.y + snowflake.getSize() / 2,
+                (int) loc.x - snowflake.getSize() / 2,
+                (int) loc.y - snowflake.getSize() / 2,
                 snowflake.getSize(),
                 snowflake.getSize()
         );

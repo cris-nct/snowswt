@@ -6,6 +6,7 @@ import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.SnowGenerator;
 
 public class SnowingApplication {
+    public static final boolean HEAVY_SNOWING = false;
     public static final boolean DEBUG_PATH = false;
 
     public static void main(String[] args) {

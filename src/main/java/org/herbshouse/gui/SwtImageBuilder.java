@@ -1,10 +1,7 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.SnowGenerator;
@@ -27,6 +24,7 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage = new GC(image);
         gcImage.setAdvanced(true);
         gcImage.setAntialias(SWT.DEFAULT);
+        gcImage.setTextAntialias(SWT.ON);
 
         if (flipImage) {
             transform = new Transform(Display.getDefault());

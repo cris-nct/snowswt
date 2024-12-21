@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SnowShell extends Shell implements PaintListener {
-    private static final int FPS = 60;
+    private static final int FPS = 120;
     private final Canvas canvas;
     private final SnowGenerator snowGenerator;
     private boolean normalWind;
@@ -61,6 +61,8 @@ public class SnowShell extends Shell implements PaintListener {
                     happyWind = !happyWind;
                 } else if (e.character == 'F' || e.character == 'f') {
                     imageRotation = !imageRotation;
+                } else if (e.character == 'P' || e.character == 'p') {
+                    listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
                 }
             }
         });

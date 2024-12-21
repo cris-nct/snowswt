@@ -39,22 +39,23 @@ public class SnowGenerator extends Thread implements SnowListener {
     @Override
     public void run() {
         if (SnowingApplication.DEBUG_PATH) {
-            int size = 3;
-            Snowflake snowflake = this.generateNewSnowflake(
-                    size,
-                    Utils.linearInterpolation(size, 1, 0.3, 10, 2)
-            );
+            this.generateNewSnowflake(20, 0.5);
         }
 
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 if (!SnowingApplication.DEBUG_PATH) {
-                      this.generateNewSnowflake();
+                    this.generateNewSnowflake();
+                    if (SnowingApplication.HEAVY_SNOWING) {
+                        for (int i = 0; i < 3; i++) {
+                            this.generateNewSnowflake();
+                        }
+                    }
                 }
 
                 //Move all snowflakes
                 for (Snowflake snowflake : snowflakes) {
-                    if (snowflake.isFreezed()){
+                    if (snowflake.isFreezed()) {
                         continue;
                     }
                     this.move(snowflake);
@@ -94,7 +95,7 @@ public class SnowGenerator extends Thread implements SnowListener {
             int endCriticalArea = startCriticalArea + 100;
             if (newLoc.y > startCriticalArea && newLoc.y < endCriticalArea) {
                 newLoc.x += Utils.linearInterpolation(newLoc.x, 1, 4, drawingSurface.width, 0);
-            } else if (newLoc.y > endCriticalArea){
+            } else if (newLoc.y > endCriticalArea) {
                 newLoc.x += Utils.linearInterpolation(newLoc.y, endCriticalArea, 2, drawingSurface.height, 0);
             }
         }
@@ -117,7 +118,7 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     private Snowflake generateNewSnowflake(int size, double speed) {
         final Snowflake snowflake = new Snowflake();
-        snowflake.setLocation(new Point2D(Math.random() * drawingSurface.width, -20));
+        snowflake.setLocation(new Point2D(Math.random() * drawingSurface.width, 0));
         snowflake.setSize(size);
         snowflake.setSpeed(speed);
         snowflakes.add(snowflake);
@@ -149,10 +150,10 @@ public class SnowGenerator extends Thread implements SnowListener {
             data.setAngleIncrease(0.03);
             data.setAreaToMove(50);
         } else {
-            data.setAngleIncrease(3 * Math.random() / 100);
+            data.setAngleIncrease(2 * Math.random() / 100);
             data.setAreaToMove(Math.abs((int) (Math.random() * 400)));
         }
-        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), 100, 3, 1, 1));
+        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), 200, 3, 1, 1));
     }
 
     @Override
@@ -182,7 +183,7 @@ public class SnowGenerator extends Thread implements SnowListener {
     public void freezeSnowflakes(List<Snowflake> snowflakes) {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-                for (Snowflake snowflake : snowflakes){
+                for (Snowflake snowflake : snowflakes) {
                     snowflake.setFreezed();
                 }
                 lockSnowflakes.unlock();
