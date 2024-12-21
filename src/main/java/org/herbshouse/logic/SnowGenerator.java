@@ -183,7 +183,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {
-                    snowflake.setFreezed();
+                    snowflake.freeze();
                 }
                 lockSnowflakes.unlock();
             }
