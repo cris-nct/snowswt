@@ -17,18 +17,12 @@ public class SnowGenerator extends Thread implements SnowListener {
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
 
     private final List<Snowflake> toRemove = new ArrayList<>();
-
-    private boolean shutdown = false;
-
-    private FlagsConfiguration flagsConfiguration;
-
     private final Rectangle drawingSurface;
-
-    private Point2D mouseLocation;
-
     private final Map<Snowflake, HappyWindSnowFlakeData> happyWindSnowData = new HashMap<>();
-
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
+    private boolean shutdown = false;
+    private FlagsConfiguration flagsConfiguration;
+    private Point2D mouseLocation;
 
     public SnowGenerator(Rectangle drawingSurface) {
         this.drawingSurface = drawingSurface;
@@ -43,7 +37,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 if (!flagsConfiguration.isDebug()) {
-                    for (int i = 0; i < (flagsConfiguration.isHeavySnowing() ? 4: 1); i++) {
+                    for (int i = 0; i < (flagsConfiguration.isHeavySnowing() ? 4 : 1); i++) {
                         this.generateNewSnowflake();
                     }
                 }
@@ -79,7 +73,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         Point2D newLoc = snowflake.getLocation().clone();
         if (flagsConfiguration.isAttack() && snowflake.getSize() > 3) {
             double distance = Utils.distance(snowflake.getLocation(), mouseLocation);
-            if (distance < 5){
+            if (distance < 5) {
                 snowflake.freeze();
             } else {
                 double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), mouseLocation);
@@ -110,7 +104,7 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     private Snowflake generateNewSnowflake() {
         final int size;
-        if (flagsConfiguration.isBigBalls()){
+        if (flagsConfiguration.isBigBalls()) {
             size = 12 + (int) (Math.random() * 10);
         } else {
             size = 1 + (int) (Math.random() * 4);

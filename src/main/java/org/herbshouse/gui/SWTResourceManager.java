@@ -1,5 +1,9 @@
 package org.herbshouse.gui;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,18 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Utility class for managing OS resources associated with SWT controls such as colors, fonts,
@@ -38,39 +30,30 @@ import org.eclipse.swt.widgets.Display;
 @SuppressWarnings("all")
 public class SWTResourceManager {
 
-    private static int MAXIMUM_FONTS_CACHE = 300;
-
-    private static int MAXIMUM_COLORS_CACHE = 300;
-
-    private static int MAXIMUM_IMAGES_CACHE = 100;
-
     /**
      * Style constant for placing decorator image in top left corner of base image.
      */
     public static final int TOP_LEFT = 1;
-
     /**
      * Style constant for placing decorator image in top right corner of base image.
      */
     public static final int TOP_RIGHT = 2;
-
     /**
      * Style constant for placing decorator image in bottom left corner of base image.
      */
     public static final int BOTTOM_LEFT = 3;
-
     /**
      * Style constant for placing decorator image in bottom right corner of base image.
      */
     public static final int BOTTOM_RIGHT = 4;
-
     /**
      * Internal value.
      */
     protected static final int LAST_CORNER_KEY = 5;
-
     private static final int MISSING_IMAGE_SIZE = 10;
-
+    private static int MAXIMUM_FONTS_CACHE = 300;
+    private static int MAXIMUM_COLORS_CACHE = 300;
+    private static int MAXIMUM_IMAGES_CACHE = 100;
     /**
      * map with colors
      */

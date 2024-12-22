@@ -6,12 +6,12 @@ public class HappyWindSnowFlakeData {
     private double angleIncrease = 0.02;
     private int areaToMove;
 
-    public void setAreaToMove(int areaToMove) {
-        this.areaToMove = areaToMove;
-    }
-
     public int getAreaToMove() {
         return areaToMove;
+    }
+
+    public void setAreaToMove(int areaToMove) {
+        this.areaToMove = areaToMove;
     }
 
     public void setAngleIncrease(double angleIncrease) {

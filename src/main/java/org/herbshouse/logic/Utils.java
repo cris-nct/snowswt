@@ -1,4 +1,3 @@
-
 package org.herbshouse.logic;
 
 import java.io.BufferedReader;

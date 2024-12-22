@@ -7,6 +7,7 @@ import org.herbshouse.logic.SnowGenerator;
 
 public class SnowingApplication {
     public static final int FPS = 120;
+
     public static void main(String[] args) {
         SnowGenerator generator = new SnowGenerator(Display.getDefault().getBounds());
         try {

@@ -1,11 +1,14 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.Snowflake;
-import org.herbshouse.logic.Point2D;
 
 /**
  * This class is responsible for creating and managing an SWT Image that displays a snowy scene with a greeting text.
@@ -77,13 +80,13 @@ public class SwtImageBuilder implements AutoCloseable {
         return image;
     }
 
-    private void addTextToLegend(StringBuilder builder, String text, boolean value){
-        if (builder.length() > 0) {
+    private void addTextToLegend(StringBuilder builder, String text, boolean value) {
+        if (!builder.isEmpty()) {
             builder.append("\r\n");
         }
         builder.append(text);
         builder.append(": ");
-        builder.append(value? "ON": "OFF");
+        builder.append(value ? "ON" : "OFF");
     }
 
     @Override

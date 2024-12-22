@@ -1,13 +1,12 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.graphics.*;
-import org.herbshouse.logic.Snowflake;
 import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.Snowflake;
 
 public final class GuiUtils {
 
     private GuiUtils() {
-
     }
 
     public static RGB getPixelColor(ImageData imageData, int x, int y) {
