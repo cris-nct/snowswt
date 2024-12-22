@@ -21,6 +21,8 @@ public class SwtImageBuilder implements AutoCloseable {
     private GC gcImage;
     private Transform transform;
     private Image image;
+    private static int alphaMB = 130;
+    private static int alphaMBSign = 1;
 
     public SwtImageBuilder(GC gc) {
         originalGC = gc;
@@ -56,7 +58,7 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw countdown
         if (snowGenerator.getCountdown() >= 0) {
-            if (snowGenerator.getCountdown() >= 4){
+            if (snowGenerator.getCountdown() >= 4) {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
             } else {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -87,7 +89,7 @@ public class SwtImageBuilder implements AutoCloseable {
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
-            if (config.isMercedesSnowflakes()){
+            if (config.isMercedesSnowflakes()) {
                 GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
             } else {
                 GuiUtils.drawSnowflake(gcImage, snowflake);
@@ -100,7 +102,13 @@ public class SwtImageBuilder implements AutoCloseable {
         }
 
         //Draw MB logo
-        gcImage.setAlpha(130);
+        if (alphaMB >= 255 || alphaMB < 30) {
+            alphaMBSign = -alphaMBSign;
+            alphaMB = Math.min(alphaMB, 255);
+            alphaMB = Math.max(alphaMB, 30);
+        }
+        gcImage.setAlpha(alphaMB);
+        alphaMB = alphaMB + 2 * alphaMBSign;
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
         gcImage.setAlpha(255);

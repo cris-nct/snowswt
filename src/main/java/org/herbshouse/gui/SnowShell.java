@@ -3,6 +3,7 @@ package org.herbshouse.gui;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -163,22 +164,25 @@ public class SnowShell extends Shell implements PaintListener {
 
     @Override
     public void paintControl(PaintEvent paintEvent) {
-        try (SwtImageBuilder imageBuilder = new SwtImageBuilder(paintEvent.gc)) {
+        GC gc = paintEvent.gc;
+        gc.setAdvanced(true);
+
+        try (SwtImageBuilder imageBuilder = new SwtImageBuilder(gc)) {
             //Draw main image
             Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration);
             ImageData imageData = image.getImageData();
-            paintEvent.gc.drawImage(image, 0, 0);
+            gc.drawImage(image, 0, 0);
 
             //Draw minimap
             double aspRatio = (double)imageData.width / imageData.height;
             int heightMinimap = 200;
             int widthMinimap = (int) (heightMinimap * aspRatio);
-            paintEvent.gc.setAlpha(180);
-            paintEvent.gc.drawImage(image, 0, 0, imageData.width, imageData.height,
+            gc.setAlpha(180);
+            gc.drawImage(image, 0, 0, imageData.width, imageData.height,
                     0, imageData.height - heightMinimap, widthMinimap, heightMinimap);
-            paintEvent.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-            paintEvent.gc.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
-            paintEvent.gc.setAlpha(255);
+            gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+            gc.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
+            gc.setAlpha(255);
 
             //Check collisions for snowflakes and notify listeners
             List<Snowflake> toFreeze = new ArrayList<>();
