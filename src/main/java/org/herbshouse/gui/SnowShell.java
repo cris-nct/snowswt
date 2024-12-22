@@ -34,6 +34,13 @@ public class SnowShell extends Shell implements PaintListener {
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
 
     public SnowShell(SnowGenerator snowGenerator) {
+        super(Display.getDefault());
+        //Setting region for a shell works only with style SWT.NO_TRIM
+//        Region region = new Region(Display.getDefault());
+//        region.add(Display.getDefault().getBounds());
+//        region.subtract(250, 30, 800, 200);
+//        this.setRegion(region);
+
         this.snowGenerator = snowGenerator;
         this.snowGenerator.setFlagsConfiguration(flagsConfiguration);
         this.setFullScreen(true);

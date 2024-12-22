@@ -73,10 +73,6 @@ public class SwtImageBuilder implements AutoCloseable {
         legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), totalArea.width - 230, 10, true);
 
-        //Draw MB logo
-        Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
-        gcImage.drawImage(mbImage, 0, 0);
-
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
@@ -91,6 +87,10 @@ public class SwtImageBuilder implements AutoCloseable {
                 }
             }
         }
+
+        //Draw MB logo
+        Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
+        gcImage.drawImage(mbImage, 0, 0);
 
         return image;
     }
