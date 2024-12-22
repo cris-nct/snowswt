@@ -2,6 +2,7 @@ package org.herbshouse.logic;
 
 
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.gui.FlagsConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,21 +17,12 @@ public class SnowGenerator extends Thread implements SnowListener {
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
 
     private final List<Snowflake> toRemove = new ArrayList<>();
+
     private boolean shutdown = false;
 
+    private FlagsConfiguration flagsConfiguration;
+
     private final Rectangle drawingSurface;
-
-    private boolean happyWind = false;
-
-    private boolean normalWind = false;
-
-    private boolean bigBalls;
-
-    private boolean heavySnowing;
-
-    private boolean debug;
-
-    private boolean attack;
 
     private Point2D mouseLocation;
 
@@ -50,8 +42,8 @@ public class SnowGenerator extends Thread implements SnowListener {
     public void run() {
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
-                if (!debug) {
-                    for (int i = 0; i < (heavySnowing ? 4: 1); i++) {
+                if (!flagsConfiguration.isDebug()) {
+                    for (int i = 0; i < (flagsConfiguration.isHeavySnowing() ? 4: 1); i++) {
                         this.generateNewSnowflake();
                     }
                 }
@@ -67,7 +59,7 @@ public class SnowGenerator extends Thread implements SnowListener {
                     }
                 }
                 if (toRemove.size() > 100) {
-                    if (happyWind) {
+                    if (flagsConfiguration.isHappyWind()) {
                         toRemove.forEach(happyWindSnowData::remove);
                     }
                     snowflakes.removeAll(toRemove);
@@ -81,11 +73,11 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     private void move(Snowflake snowflake) {
-        if (debug) {
+        if (flagsConfiguration.isDebug()) {
             snowflake.registerHistoryLocation();
         }
         Point2D newLoc = snowflake.getLocation().clone();
-        if (attack && snowflake.getSize() > 3) {
+        if (flagsConfiguration.isAttack() && snowflake.getSize() > 3) {
             double distance = Utils.distance(snowflake.getLocation(), mouseLocation);
             if (distance < 5){
                 snowflake.freeze();
@@ -96,11 +88,11 @@ public class SnowGenerator extends Thread implements SnowListener {
             }
             return;
         }
-        if (happyWind) {
+        if (flagsConfiguration.isHappyWind()) {
             HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
             newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
             data.increaseAngle();
-        } else if (normalWind) {
+        } else if (flagsConfiguration.isNormalWind()) {
             int startCriticalArea = drawingSurface.height / 4;
             int endCriticalArea = startCriticalArea + 100;
             if (newLoc.y > startCriticalArea && newLoc.y < endCriticalArea) {
@@ -118,7 +110,7 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     private Snowflake generateNewSnowflake() {
         final int size;
-        if (bigBalls){
+        if (flagsConfiguration.isBigBalls()){
             size = 12 + (int) (Math.random() * 10);
         } else {
             size = 1 + (int) (Math.random() * 4);
@@ -134,7 +126,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         snowflake.setLocation(new Point2D(Math.random() * drawingSurface.width, 0));
         snowflake.setSize(size);
         snowflake.setSpeed(speed);
-        if (happyWind) {
+        if (flagsConfiguration.isHappyWind()) {
             initializeSnowFlakeHappyWind(snowflake);
         }
         snowflakes.add(snowflake);
@@ -148,7 +140,6 @@ public class SnowGenerator extends Thread implements SnowListener {
                 for (Snowflake snowflake : snowflakes) {
                     initializeSnowFlakeHappyWind(snowflake);
                 }
-                happyWind = true;
                 lockSnowflakes.unlock();
             } else {
                 System.out.println("GUI thread is overloaded !!!");
@@ -162,7 +153,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowFlakeData());
         HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
         data.setOrigLocation(snowflake.getLocation().clone());
-        if (debug) {
+        if (flagsConfiguration.isDebug()) {
             data.setAngleIncrease(0.03);
             data.setAreaToMove(50);
         } else {
@@ -176,23 +167,12 @@ public class SnowGenerator extends Thread implements SnowListener {
     public void turnOffHappyWind() {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-                happyWind = false;
                 happyWindSnowData.clear();
                 lockSnowflakes.unlock();
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void turnOnNormalWind() {
-        normalWind = true;
-    }
-
-    @Override
-    public void turnOffNormalWind() {
-        normalWind = false;
     }
 
     @Override
@@ -210,14 +190,8 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     @Override
-    public void switchDisplayBigBalls() {
-        this.bigBalls = !bigBalls;
-    }
-
-    @Override
     public void switchDebug() {
-        this.debug = !debug;
-        if (debug) {
+        if (flagsConfiguration.isDebug()) {
             try {
                 if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                     snowflakes.clear();
@@ -232,22 +206,16 @@ public class SnowGenerator extends Thread implements SnowListener {
     }
 
     @Override
-    public void switchHeavySnowing() {
-        heavySnowing = !heavySnowing;
-    }
-
-    @Override
-    public void switchAttack() {
-        attack = !attack;
-    }
-
-    @Override
     public void mouseMove(Point2D mouseLocation) {
         this.mouseLocation = mouseLocation;
     }
 
     public void shutdown() {
         shutdown = true;
+    }
+
+    public void setFlagsConfiguration(FlagsConfiguration flagsConfiguration) {
+        this.flagsConfiguration = flagsConfiguration;
     }
 
 }

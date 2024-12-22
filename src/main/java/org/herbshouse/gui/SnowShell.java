@@ -30,14 +30,12 @@ import java.util.List;
 public class SnowShell extends Shell implements PaintListener {
     private final Canvas canvas;
     private final SnowGenerator snowGenerator;
-    private boolean normalWind;
-    private boolean happyWind;
-    private boolean imageRotation;
     private final List<SnowListener> listeners = new ArrayList<>();
-    private boolean debug;
+    private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
 
     public SnowShell(SnowGenerator snowGenerator) {
         this.snowGenerator = snowGenerator;
+        this.snowGenerator.setFlagsConfiguration(flagsConfiguration);
         this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -59,32 +57,28 @@ public class SnowShell extends Shell implements PaintListener {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.character == ' ') {
-                    if (normalWind) {
-                        listeners.forEach(SnowListener::turnOffNormalWind);
-                    } else {
-                        listeners.forEach(SnowListener::turnOnNormalWind);
-                    }
-                    normalWind = !normalWind;
+                    flagsConfiguration.switchNormalWind();
                 } else if (e.character == 'X' || e.character == 'x') {
-                    if (happyWind) {
+                    if (flagsConfiguration.isHeavySnowing()) {
                         listeners.forEach(SnowListener::turnOffHappyWind);
                     } else {
                         listeners.forEach(SnowListener::turnOnHappyWind);
                     }
-                    happyWind = !happyWind;
+                    flagsConfiguration.switchHappyWind();
                 } else if (e.character == 'F' || e.character == 'f') {
-                    imageRotation = !imageRotation;
+                    flagsConfiguration.switchFlipImage();
                 } else if (e.character == 'P' || e.character == 'p') {
+                    flagsConfiguration.switchFreezeSnowflakes();
                     listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
                 } else if (e.character == 'B' || e.character == 'b') {
-                    listeners.forEach(SnowListener::switchDisplayBigBalls);
+                    flagsConfiguration.switchBigBalls();
                 } else if (e.character == 'D' || e.character == 'd') {
-                    debug = !debug;
+                    flagsConfiguration.switchDebug();
                     listeners.forEach(SnowListener::switchDebug);
                 } else if (e.character == 'H' || e.character == 'h') {
-                    listeners.forEach(SnowListener::switchHeavySnowing);
+                    flagsConfiguration.switchHeavySnowing();
                 } else if (e.character == 'A' || e.character == 'a') {
-                    listeners.forEach(SnowListener::switchAttack);
+                    flagsConfiguration.switchAttack();
                 }
             }
         });
@@ -112,7 +106,7 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(paintEvent.gc)) {
-            Image image = imageBuilder.createImage(snowGenerator, imageRotation, debug);
+            Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration.isFlipImage(), flagsConfiguration.isDebug());
             paintEvent.gc.drawImage(image, 0, 0);
 
             ImageData imageData = image.getImageData();

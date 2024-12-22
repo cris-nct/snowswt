@@ -7,19 +7,9 @@ public interface SnowListener {
 
     void turnOffHappyWind();
 
-    void turnOnNormalWind();
-
-    void turnOffNormalWind();
-
     void freezeSnowflakes(List<Snowflake> snowflakes);
 
-    void switchDisplayBigBalls();
-
     void switchDebug();
-
-    void switchHeavySnowing();
-
-    void switchAttack();
 
     void mouseMove(Point2D mouseLocation);
 
