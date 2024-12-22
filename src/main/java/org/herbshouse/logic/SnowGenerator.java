@@ -39,7 +39,6 @@ public class SnowGenerator extends Thread implements SnowListener {
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 if (!flagsConfiguration.isDebug()) {
-
                     if (flagsConfiguration.getSnowingLevel() > 0) {
                         for (int i = 0; i < flagsConfiguration.getSnowingLevel(); i++) {
                             this.generateNewSnowflake();
@@ -120,10 +119,8 @@ public class SnowGenerator extends Thread implements SnowListener {
         } else {
             size = 1 + (int) (Math.random() * 4);
         }
-        return generateNewSnowflake(
-                size,
-                Utils.linearInterpolation(size, 1, 1, 4, 2)
-        );
+        double speed = Math.min(Utils.linearInterpolation(size, 1, 0.5, 4, 1), 1);
+        return generateNewSnowflake(size, speed);
     }
 
     private Snowflake generateNewSnowflake(int size, double speed) {
@@ -165,7 +162,7 @@ public class SnowGenerator extends Thread implements SnowListener {
             data.setAngleIncrease(2 * Math.random() / 100);
             data.setAreaToMove(Math.abs((int) (Math.random() * 400)));
         }
-        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), 200, 3, 1, 1));
+        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), 400, 3, 1, 1));
     }
 
     @Override
