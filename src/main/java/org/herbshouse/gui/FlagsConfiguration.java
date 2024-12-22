@@ -3,7 +3,6 @@ package org.herbshouse.gui;
 public class FlagsConfiguration {
     private boolean normalWind;
     private boolean happyWind;
-    private boolean heavySnowing;
     private boolean debug;
     private boolean attack;
     private boolean flipImage;
@@ -52,10 +51,6 @@ public class FlagsConfiguration {
         this.happyWind = !happyWind;
     }
 
-    void switchHeavySnowing() {
-        this.heavySnowing = !heavySnowing;
-    }
-
     public boolean isAttack() {
         return attack;
     }
@@ -74,10 +69,6 @@ public class FlagsConfiguration {
 
     public boolean isHappyWind() {
         return happyWind;
-    }
-
-    public boolean isHeavySnowing() {
-        return heavySnowing;
     }
 
     public boolean isNormalWind() {

@@ -53,7 +53,9 @@ public class SnowShell extends Shell implements PaintListener {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 //Display.getDefault().beep();
-                setFullScreen(!getFullScreen());
+                if (e.button == 1) {
+                    setFullScreen(!getFullScreen());
+                }
             }
         });
 
@@ -86,37 +88,55 @@ public class SnowShell extends Shell implements PaintListener {
         this.canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.character == ' ') {
-                    flagsConfiguration.switchNormalWind();
-                } else if (e.character == 'X' || e.character == 'x') {
-                    if (flagsConfiguration.isHeavySnowing()) {
-                        listeners.forEach(SnowListener::turnOffHappyWind);
-                    } else {
-                        listeners.forEach(SnowListener::turnOnHappyWind);
-                    }
-                    flagsConfiguration.switchHappyWind();
-                } else if (e.character == 'F' || e.character == 'f') {
-                    flagsConfiguration.switchFlipImage();
-                } else if (e.character == 'P' || e.character == 'p') {
-                    flagsConfiguration.switchFreezeSnowflakes();
-                    listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
-                } else if (e.character == 'R' || e.character == 'r') {
-                    listeners.forEach(SnowListener::reset);
-                } else if (e.character == 'B' || e.character == 'b') {
-                    flagsConfiguration.switchBigBalls();
-                } else if (e.character == 'D' || e.character == 'd') {
-                    flagsConfiguration.switchDebug();
-                    listeners.forEach(SnowListener::switchDebug);
-                } else if (e.character == 'H' || e.character == 'h') {
-                    flagsConfiguration.switchHeavySnowing();
-                } else if (e.character == 'A' || e.character == 'a') {
-                    flagsConfiguration.switchAttack();
-                } else if (e.character == 'M' || e.character == 'm') {
-                    flagsConfiguration.switchMercedesSnowflakes();
-                } else if (e.keyCode == SWT.KEYPAD_ADD) {
-                    flagsConfiguration.increaseSnowingLevel();
-                } else if (e.keyCode == SWT.KEYPAD_SUBTRACT) {
-                    flagsConfiguration.decreaseSnowingLevel();
+                switch (e.character){
+                    case ' ':
+                        flagsConfiguration.switchNormalWind();
+                        break;
+                    case 'X':
+                    case 'x':
+                        if (flagsConfiguration.isHappyWind()) {
+                            listeners.forEach(SnowListener::turnOffHappyWind);
+                        } else {
+                            listeners.forEach(SnowListener::turnOnHappyWind);
+                        }
+                        flagsConfiguration.switchHappyWind();
+                        break;
+                    case 'F':
+                    case 'f':
+                        flagsConfiguration.switchFlipImage();
+                        break;
+                    case 'P':
+                    case 'p':
+                        flagsConfiguration.switchFreezeSnowflakes();
+                        listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
+                        break;
+                    case 'R':
+                    case 'r':
+                        listeners.forEach(SnowListener::reset);
+                        break;
+                    case 'B':
+                    case 'b':
+                        flagsConfiguration.switchBigBalls();
+                        break;
+                    case 'D':
+                    case 'd':
+                        flagsConfiguration.switchDebug();
+                        listeners.forEach(SnowListener::switchDebug);
+                        break;
+                    case 'A':
+                    case 'a':
+                        flagsConfiguration.switchAttack();
+                        break;
+                    case 'M':
+                    case 'm':
+                        flagsConfiguration.switchMercedesSnowflakes();
+                        break;
+                    case '+':
+                        flagsConfiguration.increaseSnowingLevel();
+                        break;
+                    case '-':
+                        flagsConfiguration.decreaseSnowingLevel();
+                        break;
                 }
             }
         });

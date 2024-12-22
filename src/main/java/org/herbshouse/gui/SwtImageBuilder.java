@@ -62,7 +62,6 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Normal wind(space)", config.isNormalWind());
         this.addTextToLegend(legendBuilder, "Happy wind(X)", config.isHappyWind());
         this.addTextToLegend(legendBuilder, "Debug(D)", config.isDebug());
-        this.addTextToLegend(legendBuilder, "Heavy snowing(H)", config.isHeavySnowing());
         this.addTextToLegend(legendBuilder, "Flip image(F)", config.isFlipImage());
         this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
         this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
