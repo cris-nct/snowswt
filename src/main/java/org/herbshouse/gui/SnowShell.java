@@ -106,7 +106,7 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(paintEvent.gc)) {
-            Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration.isFlipImage(), flagsConfiguration.isDebug());
+            Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration);
             paintEvent.gc.drawImage(image, 0, 0);
 
             ImageData imageData = image.getImageData();

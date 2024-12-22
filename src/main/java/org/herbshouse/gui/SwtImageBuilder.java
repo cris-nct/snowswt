@@ -25,7 +25,7 @@ public class SwtImageBuilder implements AutoCloseable {
         originalGC = gc;
     }
 
-    public Image createImage(SnowGenerator snowGenerator, boolean flipImage, boolean debug) {
+    public Image createImage(SnowGenerator snowGenerator, FlagsConfiguration config) {
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
@@ -33,7 +33,7 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setAntialias(SWT.DEFAULT);
         gcImage.setTextAntialias(SWT.ON);
 
-        if (flipImage) {
+        if (config.isFlipImage()) {
             transform = new Transform(Display.getDefault());
             transform.scale(1, -1);
             transform.translate(0, -totalArea.height);
@@ -51,20 +51,39 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw legend
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
-        gcImage.setFont(SWTResourceManager.getFont("Arial", 15, SWT.BOLD));
-        gcImage.drawText("Normal wind(space): ON\nHappy wind(X): OFF", totalArea.width - 300, 10, true);
+        gcImage.setFont(SWTResourceManager.getFont("Arial", 12, SWT.BOLD));
+        StringBuilder legendBuilder = new StringBuilder();
+        this.addTextToLegend(legendBuilder, "Normal wind(space)", config.isNormalWind());
+        this.addTextToLegend(legendBuilder, "Happy wind(X)", config.isHappyWind());
+        this.addTextToLegend(legendBuilder, "Debug(D)", config.isDebug());
+        this.addTextToLegend(legendBuilder, "Heavy snowing(H)", config.isHeavySnowing());
+        this.addTextToLegend(legendBuilder, "Flip image(F)", config.isFlipImage());
+        this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
+        this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
+        this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
+        gcImage.drawText(legendBuilder.toString(), totalArea.width - 220, 10, true);
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
             GuiUtils.drawSnowflake(gcImage, snowflake);
-            if (debug) {
+            if (config.isDebug()) {
                 for (Point2D loc : snowflake.getHistoryLocations()) {
                     GuiUtils.drawSnowflake(gcImage, snowflake, loc);
                 }
             }
         }
+
         return image;
+    }
+
+    private void addTextToLegend(StringBuilder builder, String text, boolean value){
+        if (builder.length() > 0) {
+            builder.append("\r\n");
+        }
+        builder.append(text);
+        builder.append(": ");
+        builder.append(value? "ON": "OFF");
     }
 
     @Override
