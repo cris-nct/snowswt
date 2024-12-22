@@ -64,6 +64,8 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
         this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
         this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
+        legendBuilder.append("\r\n");
+        legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), totalArea.width - 220, 10, true);
 
         //Draw snowflakes

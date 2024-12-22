@@ -1,6 +1,7 @@
 package org.herbshouse.logic;
 
 
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 
@@ -202,6 +203,53 @@ public class SnowGenerator extends Thread implements SnowListener {
     @Override
     public void mouseMove(Point2D mouseLocation) {
         this.mouseLocation = mouseLocation;
+    }
+
+    @Override
+    public void mouseScrolled(MouseEvent mouseEvent) {
+        try {
+            if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                for (Snowflake snowflake : snowflakes) {
+                    if (!snowflake.isFreezed()) {
+                        Point2D newLoc = snowflake.getLocation();
+                        newLoc.y += 10 * mouseEvent.count;
+                        snowflake.setLocation(newLoc);
+                    }
+                }
+                lockSnowflakes.unlock();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void reset() {
+        try {
+            if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                snowflakes.clear();
+                happyWindSnowData.clear();
+                lockSnowflakes.unlock();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void mouseDown(MouseEvent mouseEvent) {
+        if (mouseEvent.button == 3) {
+            try {
+                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                    Snowflake snowflake = generateNewSnowflake(50, 1);
+                    snowflake.setLocation(new Point2D(mouseEvent.x, mouseEvent.y));
+                    snowflake.freeze();
+                    lockSnowflakes.unlock();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void shutdown() {

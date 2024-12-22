@@ -1,5 +1,7 @@
 package org.herbshouse.logic;
 
+import org.eclipse.swt.events.MouseEvent;
+
 import java.util.List;
 
 public interface SnowListener {
@@ -13,4 +15,9 @@ public interface SnowListener {
 
     void mouseMove(Point2D mouseLocation);
 
+    void mouseDown(MouseEvent mouseEvent);
+
+    void mouseScrolled(MouseEvent mouseEvent);
+
+    void reset();
 }

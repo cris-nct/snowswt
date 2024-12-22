@@ -53,6 +53,29 @@ public class SnowShell extends Shell implements PaintListener {
         this.canvas.addMouseMoveListener(e ->
                 listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)))
         );
+
+        this.canvas.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseScrolled(MouseEvent e) {
+                listeners.forEach(l -> l.mouseScrolled(e));
+            }
+        });
+        this.canvas.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseDown(MouseEvent e) {
+                listeners.forEach(l -> l.mouseDown(e));
+            }
+
+            @Override
+            public void mouseUp(MouseEvent e) {
+
+            }
+        });
         this.canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -70,6 +93,8 @@ public class SnowShell extends Shell implements PaintListener {
                 } else if (e.character == 'P' || e.character == 'p') {
                     flagsConfiguration.switchFreezeSnowflakes();
                     listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
+                } else if (e.character == 'R' || e.character == 'r') {
+                    listeners.forEach(SnowListener::reset);
                 } else if (e.character == 'B' || e.character == 'b') {
                     flagsConfiguration.switchBigBalls();
                 } else if (e.character == 'D' || e.character == 'd') {
@@ -106,10 +131,21 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(paintEvent.gc)) {
+            //Draw main image
             Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration);
+            ImageData imageData = image.getImageData();
             paintEvent.gc.drawImage(image, 0, 0);
 
-            ImageData imageData = image.getImageData();
+            //Draw minimap
+            double aspRatio = (double)imageData.width / imageData.height;
+            int heightMinimap = 200;
+            int widthMinimap = (int) (heightMinimap * aspRatio);
+            paintEvent.gc.drawImage(image, 0, 0, imageData.width, imageData.height,
+                    0, imageData.height - heightMinimap, widthMinimap, heightMinimap);
+            paintEvent.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+            paintEvent.gc.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
+
+            //Check collisions for snowflakes and notify listeners
             List<Snowflake> toFreeze = new ArrayList<>();
             for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
                 if (isColliding(snowflake, imageData)) {
