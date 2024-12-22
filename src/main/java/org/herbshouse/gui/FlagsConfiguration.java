@@ -9,6 +9,11 @@ public class FlagsConfiguration {
     private boolean flipImage;
     private boolean bigBalls;
     private boolean freezeSnowflakes;
+    private boolean mercedesSnowflakes;
+
+    void switchMercedesSnowflakes(){
+        this.mercedesSnowflakes=!mercedesSnowflakes;
+    }
 
     void switchFreezeSnowflakes() {
         this.freezeSnowflakes = !freezeSnowflakes;
@@ -48,6 +53,10 @@ public class FlagsConfiguration {
 
     public boolean isDebug() {
         return debug;
+    }
+
+    public boolean isMercedesSnowflakes() {
+        return mercedesSnowflakes;
     }
 
     public boolean isFlipImage() {

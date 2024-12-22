@@ -1,6 +1,7 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.graphics.*;
+import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Snowflake;
 
@@ -35,6 +36,13 @@ public final class GuiUtils {
                 (int) loc.y - snowflake.getSize() / 2,
                 snowflake.getSize(),
                 snowflake.getSize()
+        );
+    }
+
+    public static void drawSnowflakeAsMercedes(GC gc, Snowflake snowflake) {
+        gc.drawImage(SnowingApplication.mbImageSmall,
+                (int) snowflake.getLocation().x - SnowingApplication.MB_ICON_SIZE / 2,
+                (int) snowflake.getLocation().y - SnowingApplication.MB_ICON_SIZE / 2
         );
     }
 

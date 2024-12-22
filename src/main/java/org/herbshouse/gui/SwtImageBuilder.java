@@ -6,9 +6,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.Snowflake;
+
+import java.io.File;
 
 /**
  * This class is responsible for creating and managing an SWT Image that displays a snowy scene with a greeting text.
@@ -64,14 +67,23 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
         this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
         this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
-        legendBuilder.append("\r\n");
+        this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
+        legendBuilder.append("\r\n-------\n");
         legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), totalArea.width - 220, 10, true);
+
+        //Draw MB logo
+        Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
+        gcImage.drawImage(mbImage, 0, 0);
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
-            GuiUtils.drawSnowflake(gcImage, snowflake);
+            if (config.isMercedesSnowflakes()){
+                GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
+            } else {
+                GuiUtils.drawSnowflake(gcImage, snowflake);
+            }
             if (config.isDebug()) {
                 for (Point2D loc : snowflake.getHistoryLocations()) {
                     GuiUtils.drawSnowflake(gcImage, snowflake, loc);

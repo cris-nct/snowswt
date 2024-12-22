@@ -104,6 +104,8 @@ public class SnowShell extends Shell implements PaintListener {
                     flagsConfiguration.switchHeavySnowing();
                 } else if (e.character == 'A' || e.character == 'a') {
                     flagsConfiguration.switchAttack();
+                } else if (e.character == 'M' || e.character == 'm') {
+                    flagsConfiguration.switchMercedesSnowflakes();
                 }
             }
         });
