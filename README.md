@@ -59,4 +59,6 @@
 
 </settings>
 ```
+![Captură de ecran 2024-12-22 230341](https://github.com/user-attachments/assets/a0d0e73b-7a3f-43cb-896a-9b93e73eaee4)
+![Captură de ecran 2024-12-22 214718](https://github.com/user-attachments/assets/28f29466-7a29-46cf-9298-1e4e6c274947)
 
