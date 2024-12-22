@@ -21,7 +21,7 @@ public class SwtImageBuilder implements AutoCloseable {
     private GC gcImage;
     private Transform transform;
     private Image image;
-    private static int alphaMB = 130;
+    private static int alphaMB = 1;
     private static int alphaMBSign = 1;
 
     public SwtImageBuilder(GC gc) {
@@ -102,13 +102,13 @@ public class SwtImageBuilder implements AutoCloseable {
         }
 
         //Draw MB logo
-        if (alphaMB >= 255 || alphaMB < 30) {
+        if (alphaMB >= 240 || alphaMB < 30) {
             alphaMBSign = -alphaMBSign;
-            alphaMB = Math.min(alphaMB, 255);
+            alphaMB = Math.min(alphaMB, 240);
             alphaMB = Math.max(alphaMB, 30);
         }
         gcImage.setAlpha(alphaMB);
-        alphaMB = alphaMB + 2 * alphaMBSign;
+        alphaMB = alphaMB + 5 * alphaMBSign;
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
         gcImage.setAlpha(255);
