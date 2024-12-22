@@ -71,7 +71,7 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         legendBuilder.append("\r\n-------\n");
         legendBuilder.append("Reset simulation(R)");
-        gcImage.drawText(legendBuilder.toString(), totalArea.width - 230, 10, true);
+        gcImage.drawText(legendBuilder.toString(), totalArea.width - 240, 10, true);
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
