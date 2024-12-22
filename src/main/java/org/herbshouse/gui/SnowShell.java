@@ -106,6 +106,10 @@ public class SnowShell extends Shell implements PaintListener {
                     flagsConfiguration.switchAttack();
                 } else if (e.character == 'M' || e.character == 'm') {
                     flagsConfiguration.switchMercedesSnowflakes();
+                } else if (e.keyCode == SWT.KEYPAD_ADD) {
+                    flagsConfiguration.increaseSnowingLevel();
+                } else if (e.keyCode == SWT.KEYPAD_SUBTRACT) {
+                    flagsConfiguration.decreaseSnowingLevel();
                 }
             }
         });

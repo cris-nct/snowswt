@@ -24,6 +24,7 @@ public class SnowGenerator extends Thread implements SnowListener {
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
     private Point2D mouseLocation;
+    private int counterUpdates;
 
     public SnowGenerator(Rectangle drawingSurface) {
         this.drawingSurface = drawingSurface;
@@ -38,8 +39,17 @@ public class SnowGenerator extends Thread implements SnowListener {
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 if (!flagsConfiguration.isDebug()) {
-                    for (int i = 0; i < (flagsConfiguration.isHeavySnowing() ? 4 : 1); i++) {
-                        this.generateNewSnowflake();
+
+                    if (flagsConfiguration.getSnowingLevel() > 0) {
+                        for (int i = 0; i < flagsConfiguration.getSnowingLevel(); i++) {
+                            this.generateNewSnowflake();
+                        }
+                    } else if (flagsConfiguration.getSnowingLevel() < 0) {
+                        counterUpdates++;
+                        if (counterUpdates >= -flagsConfiguration.getSnowingLevel()) {
+                            this.generateNewSnowflake();
+                            counterUpdates = 0;
+                        }
                     }
                 }
 

@@ -10,6 +10,15 @@ public class FlagsConfiguration {
     private boolean bigBalls;
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
+    private int snowingLevel = 1;
+
+    void increaseSnowingLevel() {
+        this.snowingLevel++;
+    }
+
+    void decreaseSnowingLevel() {
+        this.snowingLevel--;
+    }
 
     void switchMercedesSnowflakes(){
         this.mercedesSnowflakes=!mercedesSnowflakes;
@@ -82,4 +91,9 @@ public class FlagsConfiguration {
     public boolean isFreezeSnowflakes() {
         return freezeSnowflakes;
     }
+
+    public int getSnowingLevel() {
+        return snowingLevel;
+    }
+
 }

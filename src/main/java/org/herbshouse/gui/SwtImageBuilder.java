@@ -68,9 +68,10 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
         this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
+        this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         legendBuilder.append("\r\n-------\n");
         legendBuilder.append("Reset simulation(R)");
-        gcImage.drawText(legendBuilder.toString(), totalArea.width - 220, 10, true);
+        gcImage.drawText(legendBuilder.toString(), totalArea.width - 230, 10, true);
 
         //Draw MB logo
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
@@ -101,6 +102,15 @@ public class SwtImageBuilder implements AutoCloseable {
         builder.append(text);
         builder.append(": ");
         builder.append(value ? "ON" : "OFF");
+    }
+
+    private void addTextToLegend(StringBuilder builder, String text, int value) {
+        if (!builder.isEmpty()) {
+            builder.append("\r\n");
+        }
+        builder.append(text);
+        builder.append(": ");
+        builder.append(value);
     }
 
     @Override
