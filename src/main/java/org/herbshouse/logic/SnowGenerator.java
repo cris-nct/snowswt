@@ -30,7 +30,12 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     private boolean debug;
 
+    private boolean attack;
+
+    private Point2D mouseLocation;
+
     private final Map<Snowflake, HappyWindSnowFlakeData> happyWindSnowData = new HashMap<>();
+
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
 
     public SnowGenerator(Rectangle drawingSurface) {
@@ -80,6 +85,17 @@ public class SnowGenerator extends Thread implements SnowListener {
             snowflake.registerHistoryLocation();
         }
         Point2D newLoc = snowflake.getLocation().clone();
+        if (attack && snowflake.getSize() > 3) {
+            double distance = Utils.distance(snowflake.getLocation(), mouseLocation);
+            if (distance < 5){
+                snowflake.freeze();
+            } else {
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), mouseLocation);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
+                snowflake.setLocation(newLoc);
+            }
+            return;
+        }
         if (happyWind) {
             HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
             newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
@@ -94,6 +110,7 @@ public class SnowGenerator extends Thread implements SnowListener {
                 newLoc.x += Utils.linearInterpolation(newLoc.y, endCriticalArea, 2, drawingSurface.height, 0);
             }
         }
+
         newLoc.x = Math.min(newLoc.x, drawingSurface.width);
         newLoc.y += snowflake.getSpeed();
         snowflake.setLocation(newLoc);
@@ -217,6 +234,16 @@ public class SnowGenerator extends Thread implements SnowListener {
     @Override
     public void switchHeavySnowing() {
         heavySnowing = !heavySnowing;
+    }
+
+    @Override
+    public void switchAttack() {
+        attack = !attack;
+    }
+
+    @Override
+    public void mouseMove(Point2D mouseLocation) {
+        this.mouseLocation = mouseLocation;
     }
 
     public void shutdown() {

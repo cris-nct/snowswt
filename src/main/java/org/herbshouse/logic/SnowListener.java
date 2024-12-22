@@ -19,4 +19,8 @@ public interface SnowListener {
 
     void switchHeavySnowing();
 
+    void switchAttack();
+
+    void mouseMove(Point2D mouseLocation);
+
 }

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
+import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.SnowListener;
 import org.herbshouse.logic.Snowflake;
@@ -51,6 +52,9 @@ public class SnowShell extends Shell implements PaintListener {
             }
         });
 
+        this.canvas.addMouseMoveListener(e ->
+                listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)))
+        );
         this.canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -79,6 +83,8 @@ public class SnowShell extends Shell implements PaintListener {
                     listeners.forEach(SnowListener::switchDebug);
                 } else if (e.character == 'H' || e.character == 'h') {
                     listeners.forEach(SnowListener::switchHeavySnowing);
+                } else if (e.character == 'A' || e.character == 'a') {
+                    listeners.forEach(SnowListener::switchAttack);
                 }
             }
         });
