@@ -2,6 +2,7 @@ package org.herbshouse.logic;
 
 
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 
@@ -16,7 +17,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SnowGenerator extends Thread implements SnowListener {
 
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
-
     private final List<Snowflake> toRemove = new ArrayList<>();
     private final Rectangle drawingSurface;
     private final Map<Snowflake, HappyWindSnowFlakeData> happyWindSnowData = new HashMap<>();
@@ -25,6 +25,7 @@ public class SnowGenerator extends Thread implements SnowListener {
     private FlagsConfiguration flagsConfiguration;
     private Point2D mouseLocation;
     private int counterUpdates;
+    private int countdown;
 
     public SnowGenerator(Rectangle drawingSurface) {
         this.drawingSurface = drawingSurface;
@@ -36,6 +37,7 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     @Override
     public void run() {
+        this.initialAnimation();
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 if (!flagsConfiguration.isDebug()) {
@@ -74,6 +76,33 @@ public class SnowGenerator extends Thread implements SnowListener {
 
             Utils.sleep(7);
         }
+    }
+
+    private void initialAnimation() {
+        //noinspection IntegerDivisionInFloatingPointContext
+        Point2D location = new Point2D(drawingSurface.width / 2, drawingSurface.height / 2);
+        int numberOfFlakes = 50;
+        for (int k = 0; k < numberOfFlakes; k++) {
+            Snowflake snowflake = new Snowflake();
+            snowflake.setLocation(location);
+            snowflake.setSize(15);
+            snowflake.setColor(new RGB(240, 0, 0));
+            snowflakes.add(snowflake);
+        }
+        for (countdown = 10; countdown > 0; countdown--) {
+            for (double angle = 0; angle < 360; angle++) {
+                for (int k = 0; k < numberOfFlakes; k++) {
+                    snowflakes.get(k).setLocation(Utils.moveToDirection(location, 200, Math.toRadians(angle + k * 2)));
+                }
+                Utils.sleep(3);
+            }
+        }
+        countdown = -1;
+        snowflakes.clear();
+    }
+
+    public int getCountdown() {
+        return countdown;
     }
 
     private void move(Snowflake snowflake) {

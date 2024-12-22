@@ -1,17 +1,12 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.Snowflake;
-
-import java.io.File;
 
 /**
  * This class is responsible for creating and managing an SWT Image that displays a snowy scene with a greeting text.
@@ -53,7 +48,24 @@ public class SwtImageBuilder implements AutoCloseable {
         //Draw text in middle of screen
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
-        GuiUtils.drawTextInMiddleOfScreen(gcImage, "Happy New Year!");
+        String message = "Happy New Year!";
+        Point textSize = gcImage.stringExtent(message);
+        Rectangle drawingSurface = gcImage.getClipping();
+        gcImage.drawText(message, (drawingSurface.width - textSize.x) / 2,
+                (drawingSurface.height - textSize.y) / 2, true);
+
+        //Draw countdown
+        if (snowGenerator.getCountdown() >= 0) {
+            if (snowGenerator.getCountdown() >= 4){
+                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+            } else {
+                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+            }
+            String countdown = String.valueOf(snowGenerator.getCountdown());
+            Point countdownSize = gcImage.stringExtent(countdown);
+            gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
+                    drawingSurface.height / 2 + textSize.y, true);
+        }
 
         //Draw legend
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
@@ -88,8 +100,10 @@ public class SwtImageBuilder implements AutoCloseable {
         }
 
         //Draw MB logo
+        gcImage.setAlpha(130);
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
+        gcImage.setAlpha(255);
 
         return image;
     }
