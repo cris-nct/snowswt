@@ -5,8 +5,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.SnowGenerator;
+import org.herbshouse.logic.SnowListener;
 import org.herbshouse.logic.Snowflake;
+
+import java.util.List;
 
 /**
  * This class is responsible for creating and managing an SWT Image that displays a snowy scene with a greeting text.
@@ -28,7 +30,7 @@ public class SwtImageBuilder implements AutoCloseable {
         originalGC = gc;
     }
 
-    public Image createImage(SnowGenerator snowGenerator, FlagsConfiguration config) {
+    public Image createImage(List<SnowListener> listeners, FlagsConfiguration config) {
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
@@ -57,16 +59,18 @@ public class SwtImageBuilder implements AutoCloseable {
                 (drawingSurface.height - textSize.y) / 2, true);
 
         //Draw countdown
-        if (snowGenerator.getCountdown() >= 0) {
-            if (snowGenerator.getCountdown() >= 4) {
-                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-            } else {
-                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+        for (SnowListener snowListener : listeners) {
+            if (snowListener.getCountdown() >= 0) {
+                if (snowListener.getCountdown() >= 4) {
+                    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+                } else {
+                    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                }
+                String countdown = String.valueOf(snowListener.getCountdown());
+                Point countdownSize = gcImage.stringExtent(countdown);
+                gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
+                        drawingSurface.height / 2 + textSize.y, true);
             }
-            String countdown = String.valueOf(snowGenerator.getCountdown());
-            Point countdownSize = gcImage.stringExtent(countdown);
-            gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
-                    drawingSurface.height / 2 + textSize.y, true);
         }
 
         //Draw legend
@@ -88,15 +92,17 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-        for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
-            if (config.isMercedesSnowflakes()) {
-                GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
-            } else {
-                GuiUtils.drawSnowflake(gcImage, snowflake);
-            }
-            if (config.isDebug()) {
-                for (Point2D loc : snowflake.getHistoryLocations()) {
-                    GuiUtils.drawSnowflake(gcImage, snowflake, loc);
+        for (SnowListener snowListener : listeners) {
+            for (Snowflake snowflake : snowListener.getSnowflakes()) {
+                if (config.isMercedesSnowflakes()) {
+                    GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
+                } else {
+                    GuiUtils.drawSnowflake(gcImage, snowflake);
+                }
+                if (config.isDebug()) {
+                    for (Point2D loc : snowflake.getHistoryLocations()) {
+                        GuiUtils.drawSnowflake(gcImage, snowflake, loc);
+                    }
                 }
             }
         }

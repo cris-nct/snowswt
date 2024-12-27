@@ -22,7 +22,7 @@ public class SnowingApplication {
                     .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
             );
 
-            SnowShell shell = new SnowShell(generator);
+            SnowShell shell = new SnowShell();
             shell.registerListener(generator);
             shell.open();
             generator.start();

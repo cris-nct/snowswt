@@ -31,6 +31,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         this.drawingSurface = drawingSurface;
     }
 
+    @Override
     public List<Snowflake> getSnowflakes() {
         return snowflakes;
     }
@@ -101,6 +102,7 @@ public class SnowGenerator extends Thread implements SnowListener {
         snowflakes.clear();
     }
 
+    @Override
     public int getCountdown() {
         return countdown;
     }
@@ -270,6 +272,11 @@ public class SnowGenerator extends Thread implements SnowListener {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void init(FlagsConfiguration flagsConfiguration) {
+        this.flagsConfiguration = flagsConfiguration;
     }
 
     @Override

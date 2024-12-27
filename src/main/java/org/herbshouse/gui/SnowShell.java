@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.SnowGenerator;
 import org.herbshouse.logic.SnowListener;
 import org.herbshouse.logic.Snowflake;
 
@@ -30,11 +29,10 @@ import java.util.List;
  */
 public class SnowShell extends Shell implements PaintListener {
     private final Canvas canvas;
-    private final SnowGenerator snowGenerator;
     private final List<SnowListener> listeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
 
-    public SnowShell(SnowGenerator snowGenerator) {
+    public SnowShell() {
         super(Display.getDefault());
         //Setting region for a shell works only with style SWT.NO_TRIM
 //        Region region = new Region(Display.getDefault());
@@ -42,8 +40,6 @@ public class SnowShell extends Shell implements PaintListener {
 //        region.subtract(250, 30, 800, 200);
 //        this.setRegion(region);
 
-        this.snowGenerator = snowGenerator;
-        this.snowGenerator.setFlagsConfiguration(flagsConfiguration);
         this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -109,7 +105,7 @@ public class SnowShell extends Shell implements PaintListener {
                     case 'P':
                     case 'p':
                         flagsConfiguration.switchFreezeSnowflakes();
-                        listeners.forEach(l -> l.freezeSnowflakes(snowGenerator.getSnowflakes()));
+                        listeners.forEach(l -> l.freezeSnowflakes(l.getSnowflakes()));
                         break;
                     case 'R':
                     case 'r':
@@ -144,6 +140,7 @@ public class SnowShell extends Shell implements PaintListener {
     }
 
     public void registerListener(SnowListener listener) {
+        listener.init(flagsConfiguration);
         listeners.add(listener);
     }
 
@@ -169,7 +166,7 @@ public class SnowShell extends Shell implements PaintListener {
 
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(gc)) {
             //Draw main image
-            Image image = imageBuilder.createImage(snowGenerator, flagsConfiguration);
+            Image image = imageBuilder.createImage(listeners, flagsConfiguration);
             ImageData imageData = image.getImageData();
             gc.drawImage(image, 0, 0);
 
@@ -185,14 +182,16 @@ public class SnowShell extends Shell implements PaintListener {
             gc.setAlpha(255);
 
             //Check collisions for snowflakes and notify listeners
-            List<Snowflake> toFreeze = new ArrayList<>();
-            for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
-                if (isColliding(snowflake, imageData)) {
-                    toFreeze.add(snowflake);
+            for (SnowListener snowListener: listeners) {
+                List<Snowflake> toFreeze = new ArrayList<>();
+                for (Snowflake snowflake : snowListener.getSnowflakes()) {
+                    if (isColliding(snowflake, imageData)) {
+                        toFreeze.add(snowflake);
+                    }
                 }
-            }
-            if (!toFreeze.isEmpty()) {
-                listeners.forEach(l -> l.freezeSnowflakes(toFreeze));
+                if (!toFreeze.isEmpty()) {
+                    snowListener.freezeSnowflakes(toFreeze);
+                }
             }
         }
     }

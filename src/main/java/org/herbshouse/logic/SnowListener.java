@@ -1,6 +1,7 @@
 package org.herbshouse.logic;
 
 import org.eclipse.swt.events.MouseEvent;
+import org.herbshouse.gui.FlagsConfiguration;
 
 import java.util.List;
 
@@ -20,4 +21,10 @@ public interface SnowListener {
     void mouseScrolled(MouseEvent mouseEvent);
 
     void reset();
+
+    void init(FlagsConfiguration flagsConfiguration);
+
+    int getCountdown();
+
+    List<Snowflake> getSnowflakes();
 }
