@@ -1,6 +1,7 @@
 package org.herbshouse.logic;
 
 import org.eclipse.swt.graphics.RGB;
+import org.herbshouse.gui.GuiUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +60,7 @@ public class Snowflake {
     public void freeze() {
         if (!freezed) {
             freezed = true;
-            color = new RGB(0, 255, 255);
+            color = GuiUtils.FREEZE_COLOR;
         }
     }
 

@@ -214,9 +214,9 @@ public class SnowShell extends Shell implements PaintListener {
                 colors.add(pixelColorBottom);
             }
         }
-        return colors.stream().anyMatch(p -> p.equals(new RGB(255, 255, 0)));
-    }
 
+        return colors.stream().anyMatch(p -> p.equals(GuiUtils.FREEZE_COLOR));
+    }
 
     @Override
     protected void checkSubclass() {

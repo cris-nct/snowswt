@@ -7,6 +7,8 @@ import org.herbshouse.logic.Snowflake;
 
 public final class GuiUtils {
 
+    public static final RGB FREEZE_COLOR = new RGB(0, 255, 255);
+
     private GuiUtils() {
     }
 
@@ -15,7 +17,7 @@ public final class GuiUtils {
             return new RGB(0, 0, 0);
         } else {
             int actualPixel = imageData.getPixel(x, y);
-            return new RGB((actualPixel >> 24) & 0xFF, (actualPixel >> 16) & 0xFF, (actualPixel >> 8) & 0xFF);
+            return new RGB((actualPixel >> 8) & 0xFF, (actualPixel >> 16) & 0xFF, (actualPixel >> 24) & 0xFF);
         }
     }
 
