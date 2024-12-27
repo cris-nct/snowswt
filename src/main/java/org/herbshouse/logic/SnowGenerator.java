@@ -75,7 +75,7 @@ public class SnowGenerator extends Thread implements SnowListener {
                 lockSnowflakes.unlock();
             }
 
-            Utils.sleep(7);
+            Utils.sleep(5);
         }
     }
 
