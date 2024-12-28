@@ -94,7 +94,8 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
         for (SnowListener snowListener : listeners) {
-            for (Snowflake snowflake : snowListener.getSnowflakes()) {
+            List<Snowflake> snowflakes = snowListener.getSnowflakes();
+            for (Snowflake snowflake : snowflakes) {
                 if (config.isMercedesSnowflakes()) {
                     GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
                 } else {
@@ -105,7 +106,10 @@ public class SwtImageBuilder implements AutoCloseable {
                         GuiUtils.drawSnowflake(gcImage, snowflake, loc);
                     }
                 }
-                if (config.isAttack() && !snowflake.isFreezed()){
+                if (config.isAttack()
+                        && !snowflake.isFreezed()
+                        && snowflakes.size() < 500
+                ){
                     gcImage.drawLine((int)snowflake.getLocation().x, (int)snowflake.getLocation().y, config.getMouseLocX(), config.getMouseLocY());
                 }
             }
