@@ -1,16 +1,18 @@
 package org.herbshouse.logic;
 
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 
 import java.util.List;
 
-public interface SnowListener {
+public interface SnowListener<T extends AbstractMovableObject> {
     void turnOnHappyWind();
 
     void turnOffHappyWind();
 
-    void freezeSnowflakes(List<Snowflake> snowflakes);
+    void freezeSnowflakes();
 
     void switchDebug();
 
@@ -22,9 +24,16 @@ public interface SnowListener {
 
     void reset();
 
-    void init(FlagsConfiguration flagsConfiguration);
+    void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds);
 
-    int getCountdown();
+    default int getCountdown(){
+        return -1;
+    }
 
-    List<Snowflake> getSnowflakes();
+    List<T> getSnowflakes();
+
+    void shutdown();
+
+    void checkCollisions(ImageData imageData);
+
 }

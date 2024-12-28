@@ -4,9 +4,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.SnowListener;
-import org.herbshouse.logic.Snowflake;
+import org.herbshouse.logic.*;
+import org.herbshouse.logic.redface.RedFace;
+import org.herbshouse.logic.snow.Snowflake;
 
 import java.util.List;
 
@@ -19,18 +19,18 @@ import java.util.List;
  * @author cristian.tone
  */
 public class SwtImageBuilder implements AutoCloseable {
+    public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
     private final GC originalGC;
-    private GC gcImage;
+    private final GC gcImage;
     private Transform transform;
-    private Image image;
+    private final Image image;
     private static int alphaMB = 1;
     private static int alphaMBSign = 1;
+    private final FlagsConfiguration config;
 
-    public SwtImageBuilder(GC gc) {
-        originalGC = gc;
-    }
-
-    public Image createImage(List<SnowListener> listeners, FlagsConfiguration config) {
+    public SwtImageBuilder(GC gc, FlagsConfiguration config) {
+        this.originalGC = gc;
+        this.config = config;
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
@@ -49,30 +49,41 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.fillRectangle(0, 0, totalArea.width, totalArea.height);
 
+        this.drawTextMiddleScreen();
+    }
+
+    public Image build(){
+        return image;
+    }
+
+    public void drawTextMiddleScreen(){
         //Draw text in middle of screen
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
-        String message = "Happy New Year!";
-        Point textSize = gcImage.stringExtent(message);
+        Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
         Rectangle drawingSurface = gcImage.getClipping();
-        gcImage.drawText(message, (drawingSurface.width - textSize.x) / 2,
+        gcImage.drawText(TEXT_MIDDLE_SCREEN, (drawingSurface.width - textSize.x) / 2,
                 (drawingSurface.height - textSize.y) / 2, true);
+    }
 
+    public void drawCountDown(SnowListener<Snowflake> snowListener) {
         //Draw countdown
-        for (SnowListener snowListener : listeners) {
-            if (snowListener.getCountdown() >= 0) {
-                if (snowListener.getCountdown() >= 4) {
-                    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-                } else {
-                    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-                }
-                String countdown = String.valueOf(snowListener.getCountdown());
-                Point countdownSize = gcImage.stringExtent(countdown);
-                gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
-                        drawingSurface.height / 2 + textSize.y, true);
+        Rectangle drawingSurface = gcImage.getClipping();
+        if (snowListener.getCountdown() >= 0) {
+            if (snowListener.getCountdown() >= 4) {
+                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+            } else {
+                gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             }
+            String countdown = String.valueOf(snowListener.getCountdown());
+            Point countdownSize = gcImage.stringExtent(countdown);
+            Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
+            gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
+                    drawingSurface.height / 2 + textSize.y, true);
         }
+    }
 
+    public SwtImageBuilder addLegend() {
         //Draw legend
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 12, SWT.BOLD));
@@ -88,33 +99,11 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         legendBuilder.append("\r\n-------\n");
         legendBuilder.append("Reset simulation(R)");
-        gcImage.drawText(legendBuilder.toString(), totalArea.width - 240, 10, true);
+        gcImage.drawText(legendBuilder.toString(), originalGC.getClipping().width - 240, 10, true);
+        return this;
+    }
 
-        //Draw snowflakes
-        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-        for (SnowListener snowListener : listeners) {
-            List<Snowflake> snowflakes = snowListener.getSnowflakes();
-            for (Snowflake snowflake : snowflakes) {
-                if (config.isMercedesSnowflakes()) {
-                    GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
-                } else {
-                    GuiUtils.drawSnowflake(gcImage, snowflake);
-                }
-                if (config.isDebug()) {
-                    for (Point2D loc : snowflake.getHistoryLocations()) {
-                        GuiUtils.drawSnowflake(gcImage, snowflake, loc);
-                    }
-                }
-                if (config.isAttack()
-                        && !snowflake.isFreezed()
-                        && snowflakes.size() < 500
-                ){
-                    gcImage.drawLine((int)snowflake.getLocation().x, (int)snowflake.getLocation().y, config.getMouseLocX(), config.getMouseLocY());
-                }
-            }
-        }
-
+    public SwtImageBuilder addLogo() {
         //Draw MB logo
         if (alphaMB >= 240 || alphaMB < 30) {
             alphaMBSign = -alphaMBSign;
@@ -126,8 +115,46 @@ public class SwtImageBuilder implements AutoCloseable {
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
         gcImage.setAlpha(255);
+        return this;
+    }
 
-        return image;
+    public SwtImageBuilder drawRedFace(SnowListener<RedFace> snowListener) {
+        //Draw snowflakes
+        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+        List<RedFace> snowflakes = snowListener.getSnowflakes();
+        for (RedFace obj : snowflakes) {
+            GuiUtils.draw(gcImage, obj);
+        }
+        return this;
+    }
+
+    public SwtImageBuilder drawSnowflakes(SnowListener<Snowflake> snowListener) {
+        //Draw snowflakes
+        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+        List<Snowflake> snowflakes = snowListener.getSnowflakes();
+        for (Snowflake snowflake : snowflakes) {
+            if (config.isMercedesSnowflakes()) {
+                GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
+            } else {
+                GuiUtils.draw(gcImage, snowflake);
+            }
+            if (config.isDebug()) {
+                for (Point2D loc : snowflake.getHistoryLocations()) {
+                    GuiUtils.draw(gcImage, snowflake, loc);
+                }
+            }
+            if (config.isAttack() && !snowflake.isFreezed() && snowflakes.size() < 500) {
+                gcImage.drawLine(
+                        (int) snowflake.getLocation().x,
+                        (int) snowflake.getLocation().y,
+                        config.getMouseLocX(),
+                        config.getMouseLocY()
+                );
+            }
+        }
+        return this;
     }
 
     private void addTextToLegend(StringBuilder builder, String text, boolean value) {

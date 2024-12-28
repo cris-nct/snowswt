@@ -1,4 +1,6 @@
-package org.herbshouse.logic;
+package org.herbshouse.logic.snow;
+
+import org.herbshouse.logic.Point2D;
 
 public class HappyWindSnowFlakeData {
     private volatile Point2D origLocation;

@@ -4,17 +4,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.gui.SnowShell;
-import org.herbshouse.logic.SnowGenerator;
+import org.herbshouse.logic.redface.RedFaceGenerator;
+import org.herbshouse.logic.snow.SnowGenerator;
 
 public class SnowingApplication {
-    public static final int FPS = 60;
-
     public static final int MB_ICON_SIZE = 25;
 
     public static Image mbImageSmall;
 
     public static void main(String[] args) {
-        SnowGenerator generator = new SnowGenerator(Display.getDefault().getBounds());
+        SnowGenerator generator = new SnowGenerator();
+        RedFaceGenerator redFaceGenerator = new RedFaceGenerator();
         try {
             mbImageSmall = new Image(Display.getDefault(),
                     SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true)
@@ -24,6 +24,7 @@ public class SnowingApplication {
 
             SnowShell shell = new SnowShell();
             shell.registerListener(generator);
+            shell.registerListener(redFaceGenerator);
             shell.open();
             generator.start();
             while (!shell.isDisposed()) {
@@ -33,6 +34,7 @@ public class SnowingApplication {
             }
         } finally {
             generator.shutdown();
+            redFaceGenerator.shutdown();
             SWTResourceManager.disposeAll();
             mbImageSmall.dispose();
         }

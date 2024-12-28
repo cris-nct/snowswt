@@ -2,8 +2,8 @@ package org.herbshouse.gui;
 
 import org.eclipse.swt.graphics.*;
 import org.herbshouse.SnowingApplication;
+import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.Snowflake;
 
 public final class GuiUtils {
 
@@ -21,27 +21,24 @@ public final class GuiUtils {
         }
     }
 
-    public static void drawTextInMiddleOfScreen(GC gc, String text) {
-        Point textSize = gc.stringExtent(text);
-        Rectangle drawingSurface = gc.getClipping();
-        gc.drawText(text, (drawingSurface.width - textSize.x) / 2, (drawingSurface.height - textSize.y) / 2, true);
+    public static void draw(GC gc, AbstractMovableObject snowflake) {
+        draw(gc, snowflake, snowflake.getLocation());
     }
 
-    public static void drawSnowflake(GC gc, Snowflake snowflake) {
-        drawSnowflake(gc, snowflake, snowflake.getLocation());
-    }
-
-    public static void drawSnowflake(GC gc, Snowflake snowflake, Point2D loc) {
+    public static void draw(GC gc, AbstractMovableObject snowflake, Point2D loc) {
         gc.setBackground(SWTResourceManager.getColor(snowflake.getColor()));
+        int prevAlpha = gc.getAlpha();
+        gc.setAlpha(snowflake.getAlpha());
         gc.fillOval(
                 (int) loc.x - snowflake.getSize() / 2,
                 (int) loc.y - snowflake.getSize() / 2,
                 snowflake.getSize(),
                 snowflake.getSize()
         );
+        gc.setAlpha(prevAlpha);
     }
 
-    public static void drawSnowflakeAsMercedes(GC gc, Snowflake snowflake) {
+    public static void drawSnowflakeAsMercedes(GC gc, AbstractMovableObject snowflake) {
         gc.drawImage(SnowingApplication.mbImageSmall,
                 (int) snowflake.getLocation().x - SnowingApplication.MB_ICON_SIZE / 2,
                 (int) snowflake.getLocation().y - SnowingApplication.MB_ICON_SIZE / 2
