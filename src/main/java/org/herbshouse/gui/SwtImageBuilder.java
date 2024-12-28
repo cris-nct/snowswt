@@ -92,6 +92,7 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
         for (SnowListener snowListener : listeners) {
             for (Snowflake snowflake : snowListener.getSnowflakes()) {
                 if (config.isMercedesSnowflakes()) {
@@ -103,6 +104,9 @@ public class SwtImageBuilder implements AutoCloseable {
                     for (Point2D loc : snowflake.getHistoryLocations()) {
                         GuiUtils.drawSnowflake(gcImage, snowflake, loc);
                     }
+                }
+                if (config.isAttack() && !snowflake.isFreezed()){
+                    gcImage.drawLine((int)snowflake.getLocation().x, (int)snowflake.getLocation().y, config.getMouseLocX(), config.getMouseLocY());
                 }
             }
         }

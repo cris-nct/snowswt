@@ -7,7 +7,7 @@ import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.SnowGenerator;
 
 public class SnowingApplication {
-    public static final int FPS = 75;
+    public static final int FPS = 60;
 
     public static final int MB_ICON_SIZE = 25;
 

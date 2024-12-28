@@ -56,8 +56,10 @@ public class SnowShell extends Shell implements PaintListener {
             }
         });
 
-        this.canvas.addMouseMoveListener(e ->
-                listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)))
+        this.canvas.addMouseMoveListener(e -> {
+                flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
+                listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)));
+            }
         );
 
         this.canvas.addMouseWheelListener(new MouseWheelListener() {
@@ -162,8 +164,6 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         GC gc = paintEvent.gc;
-        gc.setAdvanced(true);
-
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(gc)) {
             //Draw main image
             Image image = imageBuilder.createImage(listeners, flagsConfiguration);

@@ -146,11 +146,11 @@ public class SnowGenerator extends Thread implements SnowListener {
     private Snowflake generateNewSnowflake() {
         final int size;
         if (flagsConfiguration.isBigBalls()) {
-            size = 12 + (int) (Math.random() * 10);
+            size = 22 + (int) (Math.random() * 40);
         } else {
             size = 1 + (int) (Math.random() * 4);
         }
-        double speed = Math.min(Utils.linearInterpolation(size, 1, 0.5, 4, 1), 1);
+        double speed = Math.min(Utils.linearInterpolation(size, 1, 0.3, 4, 1), 1);
         return generateNewSnowflake(size, speed);
     }
 
@@ -297,10 +297,6 @@ public class SnowGenerator extends Thread implements SnowListener {
 
     public void shutdown() {
         shutdown = true;
-    }
-
-    public void setFlagsConfiguration(FlagsConfiguration flagsConfiguration) {
-        this.flagsConfiguration = flagsConfiguration;
     }
 
 }

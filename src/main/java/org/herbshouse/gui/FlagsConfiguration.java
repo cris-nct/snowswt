@@ -10,6 +10,8 @@ public class FlagsConfiguration {
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
     private int snowingLevel = 1;
+    private int mouseLocX;
+    private int mouseLocY;
 
     void increaseSnowingLevel() {
         this.snowingLevel++;
@@ -87,4 +89,16 @@ public class FlagsConfiguration {
         return snowingLevel;
     }
 
+    public void setMouseCurrentLocation(int mouselocX, int mouseLocY) {
+        this.mouseLocX = mouselocX;
+        this.mouseLocY = mouseLocY;
+    }
+
+    public int getMouseLocX() {
+        return mouseLocX;
+    }
+
+    public int getMouseLocY() {
+        return mouseLocY;
+    }
 }
