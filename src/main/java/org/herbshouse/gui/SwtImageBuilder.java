@@ -6,6 +6,8 @@ import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.redface.AbstractEnemy;
+import org.herbshouse.logic.redface.AnimatedGif;
 import org.herbshouse.logic.redface.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -21,7 +23,6 @@ import java.util.List;
  */
 public class SwtImageBuilder implements AutoCloseable {
     public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
-    private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
 
     private final GC originalGC;
     private final GC gcImage;
@@ -121,18 +122,26 @@ public class SwtImageBuilder implements AutoCloseable {
         return this;
     }
 
-    public SwtImageBuilder drawRedFace(GeneratorListener<RedFace> generatorListener) {
-        //Draw redfaces
+    public SwtImageBuilder drawEnemies(GeneratorListener<AbstractEnemy> generatorListener) {
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-        for (RedFace obj : generatorListener.getMoveableObjects()) {
-            //GuiUtils.draw(gcImage, obj);
-            Image img = SWTResourceManager.getGif(SnowingApplication.class,
-                    "../../angry1.gif", obj.getImageIndex(), obj.getSize(), obj.getSize(), REMOVE_BACKGROUND_COLOR, true);
-            int locX = (int) obj.getLocation().x - obj.getSize() / 2;
-            int locY = (int) obj.getLocation().y - obj.getSize() / 2;
-            gcImage.drawImage(img, locX, locY);
-            obj.increaseImageIndex();
+        for (AbstractEnemy obj : generatorListener.getMoveableObjects()) {
+            if (obj instanceof RedFace){
+                GuiUtils.draw(gcImage, obj);
+            } else if (obj instanceof AnimatedGif animatedGif){
+                Image img = SWTResourceManager.getGif(SnowingApplication.class,
+                        "../../" + animatedGif.getFilename(),
+                        animatedGif.getImageIndex(),
+                        obj.getSize(),
+                        obj.getSize(),
+                        animatedGif.getRemoveBackgroundColor(),
+                        true
+                );
+                int locX = (int) animatedGif.getLocation().x - obj.getSize() / 2;
+                int locY = (int) animatedGif.getLocation().y - obj.getSize() / 2;
+                gcImage.drawImage(img, locX, locY);
+                animatedGif.increaseImageIndex();
+            }
         }
         return this;
     }

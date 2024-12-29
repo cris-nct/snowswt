@@ -7,8 +7,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
-import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 
 import java.util.ArrayList;

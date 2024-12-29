@@ -11,10 +11,10 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.logic.AbstractMovableObject;
-import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.GeneratorListener;
-import org.herbshouse.logic.redface.RedFace;
-import org.herbshouse.logic.redface.RedFaceGenerator;
+import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.redface.AbstractEnemy;
+import org.herbshouse.logic.redface.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -153,9 +153,9 @@ public class SnowShell extends Shell implements PaintListener {
                     GeneratorListener<Snowflake> generatorListener = (GeneratorListener<Snowflake>) listener;
                     imageBuilder.drawSnowflakes(generatorListener);
                     imageBuilder.drawCountDown(generatorListener);
-                } else if (listener instanceof RedFaceGenerator) {
+                } else if (listener instanceof EnemyGenerator) {
                     //noinspection unchecked
-                    imageBuilder.drawRedFace((GeneratorListener<RedFace>) listener);
+                    imageBuilder.drawEnemies((GeneratorListener<AbstractEnemy>) listener);
                 }
             }
 
