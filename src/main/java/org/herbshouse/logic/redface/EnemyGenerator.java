@@ -38,6 +38,7 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
             redFace.setLocation(newLocation);
         } else {
             redFace.setDirection(-1);
+            redFace.update();
         }
     }
 
