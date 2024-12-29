@@ -75,7 +75,6 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
     @Override
     public void reset() {
         this.redFace.setLocation(new Point2D(screenBounds.width - 2 * SIZE / 2.0d, screenBounds.height - SIZE / 2.0d));
-        this.angryFace.setLocation(new Point2D(screenBounds.width - SIZE / 2.0d, screenBounds.height - SIZE / 2.0d));
     }
 
     @Override
