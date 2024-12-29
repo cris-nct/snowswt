@@ -32,9 +32,13 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
     }
 
     private void move() {
-        redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
-        Point2D newLocation = Utils.moveToDirection(redFace.getLocation(), redFace.getSpeed(), redFace.getDirection());
-        redFace.setLocation(newLocation);
+        if (Utils.distance(redFace.getLocation(), mouseLocation) > 10) {
+            redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
+            Point2D newLocation = Utils.moveToDirection(redFace.getLocation(), redFace.getSpeed(), redFace.getDirection());
+            redFace.setLocation(newLocation);
+        } else {
+            redFace.setDirection(-1);
+        }
     }
 
     @Override

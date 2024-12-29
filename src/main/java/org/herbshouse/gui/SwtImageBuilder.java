@@ -126,8 +126,8 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
         for (AbstractEnemy obj : generatorListener.getMoveableObjects()) {
-            if (obj instanceof RedFace){
-                GuiUtils.draw(gcImage, obj);
+            if (obj instanceof RedFace redFace){
+                GuiUtils.drawRedFace(gcImage, redFace);
             } else if (obj instanceof AnimatedGif animatedGif){
                 Image img = SWTResourceManager.getGif(SnowingApplication.class,
                         "../../" + animatedGif.getFilename(),
