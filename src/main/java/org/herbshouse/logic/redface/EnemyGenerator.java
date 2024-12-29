@@ -18,6 +18,7 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
 
     private RedFace redFace;
     private AnimatedGif angryFace;
+    private AnimatedGif fireGif;
     private final List<AbstractEnemy> enemies = new CopyOnWriteArrayList<>();
     private FlagsConfiguration flagsConfiguration;
     private Rectangle screenBounds;
@@ -36,9 +37,19 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
             redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
             Point2D newLocation = Utils.moveToDirection(redFace.getLocation(), redFace.getSpeed(), redFace.getDirection());
             redFace.setLocation(newLocation);
+            if (fireGif != null){
+                enemies.remove(fireGif);
+            }
+            fireGif = null;
         } else {
             redFace.setDirection(-1);
             redFace.update();
+            if (fireGif == null){
+                fireGif = new AnimatedGif("fire-flame.gif", 1, null);
+                fireGif.setLocation(new Point2D(redFace.getLocation().x, redFace.getLocation().y + 25));
+                fireGif.setSize(100);
+                enemies.add(fireGif);
+            }
         }
     }
 
