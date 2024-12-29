@@ -27,6 +27,7 @@ public class SnowingApplication {
             shell.registerListener(redFaceGenerator);
             shell.open();
             generator.start();
+            redFaceGenerator.start();
             while (!shell.isDisposed()) {
                 if (!Display.getDefault().readAndDispatch()) {
                     Display.getDefault().sleep();

@@ -4,7 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.logic.*;
+import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.redface.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -20,6 +21,8 @@ import java.util.List;
  */
 public class SwtImageBuilder implements AutoCloseable {
     public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
+    private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
+
     private final GC originalGC;
     private final GC gcImage;
     private Transform transform;
@@ -34,8 +37,8 @@ public class SwtImageBuilder implements AutoCloseable {
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
-        gcImage.setAdvanced(true);
-        gcImage.setAntialias(SWT.DEFAULT);
+//        gcImage.setAdvanced(true);
+//        gcImage.setAntialias(SWT.DEFAULT);
         gcImage.setTextAntialias(SWT.ON);
 
         if (config.isFlipImage()) {
@@ -52,11 +55,11 @@ public class SwtImageBuilder implements AutoCloseable {
         this.drawTextMiddleScreen();
     }
 
-    public Image build(){
+    public Image build() {
         return image;
     }
 
-    public void drawTextMiddleScreen(){
+    public void drawTextMiddleScreen() {
         //Draw text in middle of screen
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
@@ -66,16 +69,16 @@ public class SwtImageBuilder implements AutoCloseable {
                 (drawingSurface.height - textSize.y) / 2, true);
     }
 
-    public void drawCountDown(SnowListener<Snowflake> snowListener) {
+    public void drawCountDown(GeneratorListener<Snowflake> generatorListener) {
         //Draw countdown
         Rectangle drawingSurface = gcImage.getClipping();
-        if (snowListener.getCountdown() >= 0) {
-            if (snowListener.getCountdown() >= 4) {
+        if (generatorListener.getCountdown() >= 0) {
+            if (generatorListener.getCountdown() >= 4) {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
             } else {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             }
-            String countdown = String.valueOf(snowListener.getCountdown());
+            String countdown = String.valueOf(generatorListener.getCountdown());
             Point countdownSize = gcImage.stringExtent(countdown);
             Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
             gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
@@ -118,22 +121,27 @@ public class SwtImageBuilder implements AutoCloseable {
         return this;
     }
 
-    public SwtImageBuilder drawRedFace(SnowListener<RedFace> snowListener) {
-        //Draw snowflakes
-        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+    public SwtImageBuilder drawRedFace(GeneratorListener<RedFace> generatorListener) {
+        //Draw redfaces
+        gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-        List<RedFace> snowflakes = snowListener.getSnowflakes();
-        for (RedFace obj : snowflakes) {
-            GuiUtils.draw(gcImage, obj);
+        for (RedFace obj : generatorListener.getMoveableObjects()) {
+            //GuiUtils.draw(gcImage, obj);
+            Image img = SWTResourceManager.getGif(SnowingApplication.class,
+                    "../../angry1.gif", obj.getImageIndex(), obj.getSize(), obj.getSize(), REMOVE_BACKGROUND_COLOR, true);
+            int locX = (int) obj.getLocation().x - obj.getSize() / 2;
+            int locY = (int) obj.getLocation().y - obj.getSize() / 2;
+            gcImage.drawImage(img, locX, locY);
+            obj.increaseImageIndex();
         }
         return this;
     }
 
-    public SwtImageBuilder drawSnowflakes(SnowListener<Snowflake> snowListener) {
+    public SwtImageBuilder drawSnowflakes(GeneratorListener<Snowflake> generatorListener) {
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-        List<Snowflake> snowflakes = snowListener.getSnowflakes();
+        List<Snowflake> snowflakes = generatorListener.getMoveableObjects();
         for (Snowflake snowflake : snowflakes) {
             if (config.isMercedesSnowflakes()) {
                 GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);

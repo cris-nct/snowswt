@@ -1,6 +1,8 @@
 package org.herbshouse.gui;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
@@ -17,7 +19,7 @@ public final class GuiUtils {
             return new RGB(0, 0, 0);
         } else {
             int actualPixel = imageData.getPixel(x, y);
-            return new RGB((actualPixel >> 8) & 0xFF, (actualPixel >> 16) & 0xFF, (actualPixel >> 24) & 0xFF);
+            return imageData.palette.getRGB(actualPixel);
         }
     }
 
@@ -45,4 +47,9 @@ public final class GuiUtils {
         );
     }
 
+    public static boolean equalsColors(RGB color1, RGB color2, int eps) {
+        return Math.abs(color1.red - color2.red) <= eps
+                && Math.abs(color1.green - color2.green) <= eps
+                && Math.abs(color1.blue - color2.blue) <= eps;
+    }
 }

@@ -1,5 +1,6 @@
 package org.herbshouse.gui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
@@ -217,6 +218,52 @@ public class SWTResourceManager {
 
     public static Image getImage(String path) {
         return getImage(path, false);
+    }
+
+
+    public static Image getGif(Class<?> clazz,
+                               String path,
+                               int phase,
+                               int scaleX,
+                               int scaleY,
+                               RGB removeBackground,
+                               boolean disposeOnExit
+    ) {
+        String key = StringUtils.joinWith("|", clazz.getName(), phase, path, scaleX, scaleY);
+        Image image = imageMap.get(key);
+        boolean error = false;
+        if ((image == null) || image.isDisposed()) {
+            try {
+                if (imageMap.size() > MAXIMUM_IMAGES_CACHE) {
+                    disposeImages();
+                }
+                ImageLoader loader = new ImageLoader();
+                ImageData[] imageDataArray = loader.load(clazz.getResourceAsStream(path));
+                ImageData imageData = imageDataArray[phase % imageDataArray.length].scaledTo(scaleX, scaleY);
+                if (removeBackground != null) {
+                    for (int x = 0; x < imageData.width; x++) {
+                        for (int y = 0; y < imageData.height; y++) {
+                            RGB pixelColor = GuiUtils.getPixelColor(imageData, x, y);
+                            if (GuiUtils.equalsColors(pixelColor, removeBackground, 9)) {
+                                imageData.setAlpha(x, y, 0);
+                            } else {
+                                imageData.setAlpha(x, y, 255);
+                            }
+                        }
+                    }
+                }
+                image = new Image(Display.getDefault(), imageData);
+                imageMap.put(key, image);
+            } catch (Exception e) {
+                image = getMissingImage();
+                imageMap.put(key, image);
+                error = true;
+            }
+        }
+        if (!error && disposeOnExit) {
+            addResourceDisposeOnExit(key, image);
+        }
+        return image;
     }
 
     /**

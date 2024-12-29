@@ -8,7 +8,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.SnowListener;
+import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Utils;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class SnowGenerator extends Thread implements SnowListener<Snowflake> {
+public class SnowGenerator extends Thread implements GeneratorListener<Snowflake> {
 
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();
@@ -33,7 +33,7 @@ public class SnowGenerator extends Thread implements SnowListener<Snowflake> {
     private int countdown;
 
     @Override
-    public List<Snowflake> getSnowflakes() {
+    public List<Snowflake> getMoveableObjects() {
         return snowflakes;
     }
 
@@ -150,7 +150,7 @@ public class SnowGenerator extends Thread implements SnowListener<Snowflake> {
         if (flagsConfiguration.isBigBalls()) {
             size = 22 + (int) (Math.random() * 40);
         } else {
-            size = 1 + (int) (Math.random() * 4);
+            size = 2 + (int) (Math.random() * 6);
         }
         double speed = Math.min(Utils.linearInterpolation(size, 1, 0.3, 4, 1), 1);
         return generateNewSnowflake(size, speed);
@@ -188,14 +188,15 @@ public class SnowGenerator extends Thread implements SnowListener<Snowflake> {
         happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowFlakeData());
         HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
         data.setOrigLocation(snowflake.getLocation().clone());
+        int maxAreaToMove = 200;
         if (flagsConfiguration.isDebug()) {
             data.setAngleIncrease(0.03);
             data.setAreaToMove(50);
         } else {
             data.setAngleIncrease(2 * Math.random() / 100);
-            data.setAreaToMove(Math.abs((int) (Math.random() * 400)));
+            data.setAreaToMove(Math.abs((int) (Math.random() * maxAreaToMove)));
         }
-        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), 400, 3, 1, 1));
+        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), maxAreaToMove, 3, 1, 1));
     }
 
     @Override
@@ -211,7 +212,7 @@ public class SnowGenerator extends Thread implements SnowListener<Snowflake> {
     }
 
     @Override
-    public void freezeSnowflakes() {
+    public void freezeMovableObjects() {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {

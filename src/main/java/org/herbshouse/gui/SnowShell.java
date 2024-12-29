@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.SnowListener;
+import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.redface.RedFace;
 import org.herbshouse.logic.redface.RedFaceGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class SnowShell extends Shell implements PaintListener {
     private final Canvas canvas;
-    private final List<SnowListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
+    private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
 
     public SnowShell() {
@@ -84,9 +84,9 @@ public class SnowShell extends Shell implements PaintListener {
                     case 'X':
                     case 'x':
                         if (flagsConfiguration.isHappyWind()) {
-                            listeners.forEach(SnowListener::turnOffHappyWind);
+                            listeners.forEach(GeneratorListener::turnOffHappyWind);
                         } else {
-                            listeners.forEach(SnowListener::turnOnHappyWind);
+                            listeners.forEach(GeneratorListener::turnOnHappyWind);
                         }
                         flagsConfiguration.switchHappyWind();
                         break;
@@ -97,11 +97,11 @@ public class SnowShell extends Shell implements PaintListener {
                     case 'P':
                     case 'p':
                         flagsConfiguration.switchFreezeSnowflakes();
-                        listeners.forEach(SnowListener::freezeSnowflakes);
+                        listeners.forEach(GeneratorListener::freezeMovableObjects);
                         break;
                     case 'R':
                     case 'r':
-                        listeners.forEach(SnowListener::reset);
+                        listeners.forEach(GeneratorListener::reset);
                         break;
                     case 'B':
                     case 'b':
@@ -110,7 +110,7 @@ public class SnowShell extends Shell implements PaintListener {
                     case 'D':
                     case 'd':
                         flagsConfiguration.switchDebug();
-                        listeners.forEach(SnowListener::switchDebug);
+                        listeners.forEach(GeneratorListener::switchDebug);
                         break;
                     case 'A':
                     case 'a':
@@ -131,7 +131,7 @@ public class SnowShell extends Shell implements PaintListener {
         });
     }
 
-    public void registerListener(SnowListener<?> listener) {
+    public void registerListener(GeneratorListener<?> listener) {
         listener.init(flagsConfiguration, Display.getDefault().getBounds());
         listeners.add(listener);
     }
@@ -147,15 +147,15 @@ public class SnowShell extends Shell implements PaintListener {
         GC gc = paintEvent.gc;
         try (SwtImageBuilder imageBuilder = new SwtImageBuilder(gc, flagsConfiguration)) {
             //Draw objects from each listener
-            for (SnowListener<? extends AbstractMovableObject> listener : listeners) {
+            for (GeneratorListener<? extends AbstractMovableObject> listener : listeners) {
                 if (listener instanceof SnowGenerator) {
                     //noinspection unchecked
-                    SnowListener<Snowflake> snowListener = (SnowListener<Snowflake>) listener;
-                    imageBuilder.drawSnowflakes(snowListener);
-                    imageBuilder.drawCountDown(snowListener);
+                    GeneratorListener<Snowflake> generatorListener = (GeneratorListener<Snowflake>) listener;
+                    imageBuilder.drawSnowflakes(generatorListener);
+                    imageBuilder.drawCountDown(generatorListener);
                 } else if (listener instanceof RedFaceGenerator) {
                     //noinspection unchecked
-                    imageBuilder.drawRedFace((SnowListener<RedFace>) listener);
+                    imageBuilder.drawRedFace((GeneratorListener<RedFace>) listener);
                 }
             }
 
@@ -167,8 +167,8 @@ public class SnowShell extends Shell implements PaintListener {
            this.drawMinimap(gc, image, imageData);
 
             //Check collisions for snowflakes and notify listeners
-            for (SnowListener<?> snowListener : listeners) {
-                snowListener.checkCollisions(imageData);
+            for (GeneratorListener<?> generatorListener : listeners) {
+                generatorListener.checkCollisions(imageData);
             }
         }
     }
