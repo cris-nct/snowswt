@@ -88,16 +88,16 @@ public class EnemyGenerator extends Thread implements GeneratorListener<Abstract
         this.mouseLocation = new Point2D(screenBounds.width / 2.0d, screenBounds.height / 2.0d);
 
         this.redFace = new RedFace();
+        this.redFace.setLocation(new Point2D(screenBounds.width - 2 * SIZE, screenBounds.height - SIZE / 2.0d));
         this.redFace.setSize(SIZE);
         this.redFace.setColor(new RGB(180, 0, 0));
-        this.redFace.setSpeed(3);
-        this.redFace.setLocation(new Point2D(screenBounds.width - 2 * SIZE, screenBounds.height - SIZE / 2.0d));
+        this.redFace.setSpeed(1);
         this.enemies.add(redFace);
 
         this.angryFace = new AnimatedGif("angry1.gif", 0.1, REMOVE_BACKGROUND_COLOR);
+        this.angryFace.setLocation(new Point2D(screenBounds.width - SIZE / 2.0d, screenBounds.height - SIZE / 2.0d));
         this.angryFace.setSize(SIZE);
         this.angryFace.setSpeed(3);
-        this.angryFace.setLocation(new Point2D(screenBounds.width - SIZE / 2.0d, screenBounds.height - SIZE / 2.0d));
         this.enemies.add(angryFace);
     }
 
