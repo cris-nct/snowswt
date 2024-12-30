@@ -19,9 +19,6 @@ public class AnimatedGif extends AbstractEnemy {
     ) {
         this.filename = filename;
         this.animationSpeed = animationSpeed;
-        if (animationSpeed > 1){
-            throw new IllegalArgumentException("animationSpeed should be smaller than 1");
-        }
         this.removeBackgroundColor = removeBackgroundColor;
     }
 

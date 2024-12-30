@@ -46,15 +46,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
         this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
         this.canvas.addPaintListener(this);
-        this.canvas.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDoubleClick(MouseEvent e) {
-                //Display.getDefault().beep();
-                if (e.button == 1) {
-                    setFullScreen(!getFullScreen());
-                }
-            }
-        });
         this.canvas.addMouseMoveListener(e -> {
                 flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
                 listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)));

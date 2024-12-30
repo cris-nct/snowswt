@@ -30,10 +30,28 @@ public class RedFace extends AbstractEnemy {
 
     private int life = 60;
 
+    private AnimatedGif kissingGif;
+
     @Override
     public void setSize(int size) {
         super.setSize(size);
         update();
+    }
+
+    public void startKissing() {
+        if (kissingGif == null) {
+            kissingGif = new AnimatedGif("kissing.gif", 7, null);
+            kissingGif.setSize((int) (getSize() * 0.3));
+            updateKissingGif();
+        }
+    }
+
+    public void stopKissing() {
+        kissingGif = null;
+    }
+
+    public AnimatedGif getKissingGif() {
+        return kissingGif;
     }
 
     @Override
@@ -69,6 +87,14 @@ public class RedFace extends AbstractEnemy {
         );
         updateLeftPupil();
         updateRightPupil();
+
+        if (kissingGif != null){
+            updateKissingGif();
+        }
+    }
+
+    private void updateKissingGif() {
+        kissingGif.setLocation(new Point2D(getLocation().x, getLocation().y + 0.2 * getSize()));
     }
 
     private void updateLeftPupil() {
@@ -132,11 +158,11 @@ public class RedFace extends AbstractEnemy {
         this.timeFreeMovement = System.currentTimeMillis();
     }
 
-    public boolean isWaiting(){
+    public boolean isWaiting() {
         boolean waiting = false;
-        if (stopFor > 0){
+        if (stopFor > 0) {
             waiting = (System.currentTimeMillis() - timeStopFor < stopFor);
-            if (!waiting){
+            if (!waiting) {
                 stopFor = 0;
                 timeStopFor = 0;
                 freeMovementFor(5000);
@@ -145,11 +171,11 @@ public class RedFace extends AbstractEnemy {
         return waiting;
     }
 
-    public boolean isFreeMovement(){
+    public boolean isFreeMovement() {
         boolean freeMove = false;
-        if (freeMovementFor > 0){
+        if (freeMovementFor > 0) {
             freeMove = (System.currentTimeMillis() - timeFreeMovement < freeMovementFor);
-            if (!freeMove){
+            if (!freeMove) {
                 freeMovementFor = 0;
                 timeFreeMovement = 0;
             }

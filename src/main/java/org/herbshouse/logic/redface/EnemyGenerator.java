@@ -16,27 +16,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     private static final int ANGRY_FACE_SIZE = 150;
     private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
-    public static final RGB RED_COLOR = new RGB(180, 0, 0);
+    public static final RGB RED_COLOR = new RGB(160, 0, 0);
     public static final RGB INACTIVE_COLOR = new RGB(150, 150, 150);
     public static final RGB FREE_MOVE_COLOR = new RGB(50, 180, 180);
 
     private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
+    private final List<AnimatedGif> fireGifs = new CopyOnWriteArrayList<>();
     private AnimatedGif angryFace;
-    private AnimatedGif fireGif;
     private FlagsConfiguration flagsConfiguration;
     private Rectangle screenBounds;
     private boolean shutdown = false;
     private Point2D mouseLocation;
     private long counterFrames;
-    private long startTime;
 
     public void run() {
-        startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         while (!shutdown) {
-            if (System.currentTimeMillis() - startTime > 1000){
+            if (System.currentTimeMillis() - startTime > 1000) {
                 startTime = System.currentTimeMillis();
                 for (RedFace redFace : redFaces) {
-                    redFace.decreaseLife(1);
+                    if (redFace.getKissingGif() == null) {
+                        redFace.decreaseLife(1);
+                    }
                 }
             }
 
@@ -51,9 +52,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             generateRedFace();
         }
         for (RedFace redFace : redFaces) {
-            if (redFace.getLife() == 0 ){
+            if (redFace.getLife() == 0) {
                 substractAreaFromShell(
-                        Utils.generateCircle(redFace.getLocation(), redFace.getSize()/2.0d, redFace.getSize(), 0)
+                        Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d, redFace.getSize(), 0)
                 );
                 redFaces.remove(redFace);
                 continue;
@@ -71,14 +72,16 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                     redFace.setColor(RED_COLOR);
                     redFace.move();
                 }
-                fireGif = null;
+                redFace.stopKissing();
             } else {
                 redFace.setDirection(-1);
-                if (fireGif == null) {
-                    fireGif = new AnimatedGif("fire-flame.gif", 1, null);
-                    fireGif.setLocation(new Point2D(redFace.getLocation().x, redFace.getLocation().y + 25));
-                    fireGif.setSize(100);
-                }
+                redFace.startKissing();
+            }
+        }
+        for (AnimatedGif fire : fireGifs) {
+            fire.setLocation(new Point2D(fire.getLocation().x, fire.getLocation().y - fire.getSpeed()));
+            if (fire.getLocation().y < 0) {
+                fireGifs.remove(fire);
             }
         }
     }
@@ -110,7 +113,13 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
 
     @Override
     public void mouseDown(MouseEvent mouseEvent) {
-
+        if (mouseEvent.button == 1) {
+            AnimatedGif gif = new AnimatedGif("fire-flame.gif", 2, null);
+            gif.setLocation(new Point2D(mouseEvent.x, mouseEvent.y));
+            gif.setSize(50);
+            gif.setSpeed(10);
+            fireGifs.add(gif);
+        }
     }
 
     @Override
@@ -144,7 +153,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         int size = 50 + (int) (Math.random() * 100);
         redFace.setLocation(new Point2D(screenBounds.width - size - 10, screenBounds.height - size - 10));
         redFace.setSize(size);
-        redFace.setLife((int)Utils.linearInterpolation(size, 50, 30, 150, 120));
+        redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setColor(RED_COLOR);
         redFace.setSpeed(3);
         redFace.setDirection(Math.toRadians(190));
@@ -155,13 +164,17 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
 
     @Override
     public List<AbstractEnemy> getMoveableObjects() {
-        List<AbstractEnemy> enemies = new ArrayList<>(redFaces);
+        List<AbstractEnemy> enemies = new ArrayList<>();
+        for (RedFace redFace : redFaces) {
+            enemies.add(redFace);
+            if (redFace.getKissingGif() != null) {
+                enemies.add(redFace.getKissingGif());
+            }
+        }
         if (angryFace != null) {
             enemies.add(angryFace);
         }
-        if (fireGif != null) {
-            enemies.add(fireGif);
-        }
+        enemies.addAll(fireGifs);
         return enemies;
     }
 
@@ -177,14 +190,27 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             RedFace redFace1 = redFaces.get(i);
             this.checkWallCollision(redFace1);
             this.checkAngryFaceCollision(redFace1);
+            this.checkFireCollision(redFace1);
             for (int j = i + 1; j < redFaces.size(); j++) {
                 RedFace redFace2 = redFaces.get(j);
                 if (isCollide(redFace1, redFace2)) {
-                    if (!redFace1.isFreeMovement()) {
-                        redFace1.stopFor(1000 + (int) (Math.random() * 5000));
-                    }
-                    redFace2.freeMovementFor(5000);
+                    redFace1.stopFor(1000 + (int) (Math.random() * 5000));
+                    redFace1.setDirection(redFace1.getDirection() +  Math.PI);
                 }
+            }
+        }
+    }
+
+    private void checkFireCollision(RedFace redFace) {
+        for (AnimatedGif fire: fireGifs){
+            if (isCollide(redFace, fire)) {
+                if (redFace.isFreeMovement() || redFace.isWaiting()){
+                    redFaces.remove(redFace);
+                } else {
+                    redFace.freeMovementFor(5000);
+                }
+                fireGifs.remove(fire);
+                break;
             }
         }
     }
@@ -202,7 +228,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
 
     private void checkWallCollision(RedFace redFace) {
         double errFactor = 10;
-        boolean wallCollision = false;
         // Check collision with left and right walls
         if (redFace.getLocation().x - redFace.getSize() / 2.0d <= screenBounds.x - 1) {
             if (redFace.getLocation().y <= screenBounds.y + screenBounds.height / 2.0d) {
@@ -211,7 +236,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
             }
             redFace.setLocation(new Point2D(screenBounds.x + redFace.getSize() / 2.0d + errFactor, redFace.getLocation().y));
-            wallCollision = true;
         } else if (redFace.getLocation().x + redFace.getSize() / 2.0d >= screenBounds.x + screenBounds.width) {
             if (redFace.getLocation().y <= screenBounds.y + screenBounds.height / 2.0d) {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
@@ -219,7 +243,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
             }
             redFace.setLocation(new Point2D(screenBounds.x + screenBounds.width - redFace.getSize() / 2.0d - errFactor, redFace.getLocation().y));
-            wallCollision = true;
         }
 
         if (redFace.getLocation().y - redFace.getSize() / 2.0d <= screenBounds.y) {
@@ -229,7 +252,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
             }
             redFace.setLocation(new Point2D(redFace.getLocation().x, screenBounds.y + redFace.getSize() / 2.0d + errFactor));
-            wallCollision = true;
         } else if (redFace.getLocation().y + redFace.getSize() / 2.0d >= screenBounds.y + screenBounds.height) {
             if (redFace.getLocation().x <= screenBounds.x + screenBounds.width / 2.0d) {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
@@ -237,11 +259,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
             }
             redFace.setLocation(new Point2D(redFace.getLocation().x, screenBounds.y + screenBounds.height - redFace.getSize() / 2.0d - errFactor));
-            wallCollision = true;
-        }
-
-        if (wallCollision) {
-            redFace.freeMovementFor(5000);
         }
     }
 }
