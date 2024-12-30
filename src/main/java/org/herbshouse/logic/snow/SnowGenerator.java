@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
-import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class SnowGenerator extends Thread implements GeneratorListener<Snowflake> {
+public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();

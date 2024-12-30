@@ -6,6 +6,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -29,19 +30,16 @@ import java.util.List;
  * to control various features such as wind effects, image rotation, debugging options, and snowflake freezing.
  * The application continuously updates the display to simulate falling snowflakes.
  */
-public class SnowShell extends Shell implements PaintListener {
+public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final Canvas canvas;
     private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
+    private Region shellRegion;
 
     public SnowShell() {
-        super(Display.getDefault());
-        //Setting region for a shell works only with style SWT.NO_TRIM
-//        Region region = new Region(Display.getDefault());
-//        region.add(Display.getDefault().getBounds());
-//        region.subtract(250, 30, 800, 200);
-//        this.setRegion(region);
-
+        super(Display.getDefault(), SWT.NO_TRIM);
+        shellRegion = new Region(Display.getDefault());
+        shellRegion.add(Display.getDefault().getBounds());
         this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -131,6 +129,24 @@ public class SnowShell extends Shell implements PaintListener {
         });
     }
 
+    @Override
+    public void substractAreaFromShell(int[] polygon) {
+        this.shellRegion.subtract(polygon);
+        this.setRegion(shellRegion);
+        this.setLocation(0,0);
+    }
+
+    @Override
+    public void resetShellSurface(){
+        if (!shellRegion.isDisposed()){
+            shellRegion.dispose();
+        }
+        this.shellRegion = new Region(Display.getDefault());
+        this.shellRegion.add(Display.getDefault().getBounds());
+        this.setRegion(shellRegion);
+        this.setLocation(0,0);
+    }
+
     public void registerListener(GeneratorListener<?> listener) {
         listener.init(flagsConfiguration, Display.getDefault().getBounds());
         listeners.add(listener);
@@ -189,6 +205,5 @@ public class SnowShell extends Shell implements PaintListener {
     @Override
     protected void checkSubclass() {
     }
-
 
 }

@@ -13,7 +13,7 @@ public class SnowingApplication {
     public static Image mbImageSmall;
 
     public static void main(String[] args) {
-        SnowGenerator generator = new SnowGenerator();
+        SnowGenerator snowGenerator = new SnowGenerator();
         EnemyGenerator enemyGenerator = new EnemyGenerator();
         try {
             mbImageSmall = new Image(Display.getDefault(),
@@ -23,10 +23,11 @@ public class SnowingApplication {
             );
 
             SnowShell shell = new SnowShell();
-            shell.registerListener(generator);
+            shell.registerListener(snowGenerator);
             shell.registerListener(enemyGenerator);
+            enemyGenerator.registerListener(shell);
             shell.open();
-            generator.start();
+            snowGenerator.start();
             enemyGenerator.start();
             while (!shell.isDisposed()) {
                 if (!Display.getDefault().readAndDispatch()) {
@@ -34,7 +35,7 @@ public class SnowingApplication {
                 }
             }
         } finally {
-            generator.shutdown();
+            snowGenerator.shutdown();
             enemyGenerator.shutdown();
             SWTResourceManager.disposeAll();
             mbImageSmall.dispose();

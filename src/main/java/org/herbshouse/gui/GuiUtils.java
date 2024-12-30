@@ -47,6 +47,17 @@ public final class GuiUtils {
 
         //Draw right eye pupil
         drawFillOval(gc, redFace.getRightPupilLoc(), redFace.getPupilSize(), redFace.getPupilSize());
+
+        //Draw life counter
+        String life = String.valueOf(redFace.getLife());
+        gc.setFont(SWTResourceManager.getFont("Arial", 15, SWT.NORMAL));
+        int textLength = gc.textExtent(life).x;
+        gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gc.drawText(life,
+                (int) (redFace.getLocation().x - textLength / 2.0d),
+                (int) (redFace.getLocation().y),
+                true
+        );
     }
 
     public static void drawOval(GC gc, Point2D loc, Point2D size) {

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
     public static final double EPS = 0.000000000001d;
@@ -20,6 +22,33 @@ public class Utils {
             value = (((x - x2) * (y2 - y1)) / (x2 - x1)) + y2;
         }
         return value;
+    }
+
+    public static int[] generateCircle(Point2D location, double radius, int nrSegments,
+                                       double beginAngle) {
+        try {
+            List<Point2D> points = new ArrayList<>();
+            double angleIncrement = (2 * Math.PI) / nrSegments;
+            double angleTemp = beginAngle;
+            int safetyCounter = 0;
+            do {
+                Point2D point = moveToDirection(location, radius, angleTemp);
+                angleTemp = normAngle(angleTemp + angleIncrement);
+                points.add(point);
+                safetyCounter++;
+            } while (safetyCounter < nrSegments);
+
+            int[] area = new int[points.size() * 2];
+            int i = 0;
+            for (Point2D p : points) {
+                area[i++] = (int) p.x;
+                area[i++] = (int) p.y;
+            }
+            return area;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String getPCIdentifier() {
