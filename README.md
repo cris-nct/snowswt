@@ -1,6 +1,7 @@
 **Snowing simulator - demo for SWT capabilities**
-- Requires jdk 22 in order to run
-- Requires the following changes in maven settings.xml
+- The executable jar file can be downloaded from https://github.com/crisnct/snowswt/releases
+- It requires at least Java 22 to execute
+- For developers it requires jdk 22 and the following changes in maven settings.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
   <settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
