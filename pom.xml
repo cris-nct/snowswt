@@ -186,6 +186,7 @@
         </plugins>
     </build>
 
+
     <distributionManagement>
         <repository>
             <id>github</id>
