@@ -9,6 +9,7 @@ public class FlagsConfiguration {
     private boolean bigBalls;
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
+    private boolean music;
     private int snowingLevel = 1;
     private int mouseLocX;
     private int mouseLocY;
@@ -27,6 +28,10 @@ public class FlagsConfiguration {
 
     void switchFreezeSnowflakes() {
         this.freezeSnowflakes = !freezeSnowflakes;
+    }
+
+    void switchMusic(){
+        this.music = !music;
     }
 
     void switchBigBalls() {
@@ -51,6 +56,10 @@ public class FlagsConfiguration {
 
     void switchHappyWind() {
         this.happyWind = !happyWind;
+    }
+
+    public boolean isMusic() {
+        return music;
     }
 
     public boolean isAttack() {
