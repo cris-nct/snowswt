@@ -19,7 +19,7 @@ public class SnowingApplication {
         EnemyGenerator enemyGenerator = new EnemyGenerator(userInfo);
         try {
             mbImageSmall = new Image(Display.getDefault(),
-                    SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true)
+                    SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true)
                     .getImageData()
                     .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
             );

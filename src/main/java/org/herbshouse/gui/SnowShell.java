@@ -1,5 +1,6 @@
 package org.herbshouse.gui;
 
+import com.google.common.io.ByteStreams;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -22,10 +23,10 @@ import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,11 +51,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.swtImageBuilder = new SwtImageBuilder(flagsConfiguration, userInfo);
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(Display.getDefault().getBounds());
-        this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
         this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.FOCUSED);
         this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Display.getDefault().timerExec(300, () -> setFullScreen(true));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
                     flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
@@ -129,6 +130,10 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case 'E':
                         flagsConfiguration.switchEnemies();
                         break;
+                    case 'q':
+                    case 'Q':
+                        getShell().dispose();
+                        break;
                 }
             }
         });
@@ -148,9 +153,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         browser.setSize(width, height);
         browser.setLocation(locX, locY);
         try {
-            File file = new File(SnowingApplication.class.getResource("../../embededChristmasMusic.html").getFile());
-            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-            browser.setText(content, true);
+            try (InputStream is = SnowingApplication.class.getClassLoader().getResourceAsStream("embededChristmasMusic.html")) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStreams.copy(is, baos);
+                baos.close();
+                String content = baos.toString(StandardCharsets.UTF_8);
+                browser.setText(content, true);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
