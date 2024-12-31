@@ -121,7 +121,10 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         this.addTextToLegend(legendBuilder, "Enemies(E)", config.isEnemies());
-        this.addTextToLegend(legendBuilder, "Music(L)", config.isMusic());
+        this.addTextToLegend(legendBuilder, "Youtube(Y)", config.isYoutube());
+        if (config.isYoutube()) {
+            legendBuilder.append(", Next video(N)");
+        }
         legendBuilder.append("\n-------");
         this.addTextToLegend(legendBuilder, "Your points", userInfo.getPoints());
         legendBuilder.append("\n-------\n");
@@ -145,7 +148,7 @@ public class SwtImageBuilder implements AutoCloseable {
         }
         gcImage.setAlpha(alphaMB);
         alphaMB = alphaMB + 5 * alphaMBSign;
-        Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true);
+        Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
         gcImage.setAlpha(255);
         return this;
