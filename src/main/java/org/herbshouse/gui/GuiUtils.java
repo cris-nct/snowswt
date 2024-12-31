@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.redface.RedFace;
+import org.herbshouse.logic.enemies.RedFace;
 
 public final class GuiUtils {
 

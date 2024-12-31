@@ -4,7 +4,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.gui.SnowShell;
-import org.herbshouse.logic.redface.EnemyGenerator;
+import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 
 public class SnowingApplication {
@@ -13,8 +14,9 @@ public class SnowingApplication {
     public static Image mbImageSmall;
 
     public static void main(String[] args) {
+        UserInfo userInfo = new UserInfo();
         SnowGenerator snowGenerator = new SnowGenerator();
-        EnemyGenerator enemyGenerator = new EnemyGenerator();
+        EnemyGenerator enemyGenerator = new EnemyGenerator(userInfo);
         try {
             mbImageSmall = new Image(Display.getDefault(),
                     SWTResourceManager.getImage(SnowingApplication.class, "../../mb.png", true)
@@ -22,7 +24,7 @@ public class SnowingApplication {
                     .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
             );
 
-            SnowShell shell = new SnowShell();
+            SnowShell shell = new SnowShell(userInfo);
             shell.registerListener(snowGenerator);
             shell.registerListener(enemyGenerator);
             enemyGenerator.registerListener(shell);

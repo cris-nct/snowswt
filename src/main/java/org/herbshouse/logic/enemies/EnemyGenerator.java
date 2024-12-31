@@ -1,4 +1,4 @@
-package org.herbshouse.logic.redface;
+package org.herbshouse.logic.enemies;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
@@ -7,6 +7,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.Utils;
 
 import java.util.ArrayList;
@@ -28,6 +29,12 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     private boolean shutdown = false;
     private Point2D mouseLocation;
     private long counterFrames;
+    private final UserInfo userInfo;
+
+    public EnemyGenerator(UserInfo userInfo) {
+        super();
+        this.userInfo = userInfo;
+    }
 
     public void run() {
         long startTime = System.currentTimeMillis();
@@ -35,8 +42,14 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             if (System.currentTimeMillis() - startTime > 1000) {
                 startTime = System.currentTimeMillis();
                 for (RedFace redFace : redFaces) {
+                    redFace.checkTimers();
                     if (redFace.getKissingGif() == null) {
                         redFace.decreaseLife(1);
+                    } else {
+                        switch (redFace.getState()) {
+                            case FOLLOW -> userInfo.decreasePoints(1);
+                            case FREE -> userInfo.increasePoints(1);
+                        }
                     }
                 }
             }
@@ -61,20 +74,21 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             }
             if (redFace.getKissingGif() == null
                     && Utils.distance(redFace.getLocation(), mouseLocation) > redFace.getSize() / 2.0d) {
-                if (!redFace.isFreeMovement()) {
-                    redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
-                }
-                if (redFace.isWaiting()) {
-                    redFace.setColor(INACTIVE_COLOR);
-                } else if (redFace.isFreeMovement()) {
-                    redFace.setColor(FREE_MOVE_COLOR);
-                    redFace.move();
-                } else {
-                    redFace.setColor(RED_COLOR);
-                    redFace.move();
+                switch (redFace.getState()){
+                    case FOLLOW -> {
+                        redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
+                        redFace.setColor(RED_COLOR);
+                        redFace.move();
+                    }
+                    case WAITING -> redFace.setColor(INACTIVE_COLOR);
+                    case FREE -> {
+                        redFace.setColor(FREE_MOVE_COLOR);
+                        redFace.move();
+                    }
+
                 }
             } else {
-                if (!redFace.isWaiting()) {
+                if (redFace.getState() != RedFaceState.WAITING) {
                     redFace.startKissing();
                 }
             }
@@ -110,7 +124,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     @Override
     public void mouseMove(Point2D mouseLocation) {
         this.mouseLocation = mouseLocation;
-        for (RedFace redFace: redFaces){
+        for (RedFace redFace : redFaces) {
             redFace.stopKissing();
         }
     }
@@ -161,7 +175,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         redFace.setColor(RED_COLOR);
         redFace.setSpeed(3);
         redFace.setDirection(Math.toRadians(190));
-        redFace.freeMovementFor(10000);
+        redFace.setState(RedFaceState.FREE, 10000);
         redFaces.add(redFace);
         return redFace;
     }
@@ -198,12 +212,16 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             for (int j = i + 1; j < redFaces.size(); j++) {
                 RedFace redFace2 = redFaces.get(j);
                 if (isCollide(redFace1, redFace2)) {
-                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null){
-                        redFace1.startKissing();
-                        redFace2.startKissing();
+                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null) {
+                        if (redFace1.getState() != RedFaceState.WAITING) {
+                            redFace1.startKissing();
+                        }
+                        if (redFace2.getState() != RedFaceState.WAITING) {
+                            redFace2.startKissing();
+                        }
                     } else {
                         redFace1.setDirection(redFace1.getDirection() + Math.PI);
-                        redFace1.stopFor(1000 + (int) (Math.random() * 5000));
+                        redFace1.setState(RedFaceState.WAITING, 1000 + (int) (Math.random() * 5000));
                     }
                 }
             }
@@ -213,10 +231,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     private void checkFireCollision(RedFace redFace) {
         for (AnimatedGif fire : fireGifs) {
             if (isCollide(redFace, fire)) {
-                if (redFace.isFreeMovement() || redFace.isWaiting()) {
+                if (redFace.getState() == RedFaceState.FREE || redFace.getState() == RedFaceState.WAITING) {
                     redFaces.remove(redFace);
                 } else {
-                    redFace.freeMovementFor(5000);
+                    redFace.setState(RedFaceState.FREE, 5000);
                 }
                 fireGifs.remove(fire);
                 break;

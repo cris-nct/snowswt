@@ -1,4 +1,4 @@
-package org.herbshouse.logic.redface;
+package org.herbshouse.logic.enemies;
 
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
@@ -20,22 +20,20 @@ public class RedFace extends AbstractEnemy {
 
     private Point2D rightPupilLocation;
 
-    private long timeStopFor = 0;
-
-    private int stopFor = 0;
-
-    private long timeFreeMovement = 0;
-
-    private int freeMovementFor = 0;
-
     private int life = 60;
 
     private AnimatedGif kissingGif;
+
+    private RedFaceState state;
 
     @Override
     public void setSize(int size) {
         super.setSize(size);
         update();
+    }
+
+    public RedFaceState getState() {
+        return state;
     }
 
     public void startKissing() {
@@ -120,7 +118,6 @@ public class RedFace extends AbstractEnemy {
         rightPupilLocation = new Point2D(locX, locY);
     }
 
-
     public double getDirection() {
         return direction;
     }
@@ -149,39 +146,16 @@ public class RedFace extends AbstractEnemy {
         return rightPupilLocation;
     }
 
-    public void stopFor(int milliseconds) {
-        this.stopFor = milliseconds;
-        this.timeStopFor = System.currentTimeMillis();
-    }
-
-    public void freeMovementFor(int milliseconds) {
-        this.freeMovementFor = milliseconds;
-        this.timeFreeMovement = System.currentTimeMillis();
-    }
-
-    public boolean isWaiting() {
-        boolean waiting = false;
-        if (stopFor > 0) {
-            waiting = (System.currentTimeMillis() - timeStopFor < stopFor);
-            if (!waiting) {
-                stopFor = 0;
-                timeStopFor = 0;
-                freeMovementFor(5000);
-            }
+    public void setState(RedFaceState newState, int milliseconds) {
+        this.state = newState;
+        if (milliseconds > 0) {
+            this.registerTimer(new ActionTimer(milliseconds) {
+                @Override
+                public void afterEnd() {
+                    state = RedFaceState.FOLLOW;
+                }
+            });
         }
-        return waiting;
-    }
-
-    public boolean isFreeMovement() {
-        boolean freeMove = false;
-        if (freeMovementFor > 0) {
-            freeMove = (System.currentTimeMillis() - timeFreeMovement < freeMovementFor);
-            if (!freeMove) {
-                freeMovementFor = 0;
-                timeFreeMovement = 0;
-            }
-        }
-        return freeMove;
     }
 
     public int getLife() {

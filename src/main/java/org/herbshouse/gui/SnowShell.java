@@ -14,8 +14,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.redface.AbstractEnemy;
-import org.herbshouse.logic.redface.EnemyGenerator;
+import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.enemies.AbstractEnemy;
+import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -34,12 +35,14 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final Canvas canvas;
     private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
+    private final SwtImageBuilder swtImageBuilder;
     private Region shellRegion;
 
-    public SnowShell() {
+    public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
-        shellRegion = new Region(Display.getDefault());
-        shellRegion.add(Display.getDefault().getBounds());
+        this.swtImageBuilder = new SwtImageBuilder(flagsConfiguration, userInfo);
+        this.shellRegion = new Region(Display.getDefault());
+        this.shellRegion.add(Display.getDefault().getBounds());
         this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -47,16 +50,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
-                flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
-                listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)));
-            }
+                    flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
+                    listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)));
+                }
         );
-        this.canvas.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseScrolled(MouseEvent e) {
-                listeners.forEach(l -> l.mouseScrolled(e));
-            }
-        });
+        this.canvas.addMouseWheelListener(e -> listeners.forEach(l -> l.mouseScrolled(e)));
         this.canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
@@ -124,18 +122,18 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     public void substractAreaFromShell(int[] polygon) {
         this.shellRegion.subtract(polygon);
         this.setRegion(shellRegion);
-        this.setLocation(0,0);
+        this.setLocation(0, 0);
     }
 
     @Override
-    public void resetShellSurface(){
-        if (!shellRegion.isDisposed()){
+    public void resetShellSurface() {
+        if (!shellRegion.isDisposed()) {
             shellRegion.dispose();
         }
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(Display.getDefault().getBounds());
         this.setRegion(shellRegion);
-        this.setLocation(0,0);
+        this.setLocation(0, 0);
     }
 
     public void registerListener(GeneratorListener<?> listener) {
@@ -145,14 +143,14 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
 
     @Override
     public void open() {
-        Display.getDefault().timerExec(100, new RederingEngine(canvas));
+        Display.getDefault().timerExec(100, new RenderingEngine(canvas));
         super.open();
     }
 
     @Override
     public void paintControl(PaintEvent paintEvent) {
         GC gc = paintEvent.gc;
-        try (SwtImageBuilder imageBuilder = new SwtImageBuilder(gc, flagsConfiguration)) {
+        try (var imageBuilder = swtImageBuilder.drawBaseElements(gc)) {
             //Draw objects from each listener
             for (GeneratorListener<? extends AbstractMovableObject> listener : listeners) {
                 if (listener instanceof SnowGenerator) {
@@ -171,7 +169,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             gc.drawImage(image, 0, 0);
 
             //Draw minimap
-           this.drawMinimap(gc, image, imageData);
+            this.drawMinimap(gc, image, imageData);
 
             //Check collisions for snowflakes and notify listeners
             for (GeneratorListener<?> generatorListener : listeners) {
@@ -180,7 +178,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         }
     }
 
-    private void drawMinimap(GC gc, Image image, ImageData imageData){
+    private void drawMinimap(GC gc, Image image, ImageData imageData) {
         //Draw minimap
         double aspRatio = (double) imageData.width / imageData.height;
         int heightMinimap = 200;
