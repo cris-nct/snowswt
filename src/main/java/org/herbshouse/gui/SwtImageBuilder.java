@@ -120,6 +120,7 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
+        this.addTextToLegend(legendBuilder, "Enemies(E)", config.isEnemies());
         this.addTextToLegend(legendBuilder, "Music(L)", config.isMusic());
         legendBuilder.append("\n-------");
         this.addTextToLegend(legendBuilder, "Your points", userInfo.getPoints());
