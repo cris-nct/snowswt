@@ -5,8 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.herbshouse</groupId>
-    <artifactId>SnowSwt</artifactId>
-    <version>1.0</version>
+    <artifactId>snowswt</artifactId>
+    <version>1.0.0</version>
+    <name>Snowing simulator</name>
+    <url>https://github.com/crisnct/snowswt</url>
 
     <properties>
         <java.version>22</java.version>
@@ -139,18 +141,18 @@
                 </configuration>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jar-plugin</artifactId>-->
-<!--                <version>3.2.0</version>-->
-<!--                <configuration>-->
-<!--                    <archive>-->
-<!--                        <manifest>-->
-<!--                            <mainClass>org.herbshouse.SnowingApplication</mainClass>-->
-<!--                        </manifest>-->
-<!--                    </archive>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-jar-plugin</artifactId>-->
+            <!--                <version>3.2.0</version>-->
+            <!--                <configuration>-->
+            <!--                    <archive>-->
+            <!--                        <manifest>-->
+            <!--                            <mainClass>org.herbshouse.SnowingApplication</mainClass>-->
+            <!--                        </manifest>-->
+            <!--                    </archive>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -187,9 +189,8 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>Cristian Tone</name>
             <url>https://maven.pkg.github.com/crisnct/snowswt</url>
         </repository>
     </distributionManagement>
 
- </project>
+</project>
