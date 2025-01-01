@@ -5,10 +5,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -47,6 +44,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private Browser browser;
     private final List<String> videos = new ArrayList<>();
     private int videosIndex;
+    private final List<Transform> transforms = new ArrayList<>();
+    private int currentTransformIndex = 0;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
@@ -54,8 +53,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(Display.getDefault().getBounds());
 
-        this.videos.add(loadResourceAsString("embededChristmasMusic.html"));
-        this.videos.add(loadResourceAsString("embededMusicSensual.html"));
+        this.initVideos();
+        this.initTransforms();
 
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -64,15 +63,17 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         Display.getDefault().timerExec(300, () -> setFullScreen(true));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
-                    flagsConfiguration.setMouseCurrentLocation(e.x, e.y);
-                    listeners.forEach(l -> l.mouseMove(new Point2D(e.x, e.y)));
+                    final Point2D mouseLoc = convertMouseLoc(e);
+                    flagsConfiguration.setMouseCurrentLocation(mouseLoc);
+                    listeners.forEach(l -> l.mouseMove(mouseLoc));
                 }
         );
         this.canvas.addMouseWheelListener(e -> listeners.forEach(l -> l.mouseScrolled(e)));
         this.canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
-                listeners.forEach(l -> l.mouseDown(e));
+                final Point2D mouseLoc = convertMouseLoc(e);
+                listeners.forEach(l -> l.mouseDown(e.button, mouseLoc));
             }
         });
         this.canvas.addKeyListener(new KeyAdapter() {
@@ -93,6 +94,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case 'F':
                     case 'f':
+                        if (flagsConfiguration.isFlipImage()) {
+                            flagsConfiguration.setTransform(null);
+                        } else {
+                            flagsConfiguration.setTransform(transforms.get(currentTransformIndex));
+                        }
                         flagsConfiguration.switchFlipImage();
                         break;
                     case 'P':
@@ -149,6 +155,39 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                 }
             }
         });
+
+        this.addDisposeListener(e -> {
+            for (Transform transform : transforms) {
+                if (!transform.isDisposed()) {
+                    transform.dispose();
+                }
+            }
+            transforms.clear();
+        });
+    }
+
+    private Point2D convertMouseLoc(MouseEvent e){
+        int locX = e.x;
+        int locY = e.y;
+        if (flagsConfiguration.isFlipImage()) {
+            float[] mouseLoc = {locX, locY};
+            transforms.get(currentTransformIndex).transform(mouseLoc);
+            locX = (int) mouseLoc[0];
+            locY = (int) mouseLoc[1];
+        }
+        return new Point2D(locX, locY);
+    }
+
+    private void initTransforms() {
+        Transform transform = new Transform(Display.getDefault());
+        transform.scale(1, -1);
+        transform.translate(0, -Display.getDefault().getBounds().height);
+        transforms.add(transform);
+    }
+
+    private void initVideos() {
+        this.videos.add(loadResourceAsString("embededChristmasMusic.html"));
+        this.videos.add(loadResourceAsString("embededMusicSensual.html"));
     }
 
     private void updateBrowser(boolean youtubeOn) {
@@ -167,16 +206,17 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.playNext();
     }
 
-    private void playNext(){
-        browser.setText(videos.get(videosIndex++ % videos.size()), true);
+    private void playNext() {
         browser.setEnabled(true);
+        browser.setText(videos.get(videosIndex++ % videos.size()), true);
         Display.getDefault().timerExec(1000, () ->
                 {
+                    browser.setEnabled(true);
                     GuiUtils.moveMouseAndClick(
                             browser.getLocation().x + browser.getSize().x / 2,
                             browser.getLocation().y + browser.getSize().y / 2,
-                            flagsConfiguration.getMouseLocX(),
-                            flagsConfiguration.getMouseLocY()
+                            (int)flagsConfiguration.getMouseLoc().x,
+                            (int)flagsConfiguration.getMouseLoc().y
 
                     );
                     browser.setEnabled(false);
@@ -184,7 +224,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         );
     }
 
-    private String loadResourceAsString(String filename){
+    private String loadResourceAsString(String filename) {
         try {
             try (InputStream is = SnowingApplication.class.getClassLoader().getResourceAsStream(filename)) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();

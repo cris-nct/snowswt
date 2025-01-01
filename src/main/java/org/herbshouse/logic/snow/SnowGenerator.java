@@ -28,7 +28,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private Rectangle drawingSurface;
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
-    private Point2D mouseLocation;
     private int counterUpdates;
     private int countdown;
 
@@ -115,11 +114,11 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         }
         Point2D newLoc = snowflake.getLocation().clone();
         if (flagsConfiguration.isAttack() && snowflake.getSize() > 3) {
-            double distance = Utils.distance(snowflake.getLocation(), mouseLocation);
+            double distance = Utils.distance(snowflake.getLocation(), flagsConfiguration.getMouseLoc());
             if (distance < 5) {
                 snowflake.freeze();
             } else {
-                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), mouseLocation);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), flagsConfiguration.getMouseLoc());
                 newLoc = Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
                 snowflake.setLocation(newLoc);
             }
@@ -129,7 +128,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
             newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
             data.increaseAngle();
-        } else if (flagsConfiguration.isNormalWind()) {
+        }
+        if (flagsConfiguration.isNormalWind()) {
             int startCriticalArea = drawingSurface.height / 4;
             int endCriticalArea = startCriticalArea + 100;
             if (newLoc.y > startCriticalArea && newLoc.y < endCriticalArea) {
@@ -188,15 +188,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         happyWindSnowData.putIfAbsent(snowflake, new HappyWindSnowFlakeData());
         HappyWindSnowFlakeData data = happyWindSnowData.get(snowflake);
         data.setOrigLocation(snowflake.getLocation().clone());
-        int maxAreaToMove = 200;
+        int maxAreaToMove = 50;
         if (flagsConfiguration.isDebug()) {
-            data.setAngleIncrease(0.03);
+            data.setAngleIncrease(Math.toRadians(5));
             data.setAreaToMove(50);
         } else {
             data.setAngleIncrease(2 * Math.random() / 100);
             data.setAreaToMove(Math.abs((int) (Math.random() * maxAreaToMove)));
         }
-        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), maxAreaToMove, 3, 1, 1));
+        snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), maxAreaToMove, 2, 1, 0.5));
     }
 
     @Override
@@ -243,7 +243,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     @Override
     public void mouseMove(Point2D mouseLocation) {
-        this.mouseLocation = mouseLocation;
+
     }
 
     @Override
@@ -284,12 +284,12 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
 
     @Override
-    public void mouseDown(MouseEvent mouseEvent) {
-        if (mouseEvent.button == 3) {
+    public void mouseDown(int button, Point2D mouseLocation) {
+        if (button == 3) {
             try {
                 if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                     Snowflake snowflake = generateNewSnowflake(50, 1);
-                    snowflake.setLocation(new Point2D(mouseEvent.x, mouseEvent.y));
+                    snowflake.setLocation(mouseLocation);
                     snowflake.freeze();
                     lockSnowflakes.unlock();
                 }

@@ -19,7 +19,7 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void mouseMove(Point2D mouseLocation);
 
-    void mouseDown(MouseEvent mouseEvent);
+    void mouseDown(int button, Point2D mouseLocation);
 
     void mouseScrolled(MouseEvent mouseEvent);
 
