@@ -203,25 +203,12 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         int locY = (Display.getDefault().getBounds().height - height) / 2 + height;
         browser.setSize(width, height);
         browser.setLocation(locX, locY);
+        browser.setEnabled(false);
         this.playNext();
     }
 
     private void playNext() {
-        browser.setEnabled(true);
         browser.setText(videos.get(videosIndex++ % videos.size()), true);
-        Display.getDefault().timerExec(1000, () ->
-                {
-                    browser.setEnabled(true);
-                    GuiUtils.moveMouseAndClick(
-                            browser.getLocation().x + browser.getSize().x / 2,
-                            browser.getLocation().y + browser.getSize().y / 2,
-                            (int) flagsConfiguration.getMouseLoc().x,
-                            (int) flagsConfiguration.getMouseLoc().y
-
-                    );
-                    browser.setEnabled(false);
-                }
-        );
     }
 
     private String loadResourceAsString(String filename) {
