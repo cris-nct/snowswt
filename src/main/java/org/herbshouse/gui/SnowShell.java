@@ -63,7 +63,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         Display.getDefault().timerExec(300, () -> setFullScreen(true));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
-                    final Point2D mouseLoc = convertMouseLoc(e);
+                    final Point2D mouseLoc = convertLoc(e.x, e.y);
                     flagsConfiguration.setMouseCurrentLocation(mouseLoc);
                     listeners.forEach(l -> l.mouseMove(mouseLoc));
                 }
@@ -72,7 +72,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
-                final Point2D mouseLoc = convertMouseLoc(e);
+                final Point2D mouseLoc = convertLoc(e.x, e.y);
                 listeners.forEach(l -> l.mouseDown(e.button, mouseLoc));
             }
         });
@@ -166,14 +166,14 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         });
     }
 
-    private Point2D convertMouseLoc(MouseEvent e){
-        int locX = e.x;
-        int locY = e.y;
+    private Point2D convertLoc(int x, int y) {
+        int locX = x;
+        int locY = y;
         if (flagsConfiguration.isFlipImage()) {
-            float[] mouseLoc = {locX, locY};
-            transforms.get(currentTransformIndex).transform(mouseLoc);
-            locX = (int) mouseLoc[0];
-            locY = (int) mouseLoc[1];
+            float[] data = {locX, locY};
+            transforms.get(currentTransformIndex).transform(data);
+            locX = (int) data[0];
+            locY = (int) data[1];
         }
         return new Point2D(locX, locY);
     }
@@ -215,8 +215,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     GuiUtils.moveMouseAndClick(
                             browser.getLocation().x + browser.getSize().x / 2,
                             browser.getLocation().y + browser.getSize().y / 2,
-                            (int)flagsConfiguration.getMouseLoc().x,
-                            (int)flagsConfiguration.getMouseLoc().y
+                            (int) flagsConfiguration.getMouseLoc().x,
+                            (int) flagsConfiguration.getMouseLoc().y
 
                     );
                     browser.setEnabled(false);
@@ -288,6 +288,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             gc.drawImage(image, 0, 0);
 
             //Draw minimap
+            gc.setTransform(flagsConfiguration.getTransform());
             this.drawMinimap(gc, image, imageData);
 
             //Check collisions for snowflakes and notify listeners
