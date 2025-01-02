@@ -38,7 +38,6 @@ import java.util.List;
 public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final Canvas canvas;
     private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
-    private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
     private final SwtImageBuilder swtImageBuilder;
     private Region shellRegion;
@@ -46,7 +45,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final List<String> videos = new ArrayList<>();
     private int videosIndex;
     private final List<Transform> transforms = new ArrayList<>();
-    private final RenderingEngine renderingEngine;
     private int currentTransformIndex = 0;
 
     public SnowShell(UserInfo userInfo) {
@@ -158,8 +156,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             }
         });
 
-        this.renderingEngine = new RenderingEngine(this, canvas);
-
         this.addDisposeListener(e -> {
             for (Transform transform : transforms) {
                 if (!transform.isDisposed()) {
@@ -253,7 +249,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
 
     @Override
     public void open() {
-        Display.getDefault().timerExec(100, renderingEngine);
+        Display.getDefault().timerExec(100, new RenderingEngine(canvas));
         super.open();
     }
 
@@ -274,7 +270,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                 }
             }
 
-            Image image = imageBuilder.addLegend(this.renderingEngine.getRealFPS()).addLogo().build();
+            Image image = imageBuilder.addLegend().addLogo().build();
             ImageData imageData = image.getImageData();
             gc.drawImage(image, 0, 0);
 
@@ -287,8 +283,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                 generatorListener.checkCollisions(imageData);
             }
         }
-
-        drawCompleteListeners.forEach(IDrawCompleteListener::complete);
     }
 
     private void drawMinimap(GC gc, Image image, ImageData imageData) {
@@ -306,10 +300,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
 
     @Override
     protected void checkSubclass() {
-    }
-
-    public void registerListener(IDrawCompleteListener listener) {
-        this.drawCompleteListeners.add(listener);
     }
 
 }

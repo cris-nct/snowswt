@@ -75,11 +75,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                 lockSnowflakes.unlock();
             }
 
-            if (flagsConfiguration.getSnowingLevel() == 0) {
-                Utils.sleep(1000);
-            } else {
-                Utils.sleep(5);
-            }
+            Utils.sleep(5);
         }
     }
 
@@ -271,12 +267,10 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     @Override
     public void reset() {
         try {
-            if (countdown == -1) {
-                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-                    snowflakes.clear();
-                    happyWindSnowData.clear();
-                    lockSnowflakes.unlock();
-                }
+            if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                snowflakes.clear();
+                happyWindSnowData.clear();
+                lockSnowflakes.unlock();
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
