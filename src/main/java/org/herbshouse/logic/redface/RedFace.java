@@ -40,7 +40,6 @@ public class RedFace extends AbstractEnemy {
 
     public void startKissing() {
         if (kissingGif == null) {
-            direction = -1;
             kissingGif = new AnimatedGif("kissing.gif", 7, null);
             kissingGif.setSize((int) (getSize() * 0.3));
             updateKissingGif();

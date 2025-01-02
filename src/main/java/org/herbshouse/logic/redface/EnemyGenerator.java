@@ -59,8 +59,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 redFaces.remove(redFace);
                 continue;
             }
-            if (redFace.getKissingGif() == null
-                    && Utils.distance(redFace.getLocation(), mouseLocation) > redFace.getSize() / 2.0d) {
+            if (Utils.distance(redFace.getLocation(), mouseLocation) > 10) {
                 if (!redFace.isFreeMovement()) {
                     redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
                 }
@@ -73,10 +72,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                     redFace.setColor(RED_COLOR);
                     redFace.move();
                 }
+                redFace.stopKissing();
             } else {
-                if (!redFace.isWaiting()) {
-                    redFace.startKissing();
-                }
+                redFace.setDirection(-1);
+                redFace.startKissing();
             }
         }
         for (AnimatedGif fire : fireGifs) {
@@ -110,9 +109,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     @Override
     public void mouseMove(Point2D mouseLocation) {
         this.mouseLocation = mouseLocation;
-        for (RedFace redFace: redFaces){
-            redFace.stopKissing();
-        }
     }
 
     @Override
@@ -198,22 +194,17 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             for (int j = i + 1; j < redFaces.size(); j++) {
                 RedFace redFace2 = redFaces.get(j);
                 if (isCollide(redFace1, redFace2)) {
-                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null){
-                        redFace1.startKissing();
-                        redFace2.startKissing();
-                    } else {
-                        redFace1.setDirection(redFace1.getDirection() + Math.PI);
-                        redFace1.stopFor(1000 + (int) (Math.random() * 5000));
-                    }
+                    redFace1.stopFor(1000 + (int) (Math.random() * 5000));
+                    redFace1.setDirection(redFace1.getDirection() +  Math.PI);
                 }
             }
         }
     }
 
     private void checkFireCollision(RedFace redFace) {
-        for (AnimatedGif fire : fireGifs) {
+        for (AnimatedGif fire: fireGifs){
             if (isCollide(redFace, fire)) {
-                if (redFace.isFreeMovement() || redFace.isWaiting()) {
+                if (redFace.isFreeMovement() || redFace.isWaiting()){
                     redFaces.remove(redFace);
                 } else {
                     redFace.freeMovementFor(5000);

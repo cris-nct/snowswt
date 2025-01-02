@@ -102,7 +102,6 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         legendBuilder.append("\r\n-------\n");
-        legendBuilder.append("Fire(left button)\n");
         legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), originalGC.getClipping().width - 240, 10, true);
         return this;
