@@ -20,14 +20,6 @@ public class RedFace extends AbstractEnemy {
 
     private Point2D rightPupilLocation;
 
-    private long timeStopFor = 0;
-
-    private int stopFor = 0;
-
-    private long timeFreeMovement = 0;
-
-    private int freeMovementFor = 0;
-
     @Override
     public void setSize(int size) {
         super.setSize(size);
@@ -38,15 +30,6 @@ public class RedFace extends AbstractEnemy {
     public void setLocation(Point2D location) {
         super.setLocation(location);
         update();
-    }
-
-    public void setDirection(double direction) {
-        this.direction = direction;
-        update();
-    }
-
-    public void move(double offset) {
-        this.setLocation(Utils.moveToDirection(getLocation(), getSpeed() + offset, direction));
     }
 
     public void update() {
@@ -91,6 +74,9 @@ public class RedFace extends AbstractEnemy {
         rightPupilLocation = new Point2D(locX, locY);
     }
 
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
 
     public double getDirection() {
         return direction;
@@ -118,41 +104,6 @@ public class RedFace extends AbstractEnemy {
 
     public Point2D getRightPupilLoc() {
         return rightPupilLocation;
-    }
-
-    public void stopFor(int milliseconds) {
-        this.stopFor = milliseconds;
-        this.timeStopFor = System.currentTimeMillis();
-    }
-
-    public void freeMovementFor(int milliseconds) {
-        this.freeMovementFor = milliseconds;
-        this.timeFreeMovement = System.currentTimeMillis();
-    }
-
-    public boolean isWaiting(){
-        boolean waiting = false;
-        if (stopFor > 0){
-            waiting = (System.currentTimeMillis() - timeStopFor < stopFor);
-            if (!waiting){
-                stopFor = 0;
-                timeStopFor = 0;
-                freeMovementFor(5000);
-            }
-        }
-        return waiting;
-    }
-
-    public boolean isFreeMovement(){
-        boolean freeMove = false;
-        if (freeMovementFor > 0){
-            freeMove = (System.currentTimeMillis() - timeFreeMovement < freeMovementFor);
-            if (!freeMove){
-                freeMovementFor = 0;
-                timeFreeMovement = 0;
-            }
-        }
-        return freeMove;
     }
 
 }
