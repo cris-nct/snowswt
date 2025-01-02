@@ -287,9 +287,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             ImageData imageData = image.getImageData();
             gc.drawImage(image, 0, 0);
 
-            //Check collisions for snowflakes and notify listeners
             for (GeneratorListener<?> generatorListener : listeners) {
-                generatorListener.checkCollisions(imageData);
+                generatorListener.provideImageData(imageData);
             }
         }
 

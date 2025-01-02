@@ -59,7 +59,7 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public Image build() {
-       return image;
+        return image;
     }
 
     public void drawTextMiddleScreen() {
@@ -70,8 +70,11 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
         Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
-        gcImage.drawText(TEXT_MIDDLE_SCREEN, (screenArea.width - textSize.x) / 2,
-                (screenArea.height - textSize.y) / 2, true);
+        gcImage.drawText(TEXT_MIDDLE_SCREEN,
+                (screenArea.width - textSize.x) / 2,
+                (screenArea.height - textSize.y) / 2,
+                true
+        );
     }
 
     public void drawCountDown(GeneratorListener<Snowflake> generatorListener) {

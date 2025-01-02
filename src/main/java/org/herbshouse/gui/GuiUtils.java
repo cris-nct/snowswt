@@ -10,6 +10,7 @@ import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.enemies.RedFace;
+import org.herbshouse.logic.snow.Snowflake;
 
 public final class GuiUtils {
 
@@ -91,14 +92,16 @@ public final class GuiUtils {
 
     public static void draw(GC gc, AbstractMovableObject movableObject, Point2D loc) {
         gc.setBackground(SWTResourceManager.getColor(movableObject.getColor()));
+        gc.setForeground(SWTResourceManager.getColor(movableObject.getColor()));
         int prevAlpha = gc.getAlpha();
         gc.setAlpha(movableObject.getAlpha());
-        gc.fillOval(
-                (int) loc.x - movableObject.getSize() / 2,
-                (int) loc.y - movableObject.getSize() / 2,
-                movableObject.getSize(),
-                movableObject.getSize()
-        );
+        int locX = (int) loc.x - movableObject.getSize() / 2;
+        int locY = (int) loc.y - movableObject.getSize() / 2;
+        if (movableObject instanceof Snowflake snowflake && snowflake.isFreezed()) {
+            gc.fillOval(locX, locY + movableObject.getSize() / 3, movableObject.getSize(), movableObject.getSize());
+        } else {
+            gc.fillOval(locX, locY, movableObject.getSize(), movableObject.getSize());
+        }
         gc.setAlpha(prevAlpha);
     }
 

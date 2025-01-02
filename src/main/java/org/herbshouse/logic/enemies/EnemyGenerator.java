@@ -68,6 +68,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         while (!shutdown) {
             if (flagsConfiguration.isEnemies()) {
                 this.move();
+                this.checkCollisions();
                 Utils.sleep(FlagsConfiguration.SLEEP_ENEMY_GENERATOR);
             } else {
                 redFaces.clear();
@@ -215,7 +216,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }
 
     @Override
-    public void checkCollisions(ImageData imageData) {
+    public void provideImageData(ImageData imageData) {
+    }
+
+    private void checkCollisions(){
         for (int i = 0; i < redFaces.size(); i++) {
             //Check collision with walls
             RedFace redFace1 = redFaces.get(i);
@@ -224,7 +228,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             this.checkFireCollision(redFace1);
             for (int j = i + 1; j < redFaces.size(); j++) {
                 RedFace redFace2 = redFaces.get(j);
-                if (isCollide(redFace1, redFace2)) {
+                if (isColliding(redFace1, redFace2)) {
                     if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null) {
                         if (redFace1.getState() != RedFaceState.WAITING) {
                             redFace1.startKissing();
@@ -243,7 +247,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     private void checkFireCollision(RedFace redFace) {
         for (AnimatedGif fire : fireGifs) {
-            if (isCollide(redFace, fire)) {
+            if (isColliding(redFace, fire)) {
                 if (redFace.getState() == RedFaceState.FREE || redFace.getState() == RedFaceState.WAITING) {
                     redFace.decreaseLife(20);
                     if (redFace.getLife() == 0) {
@@ -259,14 +263,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }
 
     private void checkAngryFaceCollision(RedFace redFace) {
-        if (isCollide(redFace, angryFace)) {
+        if (isColliding(redFace, angryFace)) {
             redFace.increaseLife(10);
         }
-    }
-
-    private boolean isCollide(AbstractMovableObject redFace1, AbstractMovableObject redFace2) {
-        int sumSize = (redFace1.getSize() + redFace2.getSize()) / 2 + 5;
-        return Utils.distance(redFace1.getLocation(), redFace2.getLocation()) < sumSize;
     }
 
     private void checkWallCollision(RedFace redFace) {

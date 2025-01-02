@@ -35,7 +35,7 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void shutdown();
 
-    void checkCollisions(ImageData imageData);
+    void provideImageData(ImageData imageData);
 
     void registerListener(GuiListener gui);
 

@@ -11,10 +11,7 @@ import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -30,6 +27,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private FlagsConfiguration flagsConfiguration;
     private int counterUpdates;
     private int countdown;
+    private ImageData imageData;
 
     @Override
     public List<Snowflake> getMoveableObjects() {
@@ -42,6 +40,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 this.update();
+                this.checkCollisions();
                 lockSnowflakes.unlock();
             }
             if (flagsConfiguration.getSnowingLevel() == 0) {
@@ -329,41 +328,40 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
 
     @Override
-    public void checkCollisions(ImageData imageData) {
+    public void provideImageData(ImageData imageData) {
+        this.imageData = imageData;
+    }
+
+    private void checkCollisions() {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {
-                    if (isColliding(snowflake, imageData)) {
+                    if (!snowflake.isFreezed()
+                            && snowflake.getLocation().x > drawingSurface.width / 2 - 150
+                            && snowflake.getLocation().x < drawingSurface.width / 2 + 150
+                            && this.isColliding(snowflake, imageData)) {
                         snowflake.freeze();
                     }
                 }
                 lockSnowflakes.unlock();
             }
-        } catch (InterruptedException e) {
+        } catch (
+                InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     private boolean isColliding(Snowflake snowflake, ImageData imageData) {
-        List<RGB> colors = new ArrayList<>();
-        RGB pixelColorRight = GuiUtils.getPixelColor(imageData,
-                (int) snowflake.getLocation().x + snowflake.getSize() / 2,
-                (int) snowflake.getLocation().y
-        );
-        colors.add(pixelColorRight);
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = -2; j < 3; j++) {
-                RGB pixelColorBottom = GuiUtils.getPixelColor(imageData,
-                        (int) snowflake.getLocation().x + j,
-                        (int) snowflake.getLocation().y + snowflake.getSize() / 2 + i
-                );
-                colors.add(pixelColorBottom);
-            }
+        final Set<RGB> colors = new HashSet<>();
+        for (int x = -1; x < 2; x++) {
+            RGB pixelColorBottom = GuiUtils.getPixelColor(
+                    imageData,
+                    (int) snowflake.getLocation().x + x,
+                    (int) snowflake.getLocation().y
+            );
+            colors.add(pixelColorBottom);
         }
-
         return colors.stream().anyMatch(p -> p.equals(GuiUtils.FREEZE_COLOR));
     }
-
 
 }
