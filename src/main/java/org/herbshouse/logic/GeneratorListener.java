@@ -11,8 +11,6 @@ import java.util.List;
 public interface GeneratorListener<T extends AbstractMovableObject> {
     void turnOnHappyWind();
 
-    void turnOffHappyWind();
-
     void freezeMovableObjects();
 
     void switchDebug();
@@ -39,7 +37,8 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void registerListener(GuiListener gui);
 
-    default void turnOffSnowing(){
+    default void turnOffSnowing() {
 
     }
+
 }

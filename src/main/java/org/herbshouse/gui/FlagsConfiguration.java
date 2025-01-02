@@ -6,7 +6,7 @@ import org.herbshouse.logic.Point2D;
 public class FlagsConfiguration {
     public static final int DESIRED_FPS = 60;
 
-    public static final int SLEEP_SNOWFLAKE_GENERATOR = 2;
+    public static final int SLEEP_SNOWFLAKE_GENERATOR = 5;
     public static final int SLEEP_ENEMY_GENERATOR = 2;
     public static final int SLEEP_GENERATOR_DOING_NOTHING = 100;
 
@@ -14,14 +14,15 @@ public class FlagsConfiguration {
     private boolean happyWind;
     private boolean debug;
     private boolean attack;
+    private int attackType = 1;
     private boolean flipImage;
     private boolean bigBalls;
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
-    private boolean enemies = true;
+    private boolean enemies = false;
     private boolean youtube;
 
-    private int snowingLevel = 1;
+    private int snowingLevel = -2;
     private Point2D mouseLoc = new Point2D();
     private Transform transform;
 
@@ -51,6 +52,10 @@ public class FlagsConfiguration {
 
     void switchAttack() {
         this.attack = !attack;
+    }
+
+    void setAttackType(int i) {
+        this.attackType = i;
     }
 
     void switchEnemies() {
@@ -85,8 +90,8 @@ public class FlagsConfiguration {
         return youtube;
     }
 
-    public boolean isAttack() {
-        return attack;
+    public int getAttackType() {
+        return attackType;
     }
 
     public boolean isDebug() {
@@ -133,4 +138,7 @@ public class FlagsConfiguration {
         return enemies;
     }
 
+    public boolean isAttack() {
+        return attack;
+    }
 }

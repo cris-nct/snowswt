@@ -122,11 +122,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }
 
     @Override
-    public void turnOffHappyWind() {
-
-    }
-
-    @Override
     public void freezeMovableObjects() {
 
     }

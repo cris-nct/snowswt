@@ -86,9 +86,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case 'X':
                     case 'x':
-                        if (flagsConfiguration.isHappyWind()) {
-                            listeners.forEach(GeneratorListener::turnOffHappyWind);
-                        } else {
+                        if (!flagsConfiguration.isHappyWind()) {
                             listeners.forEach(GeneratorListener::turnOnHappyWind);
                         }
                         flagsConfiguration.switchHappyWind();
@@ -124,19 +122,24 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case 'a':
                         flagsConfiguration.switchAttack();
                         break;
+                    case '1':
+                    case '2':
+                        int type = Integer.parseInt(String.valueOf(e.character));
+                        flagsConfiguration.setAttackType(type);
+                        break;
                     case 'M':
                     case 'm':
                         flagsConfiguration.switchMercedesSnowflakes();
                         break;
                     case '+':
                         flagsConfiguration.increaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0){
+                        if (flagsConfiguration.getSnowingLevel() == 0) {
                             listeners.forEach(GeneratorListener::turnOffSnowing);
                         }
                         break;
                     case '-':
                         flagsConfiguration.decreaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0){
+                        if (flagsConfiguration.getSnowingLevel() == 0) {
                             listeners.forEach(GeneratorListener::turnOffSnowing);
                         }
                         break;

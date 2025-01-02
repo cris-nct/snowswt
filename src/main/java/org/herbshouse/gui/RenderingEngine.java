@@ -4,6 +4,8 @@ import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RenderingEngine implements Runnable, IDrawCompleteListener {
@@ -12,21 +14,28 @@ public class RenderingEngine implements Runnable, IDrawCompleteListener {
 
     private final AtomicInteger counterFrames = new AtomicInteger(0);
 
-    private long startTimeCounter;
-
     private int realFPS;
+
+    private final Timer timer;
 
     public RenderingEngine(Canvas canvas) {
         this.canvas = canvas;
+        this.timer = new Timer("RederingEngineTimer");
+        this.timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                realFPS = counterFrames.get();
+                counterFrames.set(0);
+            }
+        }, 1000, 1000);
+        this.canvas.addDisposeListener(e -> {
+            timer.cancel();
+            timer.purge();
+        });
     }
 
     @Override
     public void run() {
-        if (System.currentTimeMillis() - startTimeCounter >= 1000) {
-            realFPS = counterFrames.get();
-            startTimeCounter = System.currentTimeMillis();
-            counterFrames.set(0);
-        }
         if (!canvas.isDisposed()) {
             //Equivalent with canvas.redraw() and canvas.update() but more efficient
             OS.RedrawWindow(canvas.handle, null, 0, OS.RDW_INVALIDATE | OS.RDW_UPDATENOW);

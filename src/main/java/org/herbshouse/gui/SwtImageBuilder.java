@@ -4,10 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.logic.AbstractMovableObject;
-import org.herbshouse.logic.GeneratorListener;
-import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.*;
 import org.herbshouse.logic.enemies.AnimatedGif;
 import org.herbshouse.logic.enemies.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
@@ -27,11 +24,10 @@ public class SwtImageBuilder implements AutoCloseable {
 
     private GC gcImage;
     private Image image;
-    private static int alphaMB = 1;
-    private static int alphaMBSign = 1;
     private final FlagsConfiguration config;
     private final UserInfo userInfo;
     private final Rectangle screenArea;
+    private int counterLogo;
 
     SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {
         this.config = config;
@@ -110,7 +106,11 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Flip image(F)", config.isFlipImage());
         this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
         this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
-        this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
+        this.addTextToLegend(legendBuilder, "Attack mode (A)", config.isAttack());
+        if (config.isAttack()) {
+            legendBuilder.append(", type: ");
+            legendBuilder.append(config.getAttackType());
+        }
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
         this.addTextToLegend(legendBuilder, "Enemies(E)", config.isEnemies());
@@ -135,15 +135,10 @@ public class SwtImageBuilder implements AutoCloseable {
         if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
-
-        //Draw MB logo
-        if (alphaMB >= 240 || alphaMB < 30) {
-            alphaMBSign = -alphaMBSign;
-            alphaMB = Math.min(alphaMB, 240);
-            alphaMB = Math.max(alphaMB, 30);
-        }
+        int alphaMB = (int) Utils.linearInterpolation(Math.sin(Math.toRadians((counterLogo += 5) % 360)),
+                -1, 30, 1, 240
+        );
         gcImage.setAlpha(alphaMB);
-        alphaMB = alphaMB + 5 * alphaMBSign;
         Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true);
         gcImage.drawImage(mbImage, 0, 0);
         gcImage.setAlpha(255);
@@ -195,14 +190,6 @@ public class SwtImageBuilder implements AutoCloseable {
                 for (Point2D loc : snowflake.getHistoryLocations()) {
                     GuiUtils.draw(gcImage, snowflake, loc);
                 }
-            }
-            if (config.isAttack() && !snowflake.isFreezed() && snowflakes.size() < 500) {
-                gcImage.drawLine(
-                        (int) snowflake.getLocation().x,
-                        (int) snowflake.getLocation().y,
-                        (int) config.getMouseLoc().x,
-                        (int) config.getMouseLoc().y
-                );
             }
         }
         return this;
