@@ -135,7 +135,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
 
     @Override
     public void mouseDown(MouseEvent mouseEvent) {
-        if (mouseEvent.button == 1 && flagsConfiguration.isEnemies()) {
+        if (mouseEvent.button == 1) {
             AnimatedGif gif = new AnimatedGif("fire-flame.gif", 2, null);
             gif.setLocation(new Point2D(mouseEvent.x, mouseEvent.y));
             gif.setSize(50);
