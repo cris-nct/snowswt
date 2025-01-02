@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.herbshouse</groupId>
+    <groupId>com.herbshouse</groupId>
     <artifactId>SnowSwt</artifactId>
     <version>1.0</version>
 
@@ -13,14 +13,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <swt.version>3.128.0</swt.version>
     </properties>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <dependencies>
 
@@ -160,9 +152,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!--                    <descriptors>-->
-                    <!--                        <descriptor>src/main/assembly/assembly.xml</descriptor>-->
-                    <!--                    </descriptors>-->
+<!--                    <descriptors>-->
+<!--                        <descriptor>src/main/assembly/assembly.xml</descriptor>-->
+<!--                    </descriptors>-->
 
                     <archive>
                         <manifest>
@@ -183,16 +175,5 @@
 
         </plugins>
     </build>
-
-    <scm>
-        <url>https://svn.apache.org/viewvc/maven</url>
-    </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>SnowSwt</id>
-            <url>https://svn.apache.org/viewvc/maven</url>
-        </repository>
-    </distributionManagement>
 
 </project>
