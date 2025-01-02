@@ -45,18 +45,12 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final SwtImageBuilder swtImageBuilder;
     private Region shellRegion;
     private Browser browser;
-    private final List<String> videos = new ArrayList<>();
-    private int videosIndex;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
         this.swtImageBuilder = new SwtImageBuilder(flagsConfiguration, userInfo);
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(Display.getDefault().getBounds());
-
-        this.videos.add(loadResourceAsString("embededChristmasMusic.html"));
-        this.videos.add(loadResourceAsString("embededMusicSensual.html"));
-
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
         this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.FOCUSED);
@@ -127,20 +121,14 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case '-':
                         flagsConfiguration.decreaseSnowingLevel();
                         break;
-                    case 'y':
-                    case 'Y':
-                        flagsConfiguration.switchYoutube();
-                        updateBrowser(flagsConfiguration.isYoutube());
+                    case 'l':
+                    case 'L':
+                        flagsConfiguration.switchMusic();
+                        updateBrowser(flagsConfiguration.isMusic());
                         break;
                     case 'e':
                     case 'E':
                         flagsConfiguration.switchEnemies();
-                        break;
-                    case 'n':
-                    case 'N':
-                        if (browser != null) {
-                            playNext();
-                        }
                         break;
                     case 'q':
                     case 'Q':
@@ -151,8 +139,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         });
     }
 
-    private void updateBrowser(boolean youtubeOn) {
-        if (!youtubeOn) {
+    private void updateBrowser(boolean musicOn) {
+        if (!musicOn) {
             browser.dispose();
             browser = null;
             return;
@@ -164,17 +152,22 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         int locY = (Display.getDefault().getBounds().height - height) / 2 + height;
         browser.setSize(width, height);
         browser.setLocation(locX, locY);
-        this.playNext();
-    }
-
-    private void playNext(){
-        browser.setText(videos.get(videosIndex++ % videos.size()), true);
-        browser.setEnabled(true);
+        try {
+            try (InputStream is = SnowingApplication.class.getClassLoader().getResourceAsStream("embededChristmasMusic.html")) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStreams.copy(is, baos);
+                baos.close();
+                String content = baos.toString(StandardCharsets.UTF_8);
+                browser.setText(content, true);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Display.getDefault().timerExec(1000, () ->
                 {
                     GuiUtils.moveMouseAndClick(
-                            browser.getLocation().x + browser.getSize().x / 2,
-                            browser.getLocation().y + browser.getSize().y / 2,
+                            locX + width / 2,
+                            locY + height / 2,
                             flagsConfiguration.getMouseLocX(),
                             flagsConfiguration.getMouseLocY()
 
@@ -182,19 +175,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     browser.setEnabled(false);
                 }
         );
-    }
-
-    private String loadResourceAsString(String filename){
-        try {
-            try (InputStream is = SnowingApplication.class.getClassLoader().getResourceAsStream(filename)) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ByteStreams.copy(is, baos);
-                baos.close();
-                return baos.toString(StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

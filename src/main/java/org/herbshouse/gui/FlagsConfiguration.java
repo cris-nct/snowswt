@@ -10,7 +10,7 @@ public class FlagsConfiguration {
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
     private boolean enemies = true;
-    private boolean youtube;
+    private boolean music;
 
     private int snowingLevel = 1;
     private int mouseLocX;
@@ -32,8 +32,8 @@ public class FlagsConfiguration {
         this.freezeSnowflakes = !freezeSnowflakes;
     }
 
-    void switchYoutube(){
-        this.youtube = !youtube;
+    void switchMusic(){
+        this.music = !music;
     }
 
     void switchBigBalls() {
@@ -64,8 +64,8 @@ public class FlagsConfiguration {
         this.happyWind = !happyWind;
     }
 
-    public boolean isYoutube() {
-        return youtube;
+    public boolean isMusic() {
+        return music;
     }
 
     public boolean isAttack() {
