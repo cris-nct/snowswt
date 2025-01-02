@@ -87,7 +87,7 @@ public class RedFace extends AbstractEnemy {
         updateLeftPupil();
         updateRightPupil();
 
-        if (kissingGif != null) {
+        if (kissingGif != null){
             updateKissingGif();
         }
     }
@@ -148,16 +148,10 @@ public class RedFace extends AbstractEnemy {
 
     public void setState(RedFaceState newState, int milliseconds) {
         this.state = newState;
-        switch (newState) {
-            case FOLLOW -> setColor(EnemyGenerator.RED_COLOR);
-            case FREE -> setColor(EnemyGenerator.FREE_MOVE_COLOR);
-            case WAITING -> setColor(EnemyGenerator.INACTIVE_COLOR);
-        }
         if (milliseconds > 0) {
             this.registerTimer(new ActionTimer(milliseconds) {
                 @Override
                 public void afterEnd() {
-                    setColor(EnemyGenerator.RED_COLOR);
                     state = RedFaceState.FOLLOW;
                 }
             });

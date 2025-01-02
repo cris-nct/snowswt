@@ -43,9 +43,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 startTime = System.currentTimeMillis();
                 for (RedFace redFace : redFaces) {
                     redFace.checkTimers();
-                    if (flagsConfiguration.isAttack()){
-                        redFace.setState(RedFaceState.FOLLOW, -1);
-                    }
                     if (redFace.getKissingGif() == null) {
                         redFace.decreaseLife(1);
                     } else {
@@ -80,11 +77,15 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 switch (redFace.getState()){
                     case FOLLOW -> {
                         redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
+                        redFace.setColor(RED_COLOR);
                         redFace.move();
                     }
+                    case WAITING -> redFace.setColor(INACTIVE_COLOR);
                     case FREE -> {
+                        redFace.setColor(FREE_MOVE_COLOR);
                         redFace.move();
                     }
+
                 }
             } else {
                 if (redFace.getState() != RedFaceState.WAITING) {
@@ -171,6 +172,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         redFace.setLocation(new Point2D(screenBounds.width - size - 10, screenBounds.height - size - 10));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
+        redFace.setColor(RED_COLOR);
         redFace.setSpeed(3);
         redFace.setDirection(Math.toRadians(190));
         redFace.setState(RedFaceState.FREE, 10000);
@@ -230,10 +232,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         for (AnimatedGif fire : fireGifs) {
             if (isCollide(redFace, fire)) {
                 if (redFace.getState() == RedFaceState.FREE || redFace.getState() == RedFaceState.WAITING) {
-                    redFace.decreaseLife(20);
-                    if (redFace.getLife() == 0){
-                        redFaces.remove(redFace);
-                    }
+                    redFaces.remove(redFace);
                 } else {
                     redFace.setState(RedFaceState.FREE, 5000);
                 }
