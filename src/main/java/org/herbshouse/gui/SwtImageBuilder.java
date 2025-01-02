@@ -126,8 +126,7 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Your points", userInfo.getPoints());
         legendBuilder.append("\n-------\n");
         legendBuilder.append("Fire(left button)\n");
-        legendBuilder.append("Reset simulation(R)\n");
-        legendBuilder.append("Exit(Q)");
+        legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), originalGC.getClipping().width - 240, 10, true);
         return this;
     }
@@ -162,7 +161,7 @@ public class SwtImageBuilder implements AutoCloseable {
                 GuiUtils.drawRedFace(gcImage, redFace);
             } else if (obj instanceof AnimatedGif animatedGif) {
                 Image img = SWTResourceManager.getGif(SnowingApplication.class,
-                        animatedGif.getFilename(),
+                        "../../" + animatedGif.getFilename(),
                         animatedGif.getImageIndex(),
                         obj.getSize(),
                         obj.getSize(),

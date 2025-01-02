@@ -238,7 +238,7 @@ public class SWTResourceManager {
                     disposeImages();
                 }
                 ImageLoader loader = new ImageLoader();
-                ImageData[] imageDataArray = loader.load(clazz.getClassLoader().getResourceAsStream(path));
+                ImageData[] imageDataArray = loader.load(clazz.getResourceAsStream(path));
                 ImageData imageData = imageDataArray[phase % imageDataArray.length].scaledTo(scaleX, scaleY);
                 if (removeBackground != null) {
                     for (int x = 0; x < imageData.width; x++) {
@@ -284,7 +284,7 @@ public class SWTResourceManager {
                     disposeImages();
                 }
 
-                image = getImage(clazz.getClassLoader().getResourceAsStream(path));
+                image = getImage(clazz.getResourceAsStream(path));
                 imageMap.put(key, image);
 
             } catch (Exception e) {
