@@ -41,48 +41,45 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         this.initialAnimation();
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
-                this.update();
+                if (!flagsConfiguration.isDebug()) {
+                    if (flagsConfiguration.getSnowingLevel() > 0) {
+                        for (int i = 0; i < flagsConfiguration.getSnowingLevel(); i++) {
+                            this.generateNewSnowflake();
+                        }
+                    } else if (flagsConfiguration.getSnowingLevel() < 0) {
+                        counterUpdates++;
+                        if (counterUpdates >= -flagsConfiguration.getSnowingLevel()) {
+                            this.generateNewSnowflake();
+                            counterUpdates = 0;
+                        }
+                    }
+                }
+
+                //Move all snowflakes
+                for (Snowflake snowflake : snowflakes) {
+                    if (snowflake.isFreezed()) {
+                        continue;
+                    }
+                    this.move(snowflake);
+                    if (snowflake.getLocation().y > drawingSurface.height) {
+                        toRemove.add(snowflake);
+                    }
+                }
+                if (toRemove.size() > 100) {
+                    if (flagsConfiguration.isHappyWind()) {
+                        toRemove.forEach(happyWindSnowData::remove);
+                    }
+                    snowflakes.removeAll(toRemove);
+                    toRemove.clear();
+                }
                 lockSnowflakes.unlock();
             }
+
             if (flagsConfiguration.getSnowingLevel() == 0) {
-                Utils.sleep(FlagsConfiguration.SLEEP_GENERATOR_DOING_NOTHING);
+                Utils.sleep(1000);
             } else {
-                Utils.sleep(FlagsConfiguration.SLEEP_SNOWFLAKE_GENERATOR);
+                Utils.sleep(5);
             }
-        }
-    }
-
-    private void update() {
-        if (!flagsConfiguration.isDebug()) {
-            if (flagsConfiguration.getSnowingLevel() > 0) {
-                for (int i = 0; i < flagsConfiguration.getSnowingLevel(); i++) {
-                    this.generateNewSnowflake();
-                }
-            } else if (flagsConfiguration.getSnowingLevel() < 0) {
-                counterUpdates++;
-                if (counterUpdates >= -flagsConfiguration.getSnowingLevel()) {
-                    this.generateNewSnowflake();
-                    counterUpdates = 0;
-                }
-            }
-        }
-
-        //Move all snowflakes
-        for (Snowflake snowflake : snowflakes) {
-            if (snowflake.isFreezed()) {
-                continue;
-            }
-            this.move(snowflake);
-            if (snowflake.getLocation().y > drawingSurface.height) {
-                toRemove.add(snowflake);
-            }
-        }
-        if (toRemove.size() > 100) {
-            if (flagsConfiguration.isHappyWind()) {
-                toRemove.forEach(happyWindSnowData::remove);
-            }
-            snowflakes.removeAll(toRemove);
-            toRemove.clear();
         }
     }
 
@@ -311,21 +308,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     @Override
     public void shutdown() {
         shutdown = true;
-    }
-
-    @Override
-    public void turnOffSnowing() {
-        try {
-            if (countdown == -1) {
-                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-                    snowflakes.clear();
-                    happyWindSnowData.clear();
-                    lockSnowflakes.unlock();
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

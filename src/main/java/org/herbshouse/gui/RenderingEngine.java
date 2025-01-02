@@ -1,36 +1,39 @@
 package org.herbshouse.gui;
 
-import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class RenderingEngine implements Runnable, IDrawCompleteListener {
+
+    public static final int FPS = 25;
 
     private final Canvas canvas;
 
-    private final AtomicInteger counterFrames = new AtomicInteger(0);
+    private int counterFrames;
 
     private long startTimeCounter;
 
+    private final SnowShell shell;
+
     private int realFPS;
 
-    public RenderingEngine(Canvas canvas) {
+    public RenderingEngine(SnowShell shell, Canvas canvas) {
+        this.shell = shell;
         this.canvas = canvas;
+        this.shell.registerListener(this);
     }
 
     @Override
     public void run() {
         if (System.currentTimeMillis() - startTimeCounter >= 1000) {
-            realFPS = counterFrames.get();
+            realFPS = counterFrames;
             startTimeCounter = System.currentTimeMillis();
-            counterFrames.set(0);
+            counterFrames = 0;
         }
-        //Equivalent with canvas.redraw() and canvas.update() but more efficient
-        OS.RedrawWindow(canvas.handle, null, 0, OS.RDW_INVALIDATE | OS.RDW_UPDATENOW);
+        canvas.redraw();
+        canvas.update();
         if (!canvas.isDisposed()) {
-            Display.getDefault().timerExec(1000 / FlagsConfiguration.DESIRED_FPS, this);
+            Display.getDefault().timerExec(1000 / FPS, this);
         }
     }
 
@@ -39,8 +42,8 @@ public class RenderingEngine implements Runnable, IDrawCompleteListener {
     }
 
     @Override
-    public void drawCompleted() {
-        counterFrames.incrementAndGet();
+    public void complete() {
+        counterFrames++;
     }
 
 }

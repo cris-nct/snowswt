@@ -15,6 +15,7 @@ import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.enemies.AbstractEnemy;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
@@ -130,15 +131,9 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case '+':
                         flagsConfiguration.increaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0){
-                            listeners.forEach(GeneratorListener::turnOffSnowing);
-                        }
                         break;
                     case '-':
                         flagsConfiguration.decreaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0){
-                            listeners.forEach(GeneratorListener::turnOffSnowing);
-                        }
                         break;
                     case 'y':
                     case 'Y':
@@ -163,8 +158,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             }
         });
 
-        this.renderingEngine = new RenderingEngine(canvas);
-        this.registerListener(renderingEngine);
+        this.renderingEngine = new RenderingEngine(this, canvas);
 
         this.addDisposeListener(e -> {
             for (Transform transform : transforms) {
@@ -266,7 +260,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         GC gc = paintEvent.gc;
-        try (var imageBuilder = swtImageBuilder.drawBaseElements()) {
+        try (var imageBuilder = swtImageBuilder.drawBaseElements(gc)) {
             //Draw objects from each listener
             for (GeneratorListener<? extends AbstractMovableObject> listener : listeners) {
                 if (listener instanceof SnowGenerator) {
@@ -276,16 +270,17 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     imageBuilder.drawCountDown(generatorListener);
                 } else if (listener instanceof EnemyGenerator) {
                     //noinspection unchecked
-                    imageBuilder.drawEnemies((GeneratorListener<AbstractMovableObject>) listener);
+                    imageBuilder.drawEnemies((GeneratorListener<AbstractEnemy>) listener);
                 }
             }
 
-            imageBuilder.addLegend(this.renderingEngine.getRealFPS());
-            imageBuilder.addLogo();
-            imageBuilder.addMinimap();
-            Image image = imageBuilder.build();
+            Image image = imageBuilder.addLegend(this.renderingEngine.getRealFPS()).addLogo().build();
             ImageData imageData = image.getImageData();
             gc.drawImage(image, 0, 0);
+
+            //Draw minimap
+            gc.setTransform(flagsConfiguration.getTransform());
+            this.drawMinimap(gc, image, imageData);
 
             //Check collisions for snowflakes and notify listeners
             for (GeneratorListener<?> generatorListener : listeners) {
@@ -293,7 +288,20 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             }
         }
 
-        drawCompleteListeners.forEach(IDrawCompleteListener::drawCompleted);
+        drawCompleteListeners.forEach(IDrawCompleteListener::complete);
+    }
+
+    private void drawMinimap(GC gc, Image image, ImageData imageData) {
+        //Draw minimap
+        double aspRatio = (double) imageData.width / imageData.height;
+        int heightMinimap = 200;
+        int widthMinimap = (int) (heightMinimap * aspRatio);
+        gc.setAlpha(180);
+        gc.drawImage(image, 0, 0, imageData.width, imageData.height,
+                0, imageData.height - heightMinimap, widthMinimap, heightMinimap);
+        gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gc.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
+        gc.setAlpha(255);
     }
 
     @Override
