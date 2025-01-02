@@ -50,7 +50,10 @@ public class SwtImageBuilder implements AutoCloseable {
 //        gcImage.setAdvanced(true);
 //        gcImage.setAntialias(SWT.DEFAULT);
         gcImage.setTextAntialias(SWT.ON);
-        gcImage.setTransform(config.getTransform());
+
+        if (config.isFlipImage()) {
+            gcImage.setTransform(config.getTransform());
+        }
 
         //Draw background
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
