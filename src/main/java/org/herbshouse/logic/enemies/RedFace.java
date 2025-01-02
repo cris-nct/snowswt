@@ -1,13 +1,9 @@
 package org.herbshouse.logic.enemies;
 
-import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class RedFace extends AbstractMovableObject {
+public class RedFace extends AbstractEnemy {
     private double direction;
 
     private Point2D eyesSize;
@@ -29,12 +25,6 @@ public class RedFace extends AbstractMovableObject {
     private AnimatedGif kissingGif;
 
     private RedFaceState state;
-
-    private final Timer timer;
-
-    public RedFace() {
-        timer = new Timer("RedFace" + System.currentTimeMillis());
-    }
 
     @Override
     public void setSize(int size) {
@@ -164,13 +154,13 @@ public class RedFace extends AbstractMovableObject {
             case WAITING -> setColor(EnemyGenerator.INACTIVE_COLOR);
         }
         if (milliseconds > 0) {
-            timer.schedule(new TimerTask() {
+            this.registerTimer(new ActionTimer(milliseconds) {
                 @Override
-                public void run() {
+                public void afterEnd() {
                     setColor(EnemyGenerator.RED_COLOR);
                     state = RedFaceState.FOLLOW;
                 }
-            }, milliseconds);
+            });
         }
     }
 
@@ -188,10 +178,5 @@ public class RedFace extends AbstractMovableObject {
 
     public void decreaseLife(int life) {
         this.life = Math.max(this.life - life, 0);
-    }
-
-    public void stopTimer() {
-        timer.cancel();
-        timer.purge();
     }
 }

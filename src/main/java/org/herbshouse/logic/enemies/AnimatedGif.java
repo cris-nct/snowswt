@@ -1,9 +1,8 @@
 package org.herbshouse.logic.enemies;
 
 import org.eclipse.swt.graphics.RGB;
-import org.herbshouse.logic.AbstractMovableObject;
 
-public class AnimatedGif extends AbstractMovableObject {
+public class AnimatedGif extends AbstractEnemy {
 
     private double imageIndex;
 

@@ -38,8 +38,4 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
     void checkCollisions(ImageData imageData);
 
     void registerListener(GuiListener gui);
-
-    default void turnOffSnowing(){
-
-    }
 }
