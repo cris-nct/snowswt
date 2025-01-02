@@ -28,8 +28,6 @@ public class RedFace extends AbstractEnemy {
 
     private int freeMovementFor = 0;
 
-    private int life = 60;
-
     @Override
     public void setSize(int size) {
         super.setSize(size);
@@ -47,8 +45,8 @@ public class RedFace extends AbstractEnemy {
         update();
     }
 
-    public void move() {
-        this.setLocation(Utils.moveToDirection(getLocation(), getSpeed(), direction));
+    public void move(double offset) {
+        this.setLocation(Utils.moveToDirection(getLocation(), getSpeed() + offset, direction));
     }
 
     public void update() {
@@ -157,19 +155,4 @@ public class RedFace extends AbstractEnemy {
         return freeMove;
     }
 
-    public int getLife() {
-        return life;
-    }
-
-    public void setLife(int life) {
-        this.life = life;
-    }
-
-    public void increaseLife(int life) {
-        this.life += life;
-    }
-
-    public void decreaseLife(int life) {
-        this.life = Math.max(this.life - life, 0);
-    }
 }

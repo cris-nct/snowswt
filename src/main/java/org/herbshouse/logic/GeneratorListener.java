@@ -4,7 +4,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
-import org.herbshouse.gui.GuiListener;
 
 import java.util.List;
 
@@ -37,5 +36,4 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void checkCollisions(ImageData imageData);
 
-    void registerListener(GuiListener gui);
 }

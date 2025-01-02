@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
-import org.herbshouse.logic.AbstractGenerator;
+import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
+public class EnemyGenerator extends Thread implements GeneratorListener<AbstractEnemy> {
     private static final int ANGRY_FACE_SIZE = 150;
     private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     public static final RGB RED_COLOR = new RGB(180, 0, 0);
@@ -28,18 +28,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     private boolean shutdown = false;
     private Point2D mouseLocation;
     private long counterFrames;
-    private long startTime;
 
     public void run() {
-        startTime = System.currentTimeMillis();
         while (!shutdown) {
-            if (System.currentTimeMillis() - startTime > 1000){
-                startTime = System.currentTimeMillis();
-                for (RedFace redFace : redFaces) {
-                    redFace.decreaseLife(1);
-                }
-            }
-
             this.move();
             Utils.sleep(10);
         }
@@ -51,13 +42,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             generateRedFace();
         }
         for (RedFace redFace : redFaces) {
-            if (redFace.getLife() == 0 ){
-                substractAreaFromShell(
-                        Utils.generateCircle(redFace.getLocation(), redFace.getSize()/2.0d, redFace.getSize(), 0)
-                );
-                redFaces.remove(redFace);
-                continue;
-            }
             if (Utils.distance(redFace.getLocation(), mouseLocation) > 10) {
                 if (!redFace.isFreeMovement()) {
                     redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), mouseLocation));
@@ -66,10 +50,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                     redFace.setColor(INACTIVE_COLOR);
                 } else if (redFace.isFreeMovement()) {
                     redFace.setColor(FREE_MOVE_COLOR);
-                    redFace.move();
+                    redFace.move(0);
                 } else {
                     redFace.setColor(RED_COLOR);
-                    redFace.move();
+                    redFace.move(0);
                 }
                 fireGif = null;
             } else {
@@ -122,7 +106,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     public void reset() {
         this.redFaces.clear();
         this.generateRedFace();
-        resetShellSurface();
     }
 
     @Override
@@ -144,7 +127,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         int size = 50 + (int) (Math.random() * 100);
         redFace.setLocation(new Point2D(screenBounds.width - size - 10, screenBounds.height - size - 10));
         redFace.setSize(size);
-        redFace.setLife((int)Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setColor(RED_COLOR);
         redFace.setSpeed(3);
         redFace.setDirection(Math.toRadians(190));
@@ -176,7 +158,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             //Check collision with walls
             RedFace redFace1 = redFaces.get(i);
             this.checkWallCollision(redFace1);
-            this.checkAngryFaceCollision(redFace1);
             for (int j = i + 1; j < redFaces.size(); j++) {
                 RedFace redFace2 = redFaces.get(j);
                 if (isCollide(redFace1, redFace2)) {
@@ -189,13 +170,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         }
     }
 
-    private void checkAngryFaceCollision(RedFace redFace) {
-        if (isCollide(redFace, angryFace)) {
-            redFace.increaseLife(10);
-        }
-    }
-
-    private boolean isCollide(AbstractEnemy redFace1, AbstractEnemy redFace2) {
+    private boolean isCollide(RedFace redFace1, RedFace redFace2) {
         int sumSize = (redFace1.getSize() + redFace2.getSize()) / 2 + 5;
         return Utils.distance(redFace1.getLocation(), redFace2.getLocation()) < sumSize;
     }
