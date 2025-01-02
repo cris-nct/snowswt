@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <servers>
+        <server>
+            <id>github</id>
+            <username>crisnct</username>
+            <password>SESITIVE/password>
+        </server>
+    </servers>
+
+    <mirrors>
+        <mirror>
+            <id>netbeans-http-unblocker</id>
+            <mirrorOf>external:http:*</mirrorOf>
+            <name>netbeans-http-unblocker</name>
+            <url>http://netbeans.apidesign.org/maven2/</url>
+            <blocked>false</blocked>
+        </mirror>
+
+        <mirror>
+            <id>nattable-releases</id>
+            <mirrorOf>external:http:*</mirrorOf>
+            <name>nattable-releases</name>
+            <url>http://repo.eclipse.org/content/repositories/nattable-releases/</url>
+            <blocked>false</blocked>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+
+            <pluginRepositories>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                </pluginRepository>
+            </pluginRepositories>
+
+            <id>artifactory-maven-central</id>
+        </profile>
+
+        <profile>
+            <id>github</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                </repository>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/crisnct/snowswt</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>github</activeProfile>
+
+    </activeProfiles>
+
+</settings>
