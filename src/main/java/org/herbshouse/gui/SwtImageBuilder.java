@@ -1,10 +1,7 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.GeneratorListener;
@@ -28,7 +25,9 @@ import java.util.List;
 public class SwtImageBuilder implements AutoCloseable {
     public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
 
+    private GC originalGC;
     private GC gcImage;
+    private Transform transform;
     private Image image;
     private static int alphaMB = 1;
     private static int alphaMBSign = 1;
@@ -44,7 +43,8 @@ public class SwtImageBuilder implements AutoCloseable {
         if (gcImage != null){
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
-        Rectangle totalArea = Display.getDefault().getBounds();
+        this.originalGC = gc;
+        Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
 //        gcImage.setAdvanced(true);
@@ -52,7 +52,10 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setTextAntialias(SWT.ON);
 
         if (config.isFlipImage()) {
-            gcImage.setTransform(config.getTransform());
+            transform = new Transform(Display.getDefault());
+            transform.scale(1, -1);
+            transform.translate(0, -totalArea.height);
+            gcImage.setTransform(transform);
         }
 
         //Draw background
@@ -75,8 +78,9 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
         Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
-        gcImage.drawText(TEXT_MIDDLE_SCREEN, (Display.getDefault().getBounds().width - textSize.x) / 2,
-                (Display.getDefault().getBounds().height - textSize.y) / 2, true);
+        Rectangle drawingSurface = gcImage.getClipping();
+        gcImage.drawText(TEXT_MIDDLE_SCREEN, (drawingSurface.width - textSize.x) / 2,
+                (drawingSurface.height - textSize.y) / 2, true);
     }
 
     public void drawCountDown(GeneratorListener<Snowflake> generatorListener) {
@@ -84,7 +88,7 @@ public class SwtImageBuilder implements AutoCloseable {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         //Draw countdown
-        Rectangle drawingSurface = Display.getDefault().getBounds();
+        Rectangle drawingSurface = gcImage.getClipping();
         if (generatorListener.getCountdown() >= 0) {
             if (generatorListener.getCountdown() >= 4) {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -127,7 +131,7 @@ public class SwtImageBuilder implements AutoCloseable {
         legendBuilder.append("Fire(left button)\n");
         legendBuilder.append("Reset simulation(R)\n");
         legendBuilder.append("Exit(Q)");
-        gcImage.drawText(legendBuilder.toString(), Display.getDefault().getBounds().width - 240, 10, true);
+        gcImage.drawText(legendBuilder.toString(), originalGC.getClipping().width - 240, 10, true);
         return this;
     }
 
@@ -200,8 +204,8 @@ public class SwtImageBuilder implements AutoCloseable {
                 gcImage.drawLine(
                         (int) snowflake.getLocation().x,
                         (int) snowflake.getLocation().y,
-                        (int)config.getMouseLoc().x,
-                        (int)config.getMouseLoc().y
+                        config.getMouseLocX(),
+                        config.getMouseLocY()
                 );
             }
         }
@@ -228,9 +232,14 @@ public class SwtImageBuilder implements AutoCloseable {
 
     @Override
     public void close() {
+        if (transform != null) {
+            transform.dispose();
+            transform = null;
+        }
         gcImage.dispose();
         image.dispose();
         gcImage = null;
+        originalGC = null;
         image = null;
     }
 

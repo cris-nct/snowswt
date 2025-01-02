@@ -1,8 +1,5 @@
 package org.herbshouse.gui;
 
-import org.eclipse.swt.graphics.Transform;
-import org.herbshouse.logic.Point2D;
-
 public class FlagsConfiguration {
     private boolean normalWind;
     private boolean happyWind;
@@ -16,8 +13,8 @@ public class FlagsConfiguration {
     private boolean youtube;
 
     private int snowingLevel = 1;
-    private Point2D mouseLoc = new Point2D();
-    private Transform transform;
+    private int mouseLocX;
+    private int mouseLocY;
 
     void increaseSnowingLevel() {
         this.snowingLevel++;
@@ -57,14 +54,6 @@ public class FlagsConfiguration {
 
     void switchFlipImage() {
         this.flipImage = !flipImage;
-    }
-
-    void setTransform(Transform transform) {
-        this.transform = transform;
-    }
-
-    public Transform getTransform() {
-        return transform;
     }
 
     void switchNormalWind() {
@@ -115,12 +104,17 @@ public class FlagsConfiguration {
         return snowingLevel;
     }
 
-    public void setMouseCurrentLocation(Point2D mouseLoc) {
-        this.mouseLoc = mouseLoc;
+    public void setMouseCurrentLocation(int mouselocX, int mouseLocY) {
+        this.mouseLocX = mouselocX;
+        this.mouseLocY = mouseLocY;
     }
 
-    public Point2D getMouseLoc() {
-        return mouseLoc;
+    public int getMouseLocX() {
+        return mouseLocX;
+    }
+
+    public int getMouseLocY() {
+        return mouseLocY;
     }
 
     public boolean isEnemies() {
