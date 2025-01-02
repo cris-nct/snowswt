@@ -184,12 +184,15 @@
         </plugins>
     </build>
 
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>github</id>-->
-<!--            <name>Cristian Tone</name>-->
-<!--            <url>https://maven.pkg.github.com/crisnct/snowswt</url>-->
-<!--        </repository>-->
-<!--    </distributionManagement>-->
+    <scm>
+        <url>https://svn.apache.org/viewvc/maven</url>
+    </scm>
 
- </project>
+    <distributionManagement>
+        <repository>
+            <id>SnowSwt</id>
+            <url>https://svn.apache.org/viewvc/maven</url>
+        </repository>
+    </distributionManagement>
+
+</project>
