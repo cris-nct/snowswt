@@ -173,6 +173,9 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                 }
             }
             transforms.clear();
+            if (!shellRegion.isDisposed()) {
+                shellRegion.dispose();
+            }
         });
     }
 

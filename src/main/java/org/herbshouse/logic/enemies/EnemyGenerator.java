@@ -27,7 +27,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private Rectangle screenBounds;
     private boolean shutdown = false;
     private final UserInfo userInfo;
-    private final Timer timer = new Timer("EnemiesTimer");
+    private Timer timer;
 
     public EnemyGenerator(UserInfo userInfo) {
         super();
@@ -36,6 +36,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     @Override
     public void run() {
+        timer = new Timer("EnemiesTimer");
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -71,15 +72,12 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
                 this.checkCollisions();
                 Utils.sleep(FlagsConfiguration.SLEEP_ENEMY_GENERATOR);
             } else {
-                redFaces.clear();
-                fireGifs.clear();
+                this.cleanup();
                 Utils.sleep(FlagsConfiguration.SLEEP_GENERATOR_DOING_NOTHING);
             }
         }
 
-        for (RedFace redFace : redFaces) {
-            redFace.stopTimer();
-        }
+        this.cleanup();
         timer.cancel();
         timer.purge();
     }
@@ -163,9 +161,17 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     @Override
     public void reset() {
-        this.redFaces.clear();
+        cleanup();
         this.generateRedFace();
         resetShellSurface();
+    }
+
+    private void cleanup(){
+        for (RedFace redFace : redFaces) {
+            redFace.stopTimer();
+        }
+        this.redFaces.clear();
+        this.fireGifs.clear();
     }
 
     @Override

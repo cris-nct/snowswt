@@ -33,7 +33,7 @@ public class RedFace extends AbstractMovableObject {
     private final Timer timer;
 
     public RedFace() {
-        timer = new Timer("RedFace" + System.currentTimeMillis());
+        timer = new Timer("RedFaceTimer" + System.currentTimeMillis());
     }
 
     @Override

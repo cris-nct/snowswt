@@ -27,9 +27,9 @@ public class RenderingEngine implements Runnable, IDrawCompleteListener {
             startTimeCounter = System.currentTimeMillis();
             counterFrames.set(0);
         }
-        //Equivalent with canvas.redraw() and canvas.update() but more efficient
-        OS.RedrawWindow(canvas.handle, null, 0, OS.RDW_INVALIDATE | OS.RDW_UPDATENOW);
         if (!canvas.isDisposed()) {
+            //Equivalent with canvas.redraw() and canvas.update() but more efficient
+            OS.RedrawWindow(canvas.handle, null, 0, OS.RDW_INVALIDATE | OS.RDW_UPDATENOW);
             Display.getDefault().timerExec(1000 / FlagsConfiguration.DESIRED_FPS, this);
         }
     }
