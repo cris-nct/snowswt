@@ -39,31 +39,26 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     public void run() {
         long startTime = System.currentTimeMillis();
         while (!shutdown) {
-            if (flagsConfiguration.isEnemies()) {
-                if (System.currentTimeMillis() - startTime > 1000) {
-                    startTime = System.currentTimeMillis();
-                    for (RedFace redFace : redFaces) {
-                        redFace.checkTimers();
-                        if (flagsConfiguration.isAttack()) {
-                            redFace.setState(RedFaceState.FOLLOW, -1);
-                        }
-                        if (redFace.getKissingGif() == null) {
-                            redFace.decreaseLife(1);
-                        } else {
-                            switch (redFace.getState()) {
-                                case FOLLOW -> userInfo.decreasePoints(1);
-                                case FREE -> userInfo.increasePoints(1);
-                            }
+            if (System.currentTimeMillis() - startTime > 1000) {
+                startTime = System.currentTimeMillis();
+                for (RedFace redFace : redFaces) {
+                    redFace.checkTimers();
+                    if (flagsConfiguration.isAttack()){
+                        redFace.setState(RedFaceState.FOLLOW, -1);
+                    }
+                    if (redFace.getKissingGif() == null) {
+                        redFace.decreaseLife(1);
+                    } else {
+                        switch (redFace.getState()) {
+                            case FOLLOW -> userInfo.decreasePoints(1);
+                            case FREE -> userInfo.increasePoints(1);
                         }
                     }
                 }
-                this.move();
-                Utils.sleep(10);
-            } else {
-                redFaces.clear();
-                fireGifs.clear();
-                Utils.sleep(1000);
             }
+
+            this.move();
+            Utils.sleep(10);
         }
     }
 
@@ -192,7 +187,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                 enemies.add(redFace.getKissingGif());
             }
         }
-        if (angryFace != null && flagsConfiguration.isEnemies()) {
+        if (angryFace != null) {
             enemies.add(angryFace);
         }
         enemies.addAll(fireGifs);

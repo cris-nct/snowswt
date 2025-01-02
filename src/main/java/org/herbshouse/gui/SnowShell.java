@@ -125,10 +125,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         flagsConfiguration.switchMusic();
                         updateBrowser(flagsConfiguration.isMusic());
                         break;
-                    case 'e':
-                    case 'E':
-                        flagsConfiguration.switchEnemies();
-                        break;
                 }
             }
         });

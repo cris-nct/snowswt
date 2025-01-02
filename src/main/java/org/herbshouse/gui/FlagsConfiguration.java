@@ -9,9 +9,7 @@ public class FlagsConfiguration {
     private boolean bigBalls;
     private boolean freezeSnowflakes;
     private boolean mercedesSnowflakes;
-    private boolean enemies = true;
     private boolean music;
-
     private int snowingLevel = 1;
     private int mouseLocX;
     private int mouseLocY;
@@ -42,10 +40,6 @@ public class FlagsConfiguration {
 
     void switchAttack() {
         this.attack = !attack;
-    }
-
-    void switchEnemies() {
-        this.enemies = !enemies;
     }
 
     void switchDebug() {
@@ -115,9 +109,5 @@ public class FlagsConfiguration {
 
     public int getMouseLocY() {
         return mouseLocY;
-    }
-
-    public boolean isEnemies() {
-        return enemies;
     }
 }
