@@ -221,7 +221,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                         }
                     } else {
                         redFace1.setDirection(redFace1.getDirection() + Math.PI);
-                        redFace1.setState(RedFaceState.WAITING, 5000);
+                        redFace1.setState(RedFaceState.WAITING, 1000 + (int) (Math.random() * 5000));
                     }
                 }
             }

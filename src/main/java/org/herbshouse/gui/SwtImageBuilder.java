@@ -1,7 +1,10 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.GeneratorListener;
@@ -93,7 +96,7 @@ public class SwtImageBuilder implements AutoCloseable {
         }
     }
 
-    public SwtImageBuilder addLegend(int realFPS) {
+    public SwtImageBuilder addLegend() {
         if (gcImage == null){
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
@@ -120,10 +123,7 @@ public class SwtImageBuilder implements AutoCloseable {
         legendBuilder.append("\n-------\n");
         legendBuilder.append("Fire(left button)\n");
         legendBuilder.append("Reset simulation(R)\n");
-        legendBuilder.append("-------");
-        this.addTextToLegend(legendBuilder, "Desired FPS", RenderingEngine.FPS);
-        this.addTextToLegend(legendBuilder, "Real FPS", realFPS);
-        legendBuilder.append("\nExit(Q)");
+        legendBuilder.append("Exit(Q)");
         gcImage.drawText(legendBuilder.toString(), Display.getDefault().getBounds().width - 240, 10, true);
         return this;
     }
