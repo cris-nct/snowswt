@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.Point2D;
@@ -113,33 +112,5 @@ public final class GuiUtils {
         return Math.abs(color1.red - color2.red) <= eps
                 && Math.abs(color1.green - color2.green) <= eps
                 && Math.abs(color1.blue - color2.blue) <= eps;
-    }
-
-    public static void moveMouseAndClick(int locX, int locY, int origLocX, int origLocY) {
-        Event mouseMoveEvent = new Event();
-        mouseMoveEvent.type = SWT.MouseMove;
-        mouseMoveEvent.x = locX;
-        mouseMoveEvent.y = locY;
-        mouseMoveEvent.doit = true;
-        Display.getDefault().post(mouseMoveEvent);
-
-        Event mouseClick1 = new Event();
-        mouseClick1.type = SWT.MouseDown;
-        mouseClick1.button = 1;
-        mouseClick1.doit = true;
-        Display.getDefault().post(mouseClick1);
-
-        Event mouseClick2 = new Event();
-        mouseClick2.type = SWT.MouseUp;
-        mouseClick2.button = 1;
-        mouseClick2.doit = true;
-        Display.getDefault().post(mouseClick2);
-
-        Event moveToOrig = new Event();
-        moveToOrig.type = SWT.MouseMove;
-        moveToOrig.x = origLocX;
-        moveToOrig.y = origLocY;
-        moveToOrig.doit = true;
-        Display.getDefault().post(moveToOrig);
     }
 }

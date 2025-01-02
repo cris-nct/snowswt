@@ -2,7 +2,6 @@ package org.herbshouse.gui;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -12,7 +11,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
@@ -22,10 +20,6 @@ import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +37,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
     private final SwtImageBuilder swtImageBuilder;
     private Region shellRegion;
-    private Browser browser;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
@@ -53,7 +46,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.setFullScreen(true);
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
-        this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.FOCUSED);
+        this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
         this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
@@ -120,48 +113,9 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case '-':
                         flagsConfiguration.decreaseSnowingLevel();
                         break;
-                    case 'l':
-                    case 'L':
-                        flagsConfiguration.switchMusic();
-                        updateBrowser(flagsConfiguration.isMusic());
-                        break;
                 }
             }
         });
-    }
-
-    private void updateBrowser(boolean musicOn) {
-        if (!musicOn) {
-            browser.dispose();
-            browser = null;
-            return;
-        }
-        browser = new Browser(canvas, SWT.EDGE | SWT.NO_FOCUS);
-        int width = 400;
-        int height = (int) (width / 1.77);
-        int locX = (Display.getDefault().getBounds().width - width) / 2;
-        int locY = (Display.getDefault().getBounds().height - height) / 2 + height;
-        browser.setSize(width, height);
-        browser.setLocation(locX, locY);
-        try {
-            File file = new File(SnowingApplication.class.getResource("../../embededChristmasMusic.html").getFile());
-            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-            browser.setText(content, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Display.getDefault().timerExec(1000, () ->
-                {
-                    GuiUtils.moveMouseAndClick(
-                            locX + width / 2,
-                            locY + height / 2,
-                            flagsConfiguration.getMouseLocX(),
-                            flagsConfiguration.getMouseLocY()
-
-                    );
-                    browser.setEnabled(false);
-                }
-        );
     }
 
     @Override
