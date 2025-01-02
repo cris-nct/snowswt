@@ -1,4 +1,4 @@
-package org.herbshouse.logic.enemies;
+package org.herbshouse.logic.redface;
 
 import org.eclipse.swt.graphics.RGB;
 

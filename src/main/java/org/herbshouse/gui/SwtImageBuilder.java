@@ -6,10 +6,9 @@ import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.UserInfo;
-import org.herbshouse.logic.enemies.AbstractEnemy;
-import org.herbshouse.logic.enemies.AnimatedGif;
-import org.herbshouse.logic.enemies.RedFace;
+import org.herbshouse.logic.redface.AbstractEnemy;
+import org.herbshouse.logic.redface.AnimatedGif;
+import org.herbshouse.logic.redface.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
 
 import java.util.List;
@@ -25,25 +24,17 @@ import java.util.List;
 public class SwtImageBuilder implements AutoCloseable {
     public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
 
-    private GC originalGC;
-    private GC gcImage;
+    private final GC originalGC;
+    private final GC gcImage;
     private Transform transform;
-    private Image image;
+    private final Image image;
     private static int alphaMB = 1;
     private static int alphaMBSign = 1;
     private final FlagsConfiguration config;
-    private final UserInfo userInfo;
 
-    SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {
-        this.config = config;
-        this.userInfo = userInfo;
-    }
-
-    public SwtImageBuilder drawBaseElements(GC gc){
-        if (gcImage != null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
+    public SwtImageBuilder(GC gc, FlagsConfiguration config) {
         this.originalGC = gc;
+        this.config = config;
         Rectangle totalArea = originalGC.getClipping();
         image = new Image(Display.getDefault(), totalArea);
         gcImage = new GC(image);
@@ -63,7 +54,6 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.fillRectangle(0, 0, totalArea.width, totalArea.height);
 
         this.drawTextMiddleScreen();
-        return this;
     }
 
     public Image build() {
@@ -71,9 +61,6 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public void drawTextMiddleScreen() {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
         //Draw text in middle of screen
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
@@ -84,9 +71,6 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public void drawCountDown(GeneratorListener<Snowflake> generatorListener) {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
         //Draw countdown
         Rectangle drawingSurface = gcImage.getClipping();
         if (generatorListener.getCountdown() >= 0) {
@@ -104,9 +88,6 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public SwtImageBuilder addLegend() {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
         //Draw legend
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 12, SWT.BOLD));
@@ -120,9 +101,7 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Attack mode(A)", config.isAttack());
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
-        legendBuilder.append("\n-------");
-        this.addTextToLegend(legendBuilder, "Your points", userInfo.getPoints());
-        legendBuilder.append("\n-------\n");
+        legendBuilder.append("\r\n-------\n");
         legendBuilder.append("Fire(left button)\n");
         legendBuilder.append("Reset simulation(R)");
         gcImage.drawText(legendBuilder.toString(), originalGC.getClipping().width - 240, 10, true);
@@ -130,10 +109,6 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public SwtImageBuilder addLogo() {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
-
         //Draw MB logo
         if (alphaMB >= 240 || alphaMB < 30) {
             alphaMBSign = -alphaMBSign;
@@ -149,15 +124,12 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public SwtImageBuilder drawEnemies(GeneratorListener<AbstractEnemy> generatorListener) {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
         for (AbstractEnemy obj : generatorListener.getMoveableObjects()) {
-            if (obj instanceof RedFace redFace) {
+            if (obj instanceof RedFace redFace){
                 GuiUtils.drawRedFace(gcImage, redFace);
-            } else if (obj instanceof AnimatedGif animatedGif) {
+            } else if (obj instanceof AnimatedGif animatedGif){
                 Image img = SWTResourceManager.getGif(SnowingApplication.class,
                         "../../" + animatedGif.getFilename(),
                         animatedGif.getImageIndex(),
@@ -176,9 +148,6 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public SwtImageBuilder drawSnowflakes(GeneratorListener<Snowflake> generatorListener) {
-        if (gcImage == null){
-            throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
-        }
         //Draw snowflakes
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
@@ -228,13 +197,9 @@ public class SwtImageBuilder implements AutoCloseable {
     public void close() {
         if (transform != null) {
             transform.dispose();
-            transform = null;
         }
         gcImage.dispose();
         image.dispose();
-        gcImage = null;
-        originalGC = null;
-        image = null;
     }
 
 }
