@@ -4,6 +4,12 @@ import org.eclipse.swt.graphics.Transform;
 import org.herbshouse.logic.Point2D;
 
 public class FlagsConfiguration {
+    public static final int DESIRED_FPS = 60;
+
+    public static final int SLEEP_SNOWFLAKE_GENERATOR = 2;
+    public static final int SLEEP_ENEMY_GENERATOR = 2;
+    public static final int SLEEP_GENERATOR_DOING_NOTHING = 100;
+
     private boolean normalWind;
     private boolean happyWind;
     private boolean debug;
@@ -27,15 +33,15 @@ public class FlagsConfiguration {
         this.snowingLevel--;
     }
 
-    void switchMercedesSnowflakes(){
-        this.mercedesSnowflakes=!mercedesSnowflakes;
+    void switchMercedesSnowflakes() {
+        this.mercedesSnowflakes = !mercedesSnowflakes;
     }
 
     void switchFreezeSnowflakes() {
         this.freezeSnowflakes = !freezeSnowflakes;
     }
 
-    void switchYoutube(){
+    void switchYoutube() {
         this.youtube = !youtube;
     }
 
@@ -126,4 +132,5 @@ public class FlagsConfiguration {
     public boolean isEnemies() {
         return enemies;
     }
+
 }

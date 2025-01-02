@@ -4,10 +4,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
+import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.UserInfo;
-import org.herbshouse.logic.enemies.AbstractEnemy;
 import org.herbshouse.logic.enemies.AnimatedGif;
 import org.herbshouse.logic.enemies.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
@@ -31,18 +31,19 @@ public class SwtImageBuilder implements AutoCloseable {
     private static int alphaMBSign = 1;
     private final FlagsConfiguration config;
     private final UserInfo userInfo;
+    private final Rectangle screenArea;
 
     SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {
         this.config = config;
         this.userInfo = userInfo;
+        this.screenArea = Display.getDefault().getBounds();
     }
 
-    public SwtImageBuilder drawBaseElements(GC gc){
-        if (gcImage != null){
+    public SwtImageBuilder drawBaseElements() {
+        if (gcImage != null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
-        Rectangle totalArea = Display.getDefault().getBounds();
-        image = new Image(Display.getDefault(), totalArea);
+        image = new Image(Display.getDefault(), screenArea);
         gcImage = new GC(image);
 //        gcImage.setAdvanced(true);
 //        gcImage.setAntialias(SWT.DEFAULT);
@@ -51,34 +52,33 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw background
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-        gcImage.fillRectangle(0, 0, totalArea.width, totalArea.height);
+        gcImage.fillRectangle(screenArea);
 
         this.drawTextMiddleScreen();
         return this;
     }
 
     public Image build() {
-        return image;
+       return image;
     }
 
     public void drawTextMiddleScreen() {
-        if (gcImage == null){
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         //Draw text in middle of screen
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
         Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
-        gcImage.drawText(TEXT_MIDDLE_SCREEN, (Display.getDefault().getBounds().width - textSize.x) / 2,
-                (Display.getDefault().getBounds().height - textSize.y) / 2, true);
+        gcImage.drawText(TEXT_MIDDLE_SCREEN, (screenArea.width - textSize.x) / 2,
+                (screenArea.height - textSize.y) / 2, true);
     }
 
     public void drawCountDown(GeneratorListener<Snowflake> generatorListener) {
-        if (gcImage == null){
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         //Draw countdown
-        Rectangle drawingSurface = Display.getDefault().getBounds();
         if (generatorListener.getCountdown() >= 0) {
             if (generatorListener.getCountdown() >= 4) {
                 gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -88,13 +88,13 @@ public class SwtImageBuilder implements AutoCloseable {
             String countdown = String.valueOf(generatorListener.getCountdown());
             Point countdownSize = gcImage.stringExtent(countdown);
             Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
-            gcImage.drawText(countdown, (drawingSurface.width - countdownSize.x) / 2,
-                    drawingSurface.height / 2 + textSize.y, true);
+            gcImage.drawText(countdown, (screenArea.width - countdownSize.x) / 2,
+                    screenArea.height / 2 + textSize.y, true);
         }
     }
 
     public SwtImageBuilder addLegend(int realFPS) {
-        if (gcImage == null){
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         //Draw legend
@@ -121,15 +121,15 @@ public class SwtImageBuilder implements AutoCloseable {
         legendBuilder.append("Fire(left button)\n");
         legendBuilder.append("Reset simulation(R)\n");
         legendBuilder.append("-------");
-        this.addTextToLegend(legendBuilder, "Desired FPS", RenderingEngine.FPS);
+        this.addTextToLegend(legendBuilder, "Desired FPS", FlagsConfiguration.DESIRED_FPS);
         this.addTextToLegend(legendBuilder, "Real FPS", realFPS);
         legendBuilder.append("\nExit(Q)");
-        gcImage.drawText(legendBuilder.toString(), Display.getDefault().getBounds().width - 240, 10, true);
+        gcImage.drawText(legendBuilder.toString(), screenArea.width - 240, 10, true);
         return this;
     }
 
     public SwtImageBuilder addLogo() {
-        if (gcImage == null){
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
 
@@ -147,13 +147,13 @@ public class SwtImageBuilder implements AutoCloseable {
         return this;
     }
 
-    public SwtImageBuilder drawEnemies(GeneratorListener<AbstractEnemy> generatorListener) {
-        if (gcImage == null){
+    public SwtImageBuilder drawEnemies(GeneratorListener<AbstractMovableObject> generatorListener) {
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
-        for (AbstractEnemy obj : generatorListener.getMoveableObjects()) {
+        for (AbstractMovableObject obj : generatorListener.getMoveableObjects()) {
             if (obj instanceof RedFace redFace) {
                 GuiUtils.drawRedFace(gcImage, redFace);
             } else if (obj instanceof AnimatedGif animatedGif) {
@@ -175,7 +175,7 @@ public class SwtImageBuilder implements AutoCloseable {
     }
 
     public SwtImageBuilder drawSnowflakes(GeneratorListener<Snowflake> generatorListener) {
-        if (gcImage == null){
+        if (gcImage == null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
         //Draw snowflakes
@@ -197,8 +197,8 @@ public class SwtImageBuilder implements AutoCloseable {
                 gcImage.drawLine(
                         (int) snowflake.getLocation().x,
                         (int) snowflake.getLocation().y,
-                        (int)config.getMouseLoc().x,
-                        (int)config.getMouseLoc().y
+                        (int) config.getMouseLoc().x,
+                        (int) config.getMouseLoc().y
                 );
             }
         }
@@ -221,6 +221,21 @@ public class SwtImageBuilder implements AutoCloseable {
         builder.append(text);
         builder.append(": ");
         builder.append(value);
+    }
+
+    public SwtImageBuilder addMinimap() {
+        //Draw minimap
+        ImageData imageData = image.getImageData();
+        double aspRatio = (double) imageData.width / imageData.height;
+        int heightMinimap = 200;
+        int widthMinimap = (int) (heightMinimap * aspRatio);
+        gcImage.setAlpha(180);
+        gcImage.drawImage(image, 0, 0, imageData.width, imageData.height,
+                0, imageData.height - heightMinimap, widthMinimap, heightMinimap);
+        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gcImage.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
+        gcImage.setAlpha(255);
+        return this;
     }
 
     @Override

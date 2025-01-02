@@ -5,16 +5,15 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
-import org.herbshouse.logic.AbstractGenerator;
-import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.UserInfo;
-import org.herbshouse.logic.Utils;
+import org.herbshouse.logic.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
+public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private static final int ANGRY_FACE_SIZE = 150;
     private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     public static final RGB RED_COLOR = new RGB(160, 0, 0);
@@ -27,22 +26,29 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     private FlagsConfiguration flagsConfiguration;
     private Rectangle screenBounds;
     private boolean shutdown = false;
-    private long counterFrames;
     private final UserInfo userInfo;
+    private final Timer timer = new Timer("EnemiesTimer");
 
     public EnemyGenerator(UserInfo userInfo) {
         super();
         this.userInfo = userInfo;
     }
 
+    @Override
     public void run() {
-        long startTime = System.currentTimeMillis();
-        while (!shutdown) {
-            if (flagsConfiguration.isEnemies()) {
-                if (System.currentTimeMillis() - startTime > 1000) {
-                    startTime = System.currentTimeMillis();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (flagsConfiguration.isEnemies() && !shutdown) {
+                    generateRedFace();
+                }
+            }
+        }, 5000, 10000);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (flagsConfiguration.isEnemies() && !shutdown) {
                     for (RedFace redFace : redFaces) {
-                        redFace.checkTimers();
                         if (flagsConfiguration.isAttack()) {
                             redFace.setState(RedFaceState.FOLLOW, -1);
                         }
@@ -56,21 +62,28 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
                         }
                     }
                 }
+            }
+        }, 1000, 1000);
+
+        while (!shutdown) {
+            if (flagsConfiguration.isEnemies()) {
                 this.move();
-                Utils.sleep(10);
+                Utils.sleep(FlagsConfiguration.SLEEP_ENEMY_GENERATOR);
             } else {
                 redFaces.clear();
                 fireGifs.clear();
-                Utils.sleep(1000);
+                Utils.sleep(FlagsConfiguration.SLEEP_GENERATOR_DOING_NOTHING);
             }
         }
+
+        for (RedFace redFace : redFaces) {
+            redFace.stopTimer();
+        }
+        timer.cancel();
+        timer.purge();
     }
 
     private void move() {
-        counterFrames++;
-        if (counterFrames % 1000 == 0) {
-            generateRedFace();
-        }
         for (RedFace redFace : redFaces) {
             if (redFace.getLife() == 0) {
                 substractAreaFromShell(
@@ -137,7 +150,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
             AnimatedGif gif = new AnimatedGif("fire-flame.gif", 2, null);
             gif.setLocation(mouseLocation);
             gif.setSize(50);
-            gif.setSpeed(10);
+            gif.setSpeed(5);
             fireGifs.add(gif);
         }
     }
@@ -164,7 +177,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         this.angryFace = new AnimatedGif("angry1.gif", 0.3, REMOVE_BACKGROUND_COLOR);
         this.angryFace.setLocation(new Point2D(screenBounds.width - ANGRY_FACE_SIZE / 2.0d, screenBounds.height - ANGRY_FACE_SIZE / 2.0d));
         this.angryFace.setSize(ANGRY_FACE_SIZE);
-        this.angryFace.setSpeed(3);
+        this.angryFace.setSpeed(1);
     }
 
     private RedFace generateRedFace() {
@@ -173,7 +186,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         redFace.setLocation(new Point2D(screenBounds.width - size - 10, screenBounds.height - size - 10));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
-        redFace.setSpeed(3);
+        redFace.setSpeed(1);
         redFace.setDirection(Math.toRadians(190));
         redFace.setState(RedFaceState.FREE, 10000);
         redFaces.add(redFace);
@@ -181,8 +194,8 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
     }
 
     @Override
-    public List<AbstractEnemy> getMoveableObjects() {
-        List<AbstractEnemy> enemies = new ArrayList<>();
+    public List<AbstractMovableObject> getMoveableObjects() {
+        List<AbstractMovableObject> enemies = new ArrayList<>();
         for (RedFace redFace : redFaces) {
             enemies.add(redFace);
             if (redFace.getKissingGif() != null) {
@@ -251,7 +264,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractEnemy> {
         }
     }
 
-    private boolean isCollide(AbstractEnemy redFace1, AbstractEnemy redFace2) {
+    private boolean isCollide(AbstractMovableObject redFace1, AbstractMovableObject redFace2) {
         int sumSize = (redFace1.getSize() + redFace2.getSize()) / 2 + 5;
         return Utils.distance(redFace1.getLocation(), redFace2.getLocation()) < sumSize;
     }
