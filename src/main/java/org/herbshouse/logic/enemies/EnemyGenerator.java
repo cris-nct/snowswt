@@ -27,7 +27,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private Rectangle screenBounds;
     private boolean shutdown = false;
     private final UserInfo userInfo;
-    private Timer timer;
 
     public EnemyGenerator(UserInfo userInfo) {
         super();
@@ -36,7 +35,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     @Override
     public void run() {
-        timer = new Timer("EnemiesTimer");
+        Timer timer = new Timer("EnemiesTimer");
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -51,13 +50,13 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
                 if (flagsConfiguration.isEnemies() && !shutdown) {
                     for (RedFace redFace : redFaces) {
                         if (flagsConfiguration.isAttack()) {
-                            redFace.setState(RedFaceState.FOLLOW, -1);
+                            redFace.setState(RedFaceState.FOLLOW_MOUSE);
                         }
                         if (redFace.getKissingGif() == null) {
                             redFace.decreaseLife(1);
                         } else {
                             switch (redFace.getState()) {
-                                case FOLLOW -> userInfo.decreasePoints(1);
+                                case FOLLOW_MOUSE -> userInfo.decreasePoints(1);
                                 case FREE -> userInfo.increasePoints(1);
                             }
                         }
@@ -94,13 +93,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             if (redFace.getKissingGif() == null
                     && Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc()) > redFace.getSize() / 2.0d) {
                 switch (redFace.getState()) {
-                    case FOLLOW -> {
+                    case FOLLOW_MOUSE -> {
                         redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
                         redFace.move();
                     }
-                    case FREE -> {
-                        redFace.move();
-                    }
+                    case FREE -> redFace.move();
                 }
             } else {
                 if (redFace.getState() != RedFaceState.WAITING) {
@@ -144,7 +141,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             AnimatedGif gif = new AnimatedGif("fire-flame.gif", 2, null);
             gif.setLocation(mouseLocation);
             gif.setSize(50);
-            gif.setSpeed(5);
+            gif.setSpeed(2);
             fireGifs.add(gif);
         }
     }
@@ -161,7 +158,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         resetShellSurface();
     }
 
-    private void cleanup(){
+    private void cleanup() {
         for (RedFace redFace : redFaces) {
             redFace.stopTimer();
         }
@@ -190,7 +187,8 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setSpeed(1);
         redFace.setDirection(Math.toRadians(190));
-        redFace.setState(RedFaceState.FREE, 10000);
+        redFace.setState(RedFaceState.FREE);
+        redFace.setStateLazy(10000, RedFaceState.FOLLOW_MOUSE);
         redFaces.add(redFace);
         return redFace;
     }
@@ -225,42 +223,47 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     }
 
-    private void checkCollisions(){
+    private void checkCollisions() {
         for (int i = 0; i < redFaces.size(); i++) {
             //Check collision with walls
             RedFace redFace1 = redFaces.get(i);
             this.checkWallCollision(redFace1);
             this.checkAngryFaceCollision(redFace1);
             this.checkFireCollision(redFace1);
-            for (int j = i + 1; j < redFaces.size(); j++) {
-                RedFace redFace2 = redFaces.get(j);
-                if (isColliding(redFace1, redFace2)) {
-                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null) {
-                        if (redFace1.getState() != RedFaceState.WAITING) {
-                            redFace1.startKissing();
-                        }
-                        if (redFace2.getState() != RedFaceState.WAITING) {
-                            redFace2.startKissing();
-                        }
-                    } else {
-                        redFace1.setDirection(redFace1.getDirection() + Math.PI);
-                        redFace1.setState(RedFaceState.WAITING, 5000);
-                    }
-                }
-            }
+//            for (int j = i + 1; j < redFaces.size(); j++) {
+//                RedFace redFace2 = redFaces.get(j);
+//                if (isColliding(redFace1, redFace2)) {
+//                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null) {
+//                        if (redFace1.getState() != RedFaceState.WAITING) {
+//                            redFace1.startKissing();
+//                        }
+//                        if (redFace2.getState() != RedFaceState.WAITING) {
+//                            redFace2.startKissing();
+//                        }
+//                    } else {
+//                        redFace1.setDirection(redFace1.getDirection() + Math.PI);
+//                        redFace1.setState(RedFaceState.WAITING, 5000);
+//                    }
+//                }
+//            }
         }
     }
 
     private void checkFireCollision(RedFace redFace) {
         for (AnimatedGif fire : fireGifs) {
-            if (isColliding(redFace, fire)) {
+            if (this.isColliding(redFace, fire)) {
                 if (redFace.getState() == RedFaceState.FREE || redFace.getState() == RedFaceState.WAITING) {
                     redFace.decreaseLife(20);
                     if (redFace.getLife() == 0) {
                         redFaces.remove(redFace);
+                    } else {
+                        redFace.setState(RedFaceState.DAMAGED);
+                        redFace.setStateLazy(1000, RedFaceState.FREE);
                     }
-                } else {
-                    redFace.setState(RedFaceState.FREE, 5000);
+                } else if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
+                    redFace.setState(RedFaceState.DAMAGED);
+                    redFace.setStateLazy(1000, RedFaceState.FREE);
+                    redFace.setStateLazy(5000, RedFaceState.FOLLOW_MOUSE);
                 }
                 fireGifs.remove(fire);
                 break;

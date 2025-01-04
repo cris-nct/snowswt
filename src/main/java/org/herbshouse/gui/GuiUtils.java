@@ -39,7 +39,6 @@ public final class GuiUtils {
         //Draw eyes border
         gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
         gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-
         gc.setLineWidth(2);
         drawOval(gc, redFace.getLeftEyeLoc(), redFace.getEyesSize());
         drawOval(gc, redFace.getRightEyeLoc(), redFace.getEyesSize());

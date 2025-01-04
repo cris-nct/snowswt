@@ -79,12 +79,20 @@ public class RedFace extends AbstractMovableObject {
     }
 
     public void update() {
-        double gapEyesX = 0.15 * this.getSize();
+        final double gapEyesX;
         double gapEyesY = 0.2 * this.getSize();
         eyesSize = new Point2D();
-        eyesSize.x = 0.2 * this.getSize();
-        eyesSize.y = 0.7 * eyesSize.x;
-        pupilSize = 0.7 * eyesSize.y;
+        if (state == RedFaceState.DAMAGED) {
+            gapEyesX = 0.07 * this.getSize();
+            eyesSize.x = 0.3 * this.getSize();
+            eyesSize.y = 0.7 * eyesSize.x;
+            pupilSize = 0.9 * eyesSize.y;
+        } else {
+            gapEyesX = 0.15 * this.getSize();
+            eyesSize.x = 0.2 * this.getSize();
+            eyesSize.y = 0.7 * eyesSize.x;
+            pupilSize = 0.7 * eyesSize.y;
+        }
         distToMovePupil = 0.5 * pupilSize;
         leftEyeLocation = new Point2D(
                 this.getLocation().x - gapEyesX - eyesSize.x / 2,
@@ -156,22 +164,26 @@ public class RedFace extends AbstractMovableObject {
         return rightPupilLocation;
     }
 
-    public void setState(RedFaceState newState, int milliseconds) {
+    public void setState(RedFaceState newState) {
         this.state = newState;
         switch (newState) {
-            case FOLLOW -> setColor(EnemyGenerator.RED_COLOR);
+            case FOLLOW_MOUSE -> setColor(EnemyGenerator.RED_COLOR);
             case FREE -> setColor(EnemyGenerator.FREE_MOVE_COLOR);
             case WAITING -> setColor(EnemyGenerator.INACTIVE_COLOR);
+            case DAMAGED -> {
+                direction = -1;
+                update();
+            }
         }
-        if (milliseconds > 0) {
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    setColor(EnemyGenerator.RED_COLOR);
-                    state = RedFaceState.FOLLOW;
-                }
-            }, milliseconds);
-        }
+    }
+
+    public void setStateLazy(int delay, RedFaceState newState) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setState(newState);
+            }
+        }, delay);
     }
 
     public int getLife() {

@@ -1,7 +1,8 @@
 package org.herbshouse.logic.enemies;
 
 public enum RedFaceState {
-    FOLLOW,
+    FOLLOW_MOUSE,
     FREE,
-    WAITING
+    WAITING,
+    DAMAGED
 }
