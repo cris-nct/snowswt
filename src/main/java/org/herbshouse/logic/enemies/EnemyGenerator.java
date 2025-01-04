@@ -220,6 +220,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     public void provideImageData(ImageData imageData) {
     }
 
+    @Override
+    public void switchAttack() {
+
+    }
+
     private void checkCollisions(){
         for (int i = 0; i < redFaces.size(); i++) {
             //Check collision with walls

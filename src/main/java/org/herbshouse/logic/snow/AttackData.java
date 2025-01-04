@@ -5,7 +5,9 @@ import org.herbshouse.logic.Point2D;
 public class AttackData {
     private Point2D locationToFollow;
 
-    private int counter;
+    private int counterDegrees;
+
+    private int phase = 0;
 
     public void setLocationToFollow(Point2D locationToFollow) {
         this.locationToFollow = locationToFollow;
@@ -15,7 +17,16 @@ public class AttackData {
         return locationToFollow;
     }
 
-    public int getCounter() {
-        return counter++ % 360;
+    public int getCounterDegrees() {
+        return counterDegrees++ % 360;
     }
+
+    public void setPhase(int phase){
+        this.phase = phase;
+    }
+
+    public int getPhase() {
+        return phase;
+    }
+
 }

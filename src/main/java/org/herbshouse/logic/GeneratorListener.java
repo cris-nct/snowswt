@@ -41,4 +41,5 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     }
 
+    void switchAttack();
 }

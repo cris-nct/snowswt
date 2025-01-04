@@ -121,6 +121,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case 'A':
                     case 'a':
                         flagsConfiguration.switchAttack();
+                        listeners.forEach(GeneratorListener::switchAttack);
                         break;
                     case '1':
                     case '2':

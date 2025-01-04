@@ -8,14 +8,20 @@ import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 
+import java.util.Arrays;
+
 public class SnowingApplication {
     public static final int MB_ICON_SIZE = 25;
 
     public static Image mbImageSmall;
 
     public static void main(String[] args) {
+        boolean skipAnimation = Arrays.asList(args).contains("-skipInitialAnimation");
         UserInfo userInfo = new UserInfo();
         SnowGenerator snowGenerator = new SnowGenerator();
+        if (skipAnimation) {
+            snowGenerator.skipInitialAnimation();
+        }
         EnemyGenerator enemyGenerator = new EnemyGenerator(userInfo);
         try {
             mbImageSmall = new Image(Display.getDefault(),
