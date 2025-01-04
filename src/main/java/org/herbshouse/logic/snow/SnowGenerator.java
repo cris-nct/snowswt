@@ -25,11 +25,19 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private Rectangle drawingSurface;
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
-    private int counterUpdates;
     private int countdown;
     private ImageData imageData;
     private boolean skipInitialAnimation;
     private final AttackData2Global attackData2Global = new AttackData2Global();
+    private int counterFreezeSnowklakes;
+    private final Timer timer;
+    private int snowflakesTimeGen = 100;
+    private TimerTask taskSnowing;
+    private boolean pauseSnowing;
+
+    public SnowGenerator() {
+        timer = new Timer("SnowGeneratorTimer");
+    }
 
     @Override
     public List<Snowflake> getMoveableObjects() {
@@ -43,10 +51,11 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         } else {
             this.initialAnimation();
         }
+        this.resetSnowingTimer();
         while (!shutdown) {
             if (lockSnowflakes.tryLock()) {
                 this.update();
-                if (!flagsConfiguration.isAttack()) {
+                if (!flagsConfiguration.isAttack() && counterFreezeSnowklakes < 3000) {
                     this.checkCollisions();
                 }
                 lockSnowflakes.unlock();
@@ -58,28 +67,18 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             }
         }
         attackData2Global.shutdown();
+        timer.cancel();
+        timer.purge();
     }
 
     private void update() {
-        if (!flagsConfiguration.isDebug() && !flagsConfiguration.isAttack()) {
-            if (flagsConfiguration.getSnowingLevel() > 0) {
-                for (int i = 0; i < flagsConfiguration.getSnowingLevel(); i++) {
-                    this.generateNewSnowflake();
-                }
-            } else if (flagsConfiguration.getSnowingLevel() < 0) {
-                counterUpdates++;
-                if (counterUpdates >= -flagsConfiguration.getSnowingLevel()) {
-                    this.generateNewSnowflake();
-                    counterUpdates = 0;
-                }
-            }
-        }
-
         //Move all snowflakes
         Snowflake prevSnowFlake = null;
         int snowflakeindex = 0;
+        counterFreezeSnowklakes = 0;
         for (Snowflake snowflake : snowflakes) {
             if (snowflake.isFreezed()) {
+                counterFreezeSnowklakes++;
                 continue;
             }
             this.move(snowflake, prevSnowFlake, snowflakeindex);
@@ -312,6 +311,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     @Override
     public void switchDebug() {
         if (flagsConfiguration.isDebug()) {
+            pauseSnowing = true;
             try {
                 if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                     snowflakes.clear();
@@ -321,6 +321,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            pauseSnowing = false;
         }
     }
 
@@ -388,23 +390,31 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
 
     @Override
-    public void turnOffSnowing() {
-        try {
-            if (countdown == -1) {
-                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-                    snowflakes.clear();
-                    lockSnowflakes.unlock();
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    public void switchAttack() {
+        if (flagsConfiguration.isAttack()) {
+            pauseSnowing = true;
+        } else {
+            attackData2Global.resetTimers();
+            pauseSnowing = false;
         }
     }
 
     @Override
-    public void switchAttack() {
-        if (!flagsConfiguration.isAttack()) {
-            attackData2Global.resetTimers();
+    public void changedSnowingLevel() {
+        try {
+            if (countdown == -1 && flagsConfiguration.getSnowingLevel() == 0) {
+                pauseSnowing = true;
+                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                    snowflakes.clear();
+                    lockSnowflakes.unlock();
+                }
+            } else {
+                pauseSnowing = false;
+                snowflakesTimeGen = (int)Utils.linearInterpolation(flagsConfiguration.getSnowingLevel(), 1, 100, 10, 10);
+                this.resetSnowingTimer();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -448,4 +458,23 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     public void skipInitialAnimation() {
         skipInitialAnimation = true;
     }
+
+    private void resetSnowingTimer() {
+        if (taskSnowing != null) {
+            taskSnowing.cancel();
+        }
+        taskSnowing = new TimerTask() {
+            @Override
+            public void run() {
+                if (!pauseSnowing) {
+                    if (lockSnowflakes.tryLock()) {
+                        generateNewSnowflake();
+                        lockSnowflakes.unlock();
+                    }
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(taskSnowing, 0, snowflakesTimeGen);
+    }
+
 }

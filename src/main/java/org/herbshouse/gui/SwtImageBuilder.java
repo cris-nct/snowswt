@@ -110,6 +110,8 @@ public class SwtImageBuilder implements AutoCloseable {
         if (config.isAttack()) {
             legendBuilder.append(", type: ");
             legendBuilder.append(config.getAttackType());
+        } else {
+            legendBuilder.append("\nAttack types: 1-2");
         }
         this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
         this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());

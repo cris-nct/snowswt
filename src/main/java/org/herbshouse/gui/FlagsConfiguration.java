@@ -22,7 +22,7 @@ public class FlagsConfiguration {
     private boolean enemies = false;
     private boolean youtube;
 
-    private int snowingLevel = -2;
+    private int snowingLevel = 5;
     private Point2D mouseLoc = new Point2D();
     private Transform transform;
 

@@ -133,15 +133,15 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         flagsConfiguration.switchMercedesSnowflakes();
                         break;
                     case '+':
-                        flagsConfiguration.increaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0) {
-                            listeners.forEach(GeneratorListener::turnOffSnowing);
+                        if (flagsConfiguration.getSnowingLevel() < 10) {
+                            flagsConfiguration.increaseSnowingLevel();
+                            listeners.forEach(GeneratorListener::changedSnowingLevel);
                         }
                         break;
                     case '-':
-                        flagsConfiguration.decreaseSnowingLevel();
-                        if (flagsConfiguration.getSnowingLevel() == 0) {
-                            listeners.forEach(GeneratorListener::turnOffSnowing);
+                        if (flagsConfiguration.getSnowingLevel() > 0) {
+                            flagsConfiguration.decreaseSnowingLevel();
+                            listeners.forEach(GeneratorListener::changedSnowingLevel);
                         }
                         break;
                     case 'y':

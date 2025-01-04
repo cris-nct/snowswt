@@ -37,9 +37,7 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void registerListener(GuiListener gui);
 
-    default void turnOffSnowing() {
-
-    }
-
     void switchAttack();
+
+    default void changedSnowingLevel(){}
 }
