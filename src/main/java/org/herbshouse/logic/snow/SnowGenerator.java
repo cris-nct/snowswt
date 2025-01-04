@@ -245,7 +245,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private Snowflake generateNewSnowflake() {
         final int size;
         if (flagsConfiguration.isBigBalls()) {
-            size = 22 + (int) (Math.random() * 40);
+            size = 12 + (int) (Math.random() * 20);
         } else {
             size = 2 + (int) (Math.random() * 6);
         }
