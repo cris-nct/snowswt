@@ -24,11 +24,6 @@ jobs:
   SetupNewVersion:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env:
-      TEST: ${{ vars.TEST }}
-      token_push1: ${{ secrets.PAT }}
-      token_push2: ${{ secrets.PAT-PROD }}
-      token_push3: ${{ secrets.PAT30days }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -50,5 +45,10 @@ jobs:
 #          git push https://cris-nct:$token_push2@github.com/crisnct/snowswt.git
 #          git tag ${{inputs.name}}
 #          git push origin tag ${{inputs.name}}
+      env:
+        TEST: ${{ vars.TEST }}
+        token_push1: ${{ secrets.PAT }}
+        token_push2: ${{ secrets.PAT-PROD }}
+        token_push3: ${{ secrets.PAT30days }}
 
 
