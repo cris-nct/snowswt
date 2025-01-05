@@ -45,7 +45,7 @@ jobs:
 #          git push origin tag ${{inputs.name}}
       env:
         TEST: ${{ vars.TEST2-PROD }}
-        token_push: ${{ secrets.PAT }}
+        token_push: ${{ secrets.PAT2 }}
         token_push2: ${{ secrets.PAT-PROD }}
         token_push3: ${{ secrets.PAT30days }}
 
