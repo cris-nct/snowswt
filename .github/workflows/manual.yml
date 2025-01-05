@@ -30,6 +30,7 @@ jobs:
     # Runs a single command using the runners shell
     - name: Change version
       run: |
+          echo "PWD: $token_push"
           git clone https://github.com/crisnct/snowswt.git
           cd snowswt
           mvn versions:set -DnewVersion="${{inputs.name}}"
@@ -38,7 +39,7 @@ jobs:
           git config --global user.password "$token_push"
           git config --global user.name "NCT"
           git status
-          git commit -a -m "Increased version to ${{inputs.name}}" https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git commit -a -m "Increased version to ${{inputs.name}}"
           git status
           echo "PWD: $token_push"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
