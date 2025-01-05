@@ -42,7 +42,7 @@ jobs:
           git commit -a -m "Increased version to ${{inputs.name}}"
           git status
           echo "PWD: $token_push"
-          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git push https://cris-nct:$token_push@github.com/crisnct/snowswt.git
           git tag ${{inputs.name}}
           git push origin tag ${{inputs.name}}
       env:
