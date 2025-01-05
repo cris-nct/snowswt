@@ -31,7 +31,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - name: Change version
+
+    - name: Configure Git to use the token
+      run: |
+        git config user.email "nelucristian2005@gmail.com"
+        git config user.name "crisnct"
+        git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
+
+    - name: Setup release
       run: |
           git clone https://github.com/crisnct/snowswt.git
           cd snowswt
