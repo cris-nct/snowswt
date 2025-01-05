@@ -34,7 +34,7 @@ jobs:
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Send greeting2
-      run: echo "New version ${{secrets.GITHUB_TOKEN}}"
+      run: echo "New version ${{secrets.PROD.PAT}}"
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
     - name: Change version
