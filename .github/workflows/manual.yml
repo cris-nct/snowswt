@@ -38,7 +38,7 @@ jobs:
           git config --global user.password "$token_push"
           git config --global user.name "NCT"
           git status
-          git commit -a -m "Increased version to ${{inputs.name}}"
+          git commit -a -m "Increased version to ${{inputs.name}}" https://crisnct:$token_push@github.com/crisnct/snowswt.git
           git status
           echo "PWD: $token_push"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
