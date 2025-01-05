@@ -52,7 +52,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         super(Display.getDefault(), SWT.NO_TRIM);
         this.swtImageBuilder = new SwtImageBuilder(flagsConfiguration, userInfo);
         this.shellRegion = new Region(Display.getDefault());
-        this.shellRegion.add(Display.getDefault().getBounds());
+        this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
 
         this.initVideos();
         this.initTransforms();
@@ -64,7 +64,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         Display.getDefault().timerExec(300, () -> setFullScreen(true));
         this.canvas.addPaintListener(this);
         this.canvas.addMouseMoveListener(e -> {
-                    final Point2D mouseLoc = convertLoc(e.x, e.y);
+                    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(e.x, e.y));
                     flagsConfiguration.setMouseCurrentLocation(mouseLoc);
                     listeners.forEach(l -> l.mouseMove(mouseLoc));
                 }
@@ -73,7 +73,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
-                final Point2D mouseLoc = convertLoc(e.x, e.y);
+                Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(e.x, e.y));
                 listeners.forEach(l -> l.mouseDown(e.button, mouseLoc));
             }
         });
@@ -183,7 +183,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         });
     }
 
-    private Point2D convertLoc(int x, int y) {
+    private Point convertLoc(int x, int y) {
         int locX = x;
         int locY = y;
         if (flagsConfiguration.isFlipImage()) {
@@ -192,13 +192,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             locX = (int) data[0];
             locY = (int) data[1];
         }
-        return new Point2D(locX, locY);
+        return new Point(locX, locY);
     }
 
     private void initTransforms() {
         Transform transform = new Transform(Display.getDefault());
         transform.scale(1, -1);
-        transform.translate(0, -Display.getDefault().getBounds().height);
+        transform.translate(0, -GuiUtils.SCREEN_BOUNDS.height);
         transforms.add(transform);
     }
 
@@ -216,8 +216,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         browser = new Browser(canvas, SWT.EDGE | SWT.NO_FOCUS);
         int width = 400;
         int height = (int) (width / 1.77);
-        int locX = (Display.getDefault().getBounds().width - width) / 2;
-        int locY = (Display.getDefault().getBounds().height - height) / 2 + height;
+        int locX = (GuiUtils.SCREEN_BOUNDS.width - width) / 2;
+        int locY = (GuiUtils.SCREEN_BOUNDS.height - height) / 2 + height;
         browser.setSize(width, height);
         browser.setLocation(locX, locY);
         browser.setEnabled(false);
@@ -254,13 +254,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             shellRegion.dispose();
         }
         this.shellRegion = new Region(Display.getDefault());
-        this.shellRegion.add(Display.getDefault().getBounds());
+        this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
         this.setRegion(shellRegion);
         this.setLocation(0, 0);
     }
 
     public void registerListener(GeneratorListener<?> listener) {
-        listener.init(flagsConfiguration, Display.getDefault().getBounds());
+        listener.init(flagsConfiguration, GuiUtils.SCREEN_BOUNDS);
         listeners.add(listener);
     }
 

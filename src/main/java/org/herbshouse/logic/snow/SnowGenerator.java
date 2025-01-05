@@ -21,7 +21,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
-    private Rectangle drawingSurface;
+    private Rectangle screenBounds;
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
     private int countdown;
@@ -81,7 +81,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                 continue;
             }
             this.move(snowflake, prevSnowFlake, snowflakeindex);
-            if (snowflake.getLocation().y > drawingSurface.height) {
+            if (snowflake.getLocation().y <= 0) {
                 toRemove.add(snowflake);
             } else {
                 prevSnowFlake = snowflake;
@@ -115,7 +115,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     private void initialAnimation() {
         //noinspection IntegerDivisionInFloatingPointContext
-        Point2D location = new Point2D(drawingSurface.width / 2, drawingSurface.height / 2);
+        Point2D location = new Point2D(screenBounds.width / 2, screenBounds.height / 2);
         int numberOfFlakes = 50;
         for (int k = 0; k < numberOfFlakes; k++) {
             Snowflake snowflake = new Snowflake();
@@ -161,23 +161,23 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     private void regularSnowing(Snowflake snowflake) {
         Point2D newLoc = snowflake.getLocation().clone();
-        newLoc.x = Math.min(newLoc.x, drawingSurface.width);
-        newLoc.y += snowflake.getSpeed();
+        newLoc.x = Math.min(newLoc.x, screenBounds.width);
+        newLoc.y -= snowflake.getSpeed();
         snowflake.setLocation(newLoc);
     }
 
     private void moveSnowflakeNormalWind(Snowflake snowflake) {
         Point2D newLoc = snowflake.getLocation().clone();
-        int startCriticalArea = drawingSurface.height / 4;
+        int startCriticalArea = screenBounds.height / 2 + 200;
         int endCriticalArea = startCriticalArea + 100;
         if (newLoc.y > startCriticalArea && newLoc.y < endCriticalArea) {
-            newLoc.x += Utils.linearInterpolation(newLoc.x, 1, 4, drawingSurface.width, 0);
-        } else if (newLoc.y > endCriticalArea) {
+            newLoc.x += Utils.linearInterpolation(newLoc.x, 1, 4, screenBounds.width, 0);
+        } else if (newLoc.y < endCriticalArea) {
             //noinspection SuspiciousNameCombination
-            newLoc.x += Utils.linearInterpolation(newLoc.y, endCriticalArea, 2, drawingSurface.height, 0);
+            newLoc.x += Utils.linearInterpolation(newLoc.y, endCriticalArea, 2, 0, 0);
         }
-        newLoc.x = Math.min(newLoc.x, drawingSurface.width);
-        newLoc.y += snowflake.getSpeed();
+        newLoc.x = Math.min(newLoc.x, screenBounds.width);
+        newLoc.y -= snowflake.getSpeed();
         snowflake.setLocation(newLoc);
     }
 
@@ -186,8 +186,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         HappyWindSnowFlakeData data = snowflake.getHappyWindData();
         newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
         data.increaseAngle();
-        newLoc.x = Math.min(newLoc.x, drawingSurface.width);
-        newLoc.y += snowflake.getSpeed();
+        newLoc.x = Math.min(newLoc.x, screenBounds.width);
+        newLoc.y -= snowflake.getSpeed();
         snowflake.setLocation(newLoc);
     }
 
@@ -253,7 +253,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     private Snowflake generateNewSnowflake(int size, double speed) {
         final Snowflake snowflake = new Snowflake();
-        snowflake.setLocation(new Point2D(Math.random() * drawingSurface.width, 0));
+        snowflake.setLocation(new Point2D(Math.random() * screenBounds.width, screenBounds.height));
         snowflake.setSize(size);
         snowflake.setSpeed(speed);
         if (flagsConfiguration.isHappyWind()) {
@@ -364,7 +364,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     @Override
     public void init(FlagsConfiguration flagsConfiguration, Rectangle drawingSurface) {
         this.flagsConfiguration = flagsConfiguration;
-        this.drawingSurface = drawingSurface;
+        this.screenBounds = drawingSurface;
     }
 
     @Override
@@ -436,8 +436,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {
                     if (!snowflake.isFreezed()
-                            && snowflake.getLocation().x > drawingSurface.width / 2.0d - 150
-                            && snowflake.getLocation().x < drawingSurface.width / 2.0d + 150
+                            && snowflake.getLocation().x > screenBounds.width / 2.0d - 150
+                            && snowflake.getLocation().x < screenBounds.width / 2.0d + 150
                             && this.isColliding(snowflake, imageData)) {
                         snowflake.freeze();
                     }

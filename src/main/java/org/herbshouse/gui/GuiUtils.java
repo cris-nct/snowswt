@@ -1,9 +1,7 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.herbshouse.SnowingApplication;
@@ -15,6 +13,8 @@ import org.herbshouse.logic.snow.Snowflake;
 public final class GuiUtils {
 
     public static final RGB FREEZE_COLOR = new RGB(0, 255, 255);
+
+    public static final Rectangle SCREEN_BOUNDS = Display.getDefault().getBounds();
 
     private GuiUtils() {
     }
@@ -55,37 +55,30 @@ public final class GuiUtils {
             gc.setFont(SWTResourceManager.getFont("Arial", 15, SWT.NORMAL));
             int textLength = gc.textExtent(life).x;
             gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+            Point screenLoc = toScreenCoord(redFace.getLocation());
             gc.drawText(life,
-                    (int) (redFace.getLocation().x - textLength / 2.0d),
-                    (int) (redFace.getLocation().y),
+                    (int) (screenLoc.x - textLength / 2.0d),
+                    screenLoc.y,
                     true
             );
         }
     }
 
     public static void drawOval(GC gc, Point2D loc, Point2D size) {
-        gc.drawOval((int) (loc.x - size.x / 2),
-                (int) (loc.y - size.y / 2),
+        Point screenLoc = toScreenCoord(loc);
+        gc.drawOval((int) (screenLoc.x - size.x / 2),
+                (int) (screenLoc.y - size.y / 2),
                 (int) size.x,
                 (int) size.y
         );
     }
 
     public static void drawFillOval(GC gc, Point2D loc, double sizeX, double sizeY) {
-        gc.fillOval((int) (loc.x - sizeX / 2),
-                (int) (loc.y - sizeY / 2),
+        Point screenLoc = toScreenCoord(loc);
+        gc.fillOval((int) (screenLoc.x - sizeX / 2),
+                (int) (screenLoc.y - sizeY / 2),
                 (int) sizeX,
                 (int) sizeY
-        );
-    }
-
-    public static void drawFillArc(GC gc, double locX, double locY, double sizeX, double sizeY, double startAngle, double endAngle) {
-        gc.fillArc((int) (locX - sizeX / 2),
-                (int) (locY - sizeY / 2),
-                (int) sizeX,
-                (int) sizeY,
-                (int) startAngle,
-                (int) endAngle
         );
     }
 
@@ -94,14 +87,31 @@ public final class GuiUtils {
         gc.setForeground(SWTResourceManager.getColor(movableObject.getColor()));
         int prevAlpha = gc.getAlpha();
         gc.setAlpha(movableObject.getAlpha());
-        int locX = (int) loc.x - movableObject.getSize() / 2;
-        int locY = (int) loc.y - movableObject.getSize() / 2;
+
+        Point screenObjLoc = toScreenCoord(loc);
+        int locX = screenObjLoc.x - movableObject.getSize() / 2;
+        int locY = screenObjLoc.y - movableObject.getSize() / 2;
         if (movableObject instanceof Snowflake snowflake && snowflake.isFreezed()) {
-            gc.fillOval(locX, locY + movableObject.getSize() / 3, movableObject.getSize(), movableObject.getSize());
-        } else {
-            gc.fillOval(locX, locY, movableObject.getSize(), movableObject.getSize());
+            locY = locY + movableObject.getSize() / 3;
         }
+        gc.fillOval(locX, locY, movableObject.getSize(), movableObject.getSize());
         gc.setAlpha(prevAlpha);
+    }
+
+    public static Point toScreenCoord(Point2D loc) {
+        return toScreenCoord(loc.x, loc.y);
+    }
+
+    public static Point toScreenCoord(double locX, double locY) {
+        return new Point((int) locX, (int) (SCREEN_BOUNDS.height - locY));
+    }
+
+    public static Point2D toWorldCoord(int locX, double locY) {
+        return new Point2D(locX, SCREEN_BOUNDS.height - locY);
+    }
+
+    public static Point2D toWorldCoord(Point loc) {
+        return toWorldCoord(loc.x, loc.y);
     }
 
     public static void drawSnowflakeAsMercedes(GC gc, AbstractMovableObject snowflake) {
@@ -143,5 +153,15 @@ public final class GuiUtils {
         moveToOrig.y = origLocY;
         moveToOrig.doit = true;
         Display.getDefault().post(moveToOrig);
+    }
+
+    public static int[] toScreenCoord(double[] circlePoints) {
+        int[] result = new int[circlePoints.length];
+        for (int i = 0; i < circlePoints.length; i += 2) {
+            Point screenLoc = GuiUtils.toScreenCoord(new Point2D(circlePoints[i], circlePoints[i + 1]));
+            result[i] = screenLoc.x;
+            result[i + 1] = screenLoc.y;
+        }
+        return result;
     }
 }

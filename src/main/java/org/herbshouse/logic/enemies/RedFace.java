@@ -101,11 +101,11 @@ public class RedFace extends AbstractMovableObject {
         distToMovePupil = 0.5 * pupilSize;
         leftEyeLocation = new Point2D(
                 this.getLocation().x - gapEyesX - eyesSize.x / 2,
-                this.getLocation().y - gapEyesY
+                this.getLocation().y + gapEyesY
         );
         rightEyeLocation = new Point2D(
                 this.getLocation().x + gapEyesX + eyesSize.x / 2,
-                this.getLocation().y - gapEyesY
+                this.getLocation().y + gapEyesY
         );
         updateLeftPupil();
         updateRightPupil();
@@ -116,7 +116,7 @@ public class RedFace extends AbstractMovableObject {
     }
 
     private void updateKissingGif() {
-        kissingGif.setLocation(new Point2D(getLocation().x, getLocation().y + 0.2 * getSize()));
+        kissingGif.setLocation(new Point2D(getLocation().x, getLocation().y - 0.2 * getSize()));
     }
 
     private void updateLeftPupil() {

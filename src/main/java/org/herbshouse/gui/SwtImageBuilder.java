@@ -1,7 +1,10 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.logic.*;
@@ -26,20 +29,18 @@ public class SwtImageBuilder implements AutoCloseable {
     private Image image;
     private final FlagsConfiguration config;
     private final UserInfo userInfo;
-    private final Rectangle screenArea;
     private int counterLogo;
 
     SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {
         this.config = config;
         this.userInfo = userInfo;
-        this.screenArea = Display.getDefault().getBounds();
     }
 
     public SwtImageBuilder drawBaseElements() {
         if (gcImage != null) {
             throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
         }
-        image = new Image(Display.getDefault(), screenArea);
+        image = new Image(Display.getDefault(), GuiUtils.SCREEN_BOUNDS);
         gcImage = new GC(image);
 //        gcImage.setAdvanced(true);
 //        gcImage.setAntialias(SWT.DEFAULT);
@@ -48,7 +49,7 @@ public class SwtImageBuilder implements AutoCloseable {
 
         //Draw background
         gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-        gcImage.fillRectangle(screenArea);
+        gcImage.fillRectangle(GuiUtils.SCREEN_BOUNDS);
 
         this.drawTextMiddleScreen();
         return this;
@@ -67,8 +68,8 @@ public class SwtImageBuilder implements AutoCloseable {
         gcImage.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
         Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
         gcImage.drawText(TEXT_MIDDLE_SCREEN,
-                (screenArea.width - textSize.x) / 2,
-                (screenArea.height - textSize.y) / 2,
+                (GuiUtils.SCREEN_BOUNDS.width - textSize.x) / 2,
+                (GuiUtils.SCREEN_BOUNDS.height - textSize.y) / 2,
                 true
         );
     }
@@ -87,8 +88,8 @@ public class SwtImageBuilder implements AutoCloseable {
             String countdown = String.valueOf(generatorListener.getCountdown());
             Point countdownSize = gcImage.stringExtent(countdown);
             Point textSize = gcImage.stringExtent(TEXT_MIDDLE_SCREEN);
-            gcImage.drawText(countdown, (screenArea.width - countdownSize.x) / 2,
-                    screenArea.height / 2 + textSize.y, true);
+            gcImage.drawText(countdown, (GuiUtils.SCREEN_BOUNDS.width - countdownSize.x) / 2,
+                    GuiUtils.SCREEN_BOUNDS.height / 2 + textSize.y, true);
         }
     }
 
@@ -129,7 +130,7 @@ public class SwtImageBuilder implements AutoCloseable {
         this.addTextToLegend(legendBuilder, "Desired FPS", FlagsConfiguration.DESIRED_FPS);
         this.addTextToLegend(legendBuilder, "Real FPS", realFPS);
         legendBuilder.append("\nExit(Q)");
-        gcImage.drawText(legendBuilder.toString(), screenArea.width - 240, 10, true);
+        gcImage.drawText(legendBuilder.toString(), GuiUtils.SCREEN_BOUNDS.width - 240, 10, true);
         return this;
     }
 
@@ -165,9 +166,11 @@ public class SwtImageBuilder implements AutoCloseable {
                         animatedGif.getRemoveBackgroundColor(),
                         true
                 );
-                int locX = (int) animatedGif.getLocation().x - obj.getSize() / 2;
-                int locY = (int) animatedGif.getLocation().y - obj.getSize() / 2;
-                gcImage.drawImage(img, locX, locY);
+
+                Point screenLoc = GuiUtils.toScreenCoord(animatedGif.getLocation());
+                screenLoc.x -= obj.getSize() / 2;
+                screenLoc.y -= obj.getSize() / 2;
+                gcImage.drawImage(img, screenLoc.x, screenLoc.y);
                 animatedGif.increaseImageIndex();
             }
         }

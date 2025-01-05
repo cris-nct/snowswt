@@ -24,31 +24,29 @@ public class Utils {
         return value;
     }
 
-    public static int[] generateCircle(Point2D location, double radius, int nrSegments,
-                                       double beginAngle) {
-        try {
-            List<Point2D> points = new ArrayList<>();
-            double angleIncrement = (2 * Math.PI) / nrSegments;
-            double angleTemp = beginAngle;
-            int safetyCounter = 0;
-            do {
-                Point2D point = moveToDirection(location, radius, angleTemp);
-                angleTemp = normAngle(angleTemp + angleIncrement);
-                points.add(point);
-                safetyCounter++;
-            } while (safetyCounter < nrSegments);
+    public static double[] generateCircle(Point2D location,
+                                          double radius,
+                                          int nrSegments,
+                                          double beginAngle
+    ) {
+        List<Point2D> points = new ArrayList<>();
+        double angleIncrement = (2 * Math.PI) / nrSegments;
+        double angleTemp = beginAngle;
+        int safetyCounter = 0;
+        do {
+            Point2D point = moveToDirection(location, radius, angleTemp);
+            angleTemp = normAngle(angleTemp + angleIncrement);
+            points.add(point);
+            safetyCounter++;
+        } while (safetyCounter < nrSegments);
 
-            int[] area = new int[points.size() * 2];
-            int i = 0;
-            for (Point2D p : points) {
-                area[i++] = (int) p.x;
-                area[i++] = (int) p.y;
-            }
-            return area;
-        } catch (Throwable e) {
-            e.printStackTrace();
+        double[] area = new double[points.size() * 2];
+        int i = 0;
+        for (Point2D p : points) {
+            area[i++] = p.x;
+            area[i++] = p.y;
         }
-        return null;
+        return area;
     }
 
     public static String getPCIdentifier() {
@@ -75,7 +73,7 @@ public class Utils {
         return moveToDirection(loc.x, loc.y, distance, angle);
     }
 
-    public static Point2D moveToDirection(double x1, double y1, double distance, double angle) {
+    private static Point2D moveToDirection(double x1, double y1, double distance, double angle) {
         Point2D p = new Point2D(0, 0);
         double ang = angle;
         double degAlpha = Math.toDegrees(normAngle(angle));

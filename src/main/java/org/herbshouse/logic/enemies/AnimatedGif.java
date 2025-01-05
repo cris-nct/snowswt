@@ -2,6 +2,7 @@ package org.herbshouse.logic.enemies;
 
 import org.eclipse.swt.graphics.RGB;
 import org.herbshouse.logic.AbstractMovableObject;
+import org.herbshouse.logic.Point2D;
 
 public class AnimatedGif extends AbstractMovableObject {
 
@@ -37,5 +38,9 @@ public class AnimatedGif extends AbstractMovableObject {
 
     public void increaseImageIndex() {
         imageIndex += animationSpeed;
+    }
+
+    public void move() {
+        this.setLocation(new Point2D(getLocation().x, getLocation().y + getSpeed()));
     }
 }

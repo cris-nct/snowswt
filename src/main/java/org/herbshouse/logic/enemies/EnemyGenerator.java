@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.*;
 
 import java.util.ArrayList;
@@ -83,9 +84,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private void move() {
         for (RedFace redFace : redFaces) {
             if (redFace.getLife() == 0) {
-                substractAreaFromShell(
-                        Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d, redFace.getSize(), 0)
-                );
+                double[] circlePoints
+                        = Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d, redFace.getSize(), 0);
+                substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
                 redFaces.remove(redFace);
                 continue;
             }
@@ -103,7 +104,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         }
 
         for (AnimatedGif fire : fireGifs) {
-            fire.setLocation(new Point2D(fire.getLocation().x, fire.getLocation().y - fire.getSpeed()));
+            fire.move();
             if (fire.getLocation().y < 0) {
                 fireGifs.remove(fire);
             }
@@ -171,7 +172,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         this.generateRedFace();
 
         this.angryFace = new AnimatedGif("angry1.gif", 0.3, REMOVE_BACKGROUND_COLOR);
-        this.angryFace.setLocation(new Point2D(screenBounds.width - ANGRY_FACE_SIZE / 2.0d, screenBounds.height - ANGRY_FACE_SIZE / 2.0d));
+        this.angryFace.setLocation(new Point2D(screenBounds.width - ANGRY_FACE_SIZE / 2.0d, ANGRY_FACE_SIZE / 2.0d));
         this.angryFace.setSize(ANGRY_FACE_SIZE);
         this.angryFace.setSpeed(1);
     }
@@ -179,7 +180,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private RedFace generateRedFace() {
         RedFace redFace = new RedFace();
         int size = 50 + (int) (Math.random() * 100);
-        redFace.setLocation(new Point2D(screenBounds.width, screenBounds.height));
+        redFace.setLocation(new Point2D(screenBounds.width/2.0d, 500));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setSpeed(1);
