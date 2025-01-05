@@ -40,7 +40,7 @@ jobs:
           mvn versions:commit
           git status
           echo "Git commit"
-          git commit -a -m "Increased version to ${{inputs.name}}"
+          git commit -a --author="crisnct" -m "Increased version to ${{inputs.name}}"
           git status
           echo "Git push commits"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
