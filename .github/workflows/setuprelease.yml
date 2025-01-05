@@ -48,6 +48,9 @@ jobs:
           echo "Git push commits"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
+    - name: Deploy new package
+      run: mvn deploy
+
     - name: Setup release
       run: |
           echo "Create release branch"
