@@ -36,3 +36,9 @@ jobs:
       run: cd snowswt; mvn versions:set -DnewVersion="${{inputs.name}}"
     - name: Change version complete
       run: cd snowswt; mvn versions:commit
+    - name: Git push
+      run: cd snowswt; git push
+    - name: Create git tag
+      run: cd snowswt; git tag ${{inputs.name}}
+    - name: Push git tag
+      run: cd snowswt; git push origin tag ${{inputs.name}}
