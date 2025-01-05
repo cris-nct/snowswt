@@ -30,21 +30,21 @@ jobs:
     # Runs a single command using the runners shell
     - name: Change version
       run: |
-          echo "PWD: $token_push"
-          git clone https://github.com/crisnct/snowswt.git
-          cd snowswt
-          mvn versions:set -DnewVersion="${{inputs.name}}"
-          mvn versions:commit
-          git config --global user.email "nelucristian2005@gmail.com"
-          git config --global user.name "cris-nct"
-          git config --global user.password "$token_push2"
-          git status
-          git commit -a -m "Increased version to ${{inputs.name}}"
-          git status
-          echo "PWD: $token_push2"
-          git push https://cris-nct:$token_push2@github.com/crisnct/snowswt.git
-          git tag ${{inputs.name}}
-          git push origin tag ${{inputs.name}}
+          echo "PWD: $token_push, $token_push2"
+#          git clone https://github.com/crisnct/snowswt.git
+#          cd snowswt
+#          mvn versions:set -DnewVersion="${{inputs.name}}"
+#          mvn versions:commit
+#          git config --global user.email "nelucristian2005@gmail.com"
+#          git config --global user.name "cris-nct"
+#          git config --global user.password "$token_push2"
+#          git status
+#          git commit -a -m "Increased version to ${{inputs.name}}"
+#          git status
+#          echo "PWD: $token_push2"
+#          git push https://cris-nct:$token_push2@github.com/crisnct/snowswt.git
+#          git tag ${{inputs.name}}
+#          git push origin tag ${{inputs.name}}
       env:
         token_push: ${{ secrets.PAT }}
         token_push2: ${{ secrets.PAT30days }}
