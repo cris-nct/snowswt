@@ -43,8 +43,10 @@ jobs:
           echo "Git commit"
           git commit -a -m "Increased version to ${{inputs.name}}"
           git status
+          echo "Git push commits"
+          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
           echo "Create tag"
           git tag ${{inputs.name}}
-          echo "Git push"
-          git push --tags --branches https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          echo "Git push tag"
+          git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
