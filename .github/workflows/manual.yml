@@ -29,10 +29,10 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      run: echo "New version ${{inputs.name}}"
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
     - name: Change version
-      run: cd snowswt; mvn versions:set -DnewVersion="${name}"
+      run: cd snowswt; mvn versions:set -DnewVersion="${{inputs.name}}"
     - name: Change version complete
       run: cd snowswt; mvn versions:commit
