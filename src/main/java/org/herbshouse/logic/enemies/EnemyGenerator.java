@@ -179,7 +179,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private RedFace generateRedFace() {
         RedFace redFace = new RedFace();
         int size = 50 + (int) (Math.random() * 100);
-        redFace.setLocation(new Point2D(screenBounds.width / 2.0d, 500));
+        redFace.setLocation(new Point2D(screenBounds.width - size / 2.0d - 10, size / 2.0d + 10));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setSpeed(1);
