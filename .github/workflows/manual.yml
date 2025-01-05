@@ -33,7 +33,6 @@ jobs:
     # Runs a single command using the runners shell
     - name: Change version
       run: |
-          @echo "PWD: $token_push"
           git clone https://github.com/crisnct/snowswt.git
           cd snowswt
           mvn versions:set -DnewVersion="${{inputs.name}}"
@@ -45,6 +44,6 @@ jobs:
           git status
           git push https://cris-nct:$token_push@github.com/crisnct/snowswt.git
           git tag ${{inputs.name}}
-          git push origin tag ${{inputs.name}}
+          git push origin tag ${{inputs.name}} https://cris-nct:$token_push@github.com/crisnct/snowswt.git
 
 
