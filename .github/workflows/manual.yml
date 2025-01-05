@@ -40,15 +40,11 @@ jobs:
           git status
           git config user.email "nelucristian2005@gmail.com"
           git config user.name "crisnct"
-          echo "Create tag"
-          git tag ${{inputs.name}}
-          echo "Push tags"
-          git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
-          echo "Push follow tags"
-          git push --follow-tags
           echo "Git commit"
           git commit -a -m "Increased version to ${{inputs.name}}"
           git status
+          echo "Create tag"
+          git tag ${{inputs.name}}
           echo "Git push"
-          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
