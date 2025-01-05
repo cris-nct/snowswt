@@ -49,7 +49,7 @@ jobs:
           echo "Create release branch"
           git branch release/${{inputs.name}}
           git checkout release/${{inputs.name}}
-          git push --set-upstream origin release/${{inputs.name}} https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git push --set-upstream origin release/${{inputs.name}}
   
           echo "Create tag"
           git tag ${{inputs.name}}
