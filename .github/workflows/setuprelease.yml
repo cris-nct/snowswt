@@ -1,0 +1,64 @@
+# This is a basic workflow that is manually triggered
+
+name: Setup new version workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'New version'
+        # Default value if no value is explicitly provided
+        default: '0.0.0'
+        # Input has to be provided for the workflow to run
+        required: true
+        # The data type of the input
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "greet"
+  SetupNewVersion:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    env:
+      TEST: ${{ vars.TEST }}
+      token_push: ${{ secrets.PERSONAL_ACCESS_TOKEN_PUSH }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Runs a single command using the runners shell
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure Git
+      run : |
+        git config user.name "crisnct"
+        git config user.email "nelucristian2005@gmail.com"
+
+    - name: Increase version
+      run: |
+          mvn versions:set -DnewVersion="${{inputs.name}}"
+          mvn versions:commit
+          echo "Git commit"
+          git commit -a -m "Increased version to ${{inputs.name}}"
+          echo "Git push commits"
+          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+
+    - name: Setup release
+      run: |
+          echo "Create release branch"
+          git branch release/${{inputs.name}}
+          git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git push --set-upstream origin release/${{inputs.name}}
+
+    - name: Setup tag
+      run: |
+          echo "Create tag"
+          git tag ${{inputs.name}}
+          echo "Git push tag"
+          git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
+  
