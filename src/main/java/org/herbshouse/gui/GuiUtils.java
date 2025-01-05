@@ -20,10 +20,11 @@ public final class GuiUtils {
     }
 
     public static RGB getPixelColor(ImageData imageData, int x, int y) {
-        if (x >= imageData.width || y >= imageData.height || x < 0 || y < 0) {
+        Point screenLoc = GuiUtils.toScreenCoord(x, y);
+        if (screenLoc.x >= imageData.width || screenLoc.y >= imageData.height || screenLoc.x < 0 || screenLoc.y < 0) {
             return new RGB(0, 0, 0);
         } else {
-            int actualPixel = imageData.getPixel(x, y);
+            int actualPixel = imageData.getPixel(screenLoc.x, screenLoc.y);
             return imageData.palette.getRGB(actualPixel);
         }
     }
