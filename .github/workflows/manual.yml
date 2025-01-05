@@ -47,3 +47,4 @@ jobs:
           git push origin tag ${{inputs.name}}
       env:
         token_push: ${{ secrets.PAT }}
+
