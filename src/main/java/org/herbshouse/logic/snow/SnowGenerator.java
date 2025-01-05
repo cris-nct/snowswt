@@ -3,6 +3,7 @@ package org.herbshouse.logic.snow;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
@@ -453,12 +454,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private boolean isColliding(Snowflake snowflake, ImageData imageData) {
         final Set<RGB> colors = new HashSet<>();
         for (int x = -1; x < 2; x++) {
-            RGB pixelColorBottom = GuiUtils.getPixelColor(
-                    imageData,
-                    (int) snowflake.getLocation().x + x,
-                    (int) snowflake.getLocation().y
-            );
-            colors.add(pixelColorBottom);
+            Point screenLoc = GuiUtils.toScreenCoord((int) snowflake.getLocation().x + x,
+                    (int) snowflake.getLocation().y);
+            colors.add(GuiUtils.getPixelColor(imageData,screenLoc.x, screenLoc.y));
         }
         return colors.stream().anyMatch(p -> p.equals(GuiUtils.FREEZE_COLOR));
     }
