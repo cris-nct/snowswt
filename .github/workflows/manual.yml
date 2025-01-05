@@ -10,9 +10,9 @@ on:
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
+        description: 'New version'
         # Default value if no value is explicitly provided
-        default: 'World'
+        default: '0.0.0'
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
@@ -33,6 +33,6 @@ jobs:
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
     - name: Change version
-      run: cd snowswt; mvn versions:set -DnewVersion="1.5.0"
+      run: cd snowswt; mvn versions:set -DnewVersion="${name}"
     - name: Change version complete
-      run: mvn versions:commit
+      run: cd snowswt; mvn versions:commit
