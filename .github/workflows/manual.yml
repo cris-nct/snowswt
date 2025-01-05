@@ -30,7 +30,7 @@ jobs:
     # Runs a single command using the runners shell
     - uses: actions/checkout@v3
       with:
-        token: ${{ PROD.PAT }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Checkout
