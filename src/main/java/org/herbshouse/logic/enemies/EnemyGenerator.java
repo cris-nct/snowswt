@@ -92,7 +92,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             }
             boolean isMouseInTheBall
                     = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc()) < redFace.getSize() / 2.0d;
-            if (isMouseInTheBall){
+            if (isMouseInTheBall) {
                 redFace.startKissing();
             } else {
                 redFace.stopKissing();
@@ -180,7 +180,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private RedFace generateRedFace() {
         RedFace redFace = new RedFace();
         int size = 50 + (int) (Math.random() * 100);
-        redFace.setLocation(new Point2D(screenBounds.width/2.0d, 500));
+        redFace.setLocation(new Point2D(screenBounds.width / 2.0d, 500));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setSpeed(1);
@@ -305,38 +305,30 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }
 
     private void checkWallCollision(RedFace redFace) {
-        double errFactor = 10;
-        // Check collision with left and right walls
-        if (redFace.getLocation().x - redFace.getSize() / 2.0d <= screenBounds.x - 1) {
-            if (redFace.getLocation().y <= screenBounds.y + screenBounds.height / 2.0d) {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
-            } else {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
-            }
-            redFace.setLocation(new Point2D(screenBounds.x + redFace.getSize() / 2.0d + errFactor, redFace.getLocation().y));
-        } else if (redFace.getLocation().x + redFace.getSize() / 2.0d >= screenBounds.x + screenBounds.width) {
-            if (redFace.getLocation().y <= screenBounds.y + screenBounds.height / 2.0d) {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
-            } else {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
-            }
-            redFace.setLocation(new Point2D(screenBounds.x + screenBounds.width - redFace.getSize() / 2.0d - errFactor, redFace.getLocation().y));
+        Point2D vel = Utils.moveToDirection(new Point2D(0, 0), redFace.getSpeed(), redFace.getDirection());
+        int radius = redFace.getSize() / 2;
+        double x = redFace.getLocation().x;
+        double y = redFace.getLocation().y;
+
+        // Check for collision with the left or right bounds
+        if (x - radius < 0) {
+            x = radius; // Correct position
+            vel.x = -vel.x; // Reverse the horizontal direction
+        } else if (x + radius > screenBounds.width) {
+            x = screenBounds.width - radius; // Correct position
+            vel.y = -vel.y; // Reverse the horizontal direction
         }
 
-        if (redFace.getLocation().y - redFace.getSize() / 2.0d <= screenBounds.y) {
-            if (redFace.getLocation().x <= screenBounds.x + screenBounds.width / 2.0d) {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
-            } else {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
-            }
-            redFace.setLocation(new Point2D(redFace.getLocation().x, screenBounds.y + redFace.getSize() / 2.0d + errFactor));
-        } else if (redFace.getLocation().y + redFace.getSize() / 2.0d >= screenBounds.y + screenBounds.height) {
-            if (redFace.getLocation().x <= screenBounds.x + screenBounds.width / 2.0d) {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() - Math.PI / 2));
-            } else {
-                redFace.setDirection(Utils.normAngle(redFace.getDirection() + Math.PI / 2));
-            }
-            redFace.setLocation(new Point2D(redFace.getLocation().x, screenBounds.y + screenBounds.height - redFace.getSize() / 2.0d - errFactor));
+        // Check for collision with the top or bottom bounds
+        if (y - radius < 0) {
+            y = radius;// Correct position
+            vel.y = -vel.y; // Reverse the vertical direction
+        } else if (y + radius > screenBounds.height) {
+            y = screenBounds.height - radius; // Correct position
+            vel.y = -vel.y; // Reverse the vertical direction
         }
+
+        redFace.setLocation(new Point2D(x, y));
+        redFace.setDirection(Math.atan2(vel.y, vel.x));
     }
 }
