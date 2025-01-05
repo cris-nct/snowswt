@@ -18,7 +18,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
-    private static final int MAX_SNOWFLAKES_ATTACK = 1000;
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
@@ -147,9 +146,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         if (flagsConfiguration.isDebug()) {
             snowflake.registerHistoryLocation();
         }
-        if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 1 && index < MAX_SNOWFLAKES_ATTACK) {
+        if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 1) {
             this.moveSnowflakeAttack1(snowflake, prevSnowFlake);
-        } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2 && index < MAX_SNOWFLAKES_ATTACK) {
+        } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2) {
             this.moveSnowflakeAttack2(snowflake);
         } else if (flagsConfiguration.isHappyWind()) {
             this.moveSnowflakeHappyWind(snowflake);
@@ -393,6 +392,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     public void switchAttack() {
         if (flagsConfiguration.isAttack()) {
             pauseSnowing = true;
+            try {
+                if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+                    snowflakes.removeAll(snowflakes.stream().filter(Snowflake::isFreezed).toList());
+                    attackData2Global.updateIncrementsBounds(flagsConfiguration.getSnowingLevel());
+                    lockSnowflakes.unlock();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             attackData2Global.resetTimers();
             pauseSnowing = false;
@@ -409,8 +417,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                     lockSnowflakes.unlock();
                 }
             } else {
-                pauseSnowing = false;
-                snowflakesTimeGen = (int)Utils.linearInterpolation(flagsConfiguration.getSnowingLevel(), 1, 100, 10, 10);
+                pauseSnowing = flagsConfiguration.isAttack();
+                snowflakesTimeGen = (int) Utils.linearInterpolation(flagsConfiguration.getSnowingLevel(), 1, 100, 10, 7);
                 this.resetSnowingTimer();
             }
         } catch (InterruptedException e) {

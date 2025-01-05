@@ -5,15 +5,17 @@ import java.util.TimerTask;
 
 public class AttackData2Global {
 
-    private static final double INITIAL_MIN_PHASE = 0.4;
-    private static final double INITIAL_MAX_PHASE = 3.0;
     private static final double INITIAL_COUNTER = 1.0;
 
     private double counterStepsPhase = INITIAL_COUNTER;
 
-    private double phaseIncrement = INITIAL_MIN_PHASE;
+    private double initialMinPhase = 0.4;
+
+    private double initialMaxPhase = 3.0;
 
     private boolean allArrivedToDestination;
+
+    private double phaseIncrement = initialMinPhase;
 
     private final Timer timer;
 
@@ -22,10 +24,10 @@ public class AttackData2Global {
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (phaseIncrement == INITIAL_MAX_PHASE) {
-                    phaseIncrement = INITIAL_MIN_PHASE;
-                } else if (phaseIncrement == INITIAL_MIN_PHASE) {
-                    phaseIncrement = INITIAL_MAX_PHASE;
+                if (phaseIncrement == initialMaxPhase) {
+                    phaseIncrement = initialMinPhase;
+                } else if (phaseIncrement == initialMinPhase) {
+                    phaseIncrement = initialMaxPhase;
                 }
             }
         }, 5000, 10000);
@@ -38,9 +40,35 @@ public class AttackData2Global {
         }, 5000, 30000);
     }
 
+    public void updateIncrementsBounds(int snowingLevel) {
+        switch (snowingLevel) {
+            case 1 -> {
+                initialMinPhase = 1;
+                initialMaxPhase = 1;
+            }
+            case 2 -> {
+                initialMinPhase = 1;
+                initialMaxPhase = 2;
+            }
+            //TODO
+            case 3 -> {
+
+            }
+            case 10 -> {
+                initialMinPhase = 0.1;
+                initialMaxPhase = 1;
+            }
+            default -> {
+                initialMinPhase = 0.4;
+                initialMaxPhase = 3;
+            }
+        }
+        this.phaseIncrement = initialMinPhase;
+    }
+
     public void resetTimers() {
         counterStepsPhase = INITIAL_COUNTER;
-        phaseIncrement = INITIAL_MIN_PHASE;
+        phaseIncrement = initialMinPhase;
     }
 
     public void shutdown() {
