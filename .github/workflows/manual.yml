@@ -31,20 +31,20 @@ jobs:
     - name: Change version
       run: |
           echo "PWD: $TEST, $token_push, $token_push2, $token_push3"
-          git clone https://github.com/crisnct/snowswt.git
-          cd snowswt
-          mvn versions:set -DnewVersion="${{inputs.name}}"
-          mvn versions:commit
-          git status
-          git config --global user.email "nelucristian2005@gmail.com"
-          git config --global user.name "cris-nct"
-          git commit -a -m "Increased version to ${{inputs.name}}"
-          git status
-          git push  
-          git tag ${{inputs.name}}
-          git push origin tag ${{inputs.name}}
+#          git clone https://github.com/crisnct/snowswt.git
+#          cd snowswt
+#          mvn versions:set -DnewVersion="${{inputs.name}}"
+#          mvn versions:commit
+#          git status
+#          git config user.email "nelucristian2005@gmail.com"
+#          git config user.name "cris-nct"
+#          git commit -a -m "Increased version to ${{inputs.name}}"
+#          git status
+#          git push https://cris-nct:$token_push@github.com/crisnct/snowswt.git
+#          git tag ${{inputs.name}}
+#          git push origin tag ${{inputs.name}}
       env:
-        TEST: ${{ vars.TEST }}
+        TEST: ${{ vars.TEST2 }}
         token_push: ${{ secrets.PAT }}
         token_push2: ${{ secrets.PAT-PROD }}
         token_push3: ${{ secrets.PAT30days }}
