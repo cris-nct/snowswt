@@ -42,8 +42,8 @@ jobs:
     - name: Git push
       run: |
           git config --global user.email "nelucristian2005@gmail.com"
-          git config --global user.name "${GITHUB_USERNAME}"
-          git config --global user.password "${GITHUB_PASSWORD}"
+          git config --global user.password "${{secrets.PAT}}"
+          git config --global user.name "NCT"
           cd snowswt
           git push --set-upstream origin
     - name: Create git tag
