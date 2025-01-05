@@ -28,12 +28,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "New version ${{inputs.name}}"
-    - name: Send greeting2
-      run: echo "New version $token_push"
-      env:
-        token_push: ${{ secrets.PAT }}
     - name: Change version
       run: |
           git clone https://github.com/crisnct/snowswt.git
@@ -43,11 +37,12 @@ jobs:
           git config --global user.email "nelucristian2005@gmail.com"
           git config --global user.password "$token_push"
           git config --global user.name "NCT"
+          git status
           git commit -a -m "Increased version to ${{inputs.name}}"
+          git status
+          echo "PWD: $token_push"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+          git tag ${{inputs.name}}
+          git push origin tag ${{inputs.name}}
       env:
         token_push: ${{ secrets.PAT }}
-    - name: Create git tag
-      run: cd snowswt; git tag ${{inputs.name}}
-    - name: Push git tag
-      run: cd snowswt; git push origin tag ${{inputs.name}}
