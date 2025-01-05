@@ -41,6 +41,7 @@ jobs:
       run: cd snowswt; mvn versions:commit
     - name: Git push
       run: |
+          git remote add origin https://crisnct:${{secrets.PAT}}@github.com/crisnct/project.git
           git config --global user.email "nelucristian2005@gmail.com"
           git config --global user.password "${{secrets.PAT}}"
           git config --global user.name "NCT"
