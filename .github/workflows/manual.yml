@@ -30,7 +30,7 @@ jobs:
     # Runs a single command using the runners shell
     - name: Change version
       run: |
-           echo "PWD: $TEST, $token_push, $token_push2, $token_push3"
+          echo "PWD: $TEST, $token_push, $token_push2, $token_push3"
           git clone https://github.com/crisnct/snowswt.git
           cd snowswt
           mvn versions:set -DnewVersion="${{inputs.name}}"
