@@ -35,13 +35,9 @@ jobs:
           cd snowswt
           mvn versions:set -DnewVersion="${{inputs.name}}"
           mvn versions:commit
-#          git config --global user.email "nelucristian2005@gmail.com"
-#          git config --global user.name "cris-nct"
-#          git config --global user.password "$token_push2"
           git status
           git commit -a -m "Increased version to ${{inputs.name}}"
           git status
-#          git push https://cris-nct:$token_push2@github.com/crisnct/snowswt.git
           git push  
           git tag ${{inputs.name}}
           git push origin tag ${{inputs.name}}
