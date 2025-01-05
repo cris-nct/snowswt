@@ -28,12 +28,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - uses: actions/checkout@v3
+    - uses: actions/push@v3
+      with: # Set the secret as an input
+        super_secret: ${{ secrets.PAT }}
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Send greeting2
-      with: # Set the secret as an input
-        super_secret: ${{ secrets.PAT }}
       run: echo "New version ${{secrets.PAT}}"
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
