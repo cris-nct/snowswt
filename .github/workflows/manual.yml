@@ -45,8 +45,14 @@ jobs:
           git status
           echo "Git push commits"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+        
+          echo "Create release branch"
+          git branch release/${{inputs.name}}
+          git checkout release/${{inputs.name}}
+          git push --set-upstream origin release/${{inputs.name}} https://crisnct:$token_push@github.com/crisnct/snowswt.git
+  
           echo "Create tag"
           git tag ${{inputs.name}}
           echo "Git push tag"
           git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
-
+  
