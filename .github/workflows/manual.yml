@@ -31,13 +31,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Configure Git
       run : |
         git config user.name "crisnct"
         git config user.email "nelucristian2005@gmail.com"
-
-    - name: Checkout code
-      uses: actions/checkout@v4
 
     - name: Increase version
       run: |
