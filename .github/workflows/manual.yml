@@ -43,7 +43,7 @@ jobs:
           echo "Create tag"
           git tag ${{inputs.name}}
           echo "Push tags"
-          git push --tags
+          git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
           echo "Push follow tags"
           git push --follow-tags
           echo "Git commit"
