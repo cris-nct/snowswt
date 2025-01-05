@@ -28,6 +28,9 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PAT }}
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Checkout
@@ -37,11 +40,12 @@ jobs:
     - name: Change version complete
       run: cd snowswt; mvn versions:commit
     - name: Git push
-      run: cd snowswt; git push
+      run: |
+          git config --global user.email "nelucristian2005@gmail.com"
+          git config --global user.name "NCT"
+          cd snowswt
+          git push
     - name: Create git tag
       run: cd snowswt; git tag ${{inputs.name}}
     - name: Push git tag
       run: cd snowswt; git push origin tag ${{inputs.name}}
-    - uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.PAT }}
