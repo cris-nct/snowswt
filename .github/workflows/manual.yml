@@ -34,8 +34,6 @@ jobs:
       run: echo "New version $token_push, ${{token_push}}"
       env:
         token_push: ${{ secrets.PAT }}
-      with: # Set the secret as an input
-        token_push: ${{ secrets.PAT }}
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
     - name: Change version
@@ -50,6 +48,8 @@ jobs:
           cd snowswt
           git commit -m "Increased version to ${{inputs.name}}"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
+      env:
+        token_push: ${{ secrets.PAT }}
     - name: Create git tag
       run: cd snowswt; git tag ${{inputs.name}}
     - name: Push git tag
