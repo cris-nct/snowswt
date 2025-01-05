@@ -31,7 +31,7 @@ jobs:
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Send greeting2
-      run: echo "New version $token_push, ${{token_push}}"
+      run: echo "New version $token_push"
       env:
         token_push: ${{ secrets.PAT }}
     - name: Checkout
