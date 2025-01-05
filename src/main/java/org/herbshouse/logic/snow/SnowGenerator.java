@@ -21,15 +21,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
+    private final AttackData2Global attackData2Global = new AttackData2Global();
+    private final Timer timer;
     private Rectangle screenBounds;
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
     private int countdown;
     private ImageData imageData;
     private boolean skipInitialAnimation;
-    private final AttackData2Global attackData2Global = new AttackData2Global();
     private int counterFreezeSnowklakes;
-    private final Timer timer;
     private int snowflakesTimeGen = 100;
     private TimerTask taskSnowing;
     private boolean pauseSnowing;

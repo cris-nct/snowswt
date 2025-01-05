@@ -54,10 +54,6 @@ public class FlagsConfiguration {
         this.attack = !attack;
     }
 
-    void setAttackType(int i) {
-        this.attackType = i;
-    }
-
     void switchEnemies() {
         this.enemies = !enemies;
     }
@@ -70,12 +66,12 @@ public class FlagsConfiguration {
         this.flipImage = !flipImage;
     }
 
-    void setTransform(Transform transform) {
-        this.transform = transform;
-    }
-
     public Transform getTransform() {
         return transform;
+    }
+
+    void setTransform(Transform transform) {
+        this.transform = transform;
     }
 
     void switchNormalWind() {
@@ -92,6 +88,10 @@ public class FlagsConfiguration {
 
     public int getAttackType() {
         return attackType;
+    }
+
+    void setAttackType(int i) {
+        this.attackType = i;
     }
 
     public boolean isDebug() {

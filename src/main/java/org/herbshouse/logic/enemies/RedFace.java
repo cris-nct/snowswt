@@ -8,29 +8,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class RedFace extends AbstractMovableObject {
-    private double direction;
-
-    private Point2D eyesSize;
-
-    private double pupilSize;
-
-    private double distToMovePupil;
-
-    private Point2D leftEyeLocation;
-
-    private Point2D rightEyeLocation;
-
-    private Point2D leftPupilLocation;
-
-    private Point2D rightPupilLocation;
-
-    private int life = 60;
-
-    private AnimatedGif kissingGif;
-
-    private RedFaceState state;
-
     private final Timer timer;
+    private double direction;
+    private Point2D eyesSize;
+    private double pupilSize;
+    private double distToMovePupil;
+    private Point2D leftEyeLocation;
+    private Point2D rightEyeLocation;
+    private Point2D leftPupilLocation;
+    private Point2D rightPupilLocation;
+    private int life = 60;
+    private AnimatedGif kissingGif;
+    private RedFaceState state;
 
     public RedFace() {
         timer = new Timer("RedFaceTimer" + System.currentTimeMillis());
@@ -44,6 +33,19 @@ public class RedFace extends AbstractMovableObject {
 
     public RedFaceState getState() {
         return state;
+    }
+
+    public void setState(RedFaceState newState) {
+        this.state = newState;
+        this.setPause(false);
+        switch (newState) {
+            case FOLLOW_MOUSE -> setColor(EnemyGenerator.RED_COLOR);
+            case FREE -> setColor(EnemyGenerator.FREE_MOVE_COLOR);
+            case DAMAGED -> {
+                setPause(true);
+                update();
+            }
+        }
     }
 
     public void startKissing() {
@@ -69,11 +71,6 @@ public class RedFace extends AbstractMovableObject {
     @Override
     public void setLocation(Point2D location) {
         super.setLocation(location);
-        update();
-    }
-
-    public void setDirection(double direction) {
-        this.direction = direction;
         update();
     }
 
@@ -145,6 +142,11 @@ public class RedFace extends AbstractMovableObject {
         return direction;
     }
 
+    public void setDirection(double direction) {
+        this.direction = direction;
+        update();
+    }
+
     public Point2D getEyesSize() {
         return eyesSize;
     }
@@ -167,19 +169,6 @@ public class RedFace extends AbstractMovableObject {
 
     public Point2D getRightPupilLoc() {
         return rightPupilLocation;
-    }
-
-    public void setState(RedFaceState newState) {
-        this.state = newState;
-        this.setPause(false);
-        switch (newState) {
-            case FOLLOW_MOUSE -> setColor(EnemyGenerator.RED_COLOR);
-            case FREE -> setColor(EnemyGenerator.FREE_MOVE_COLOR);
-            case DAMAGED -> {
-                setPause(true);
-                update();
-            }
-        }
     }
 
     public void setStateLazy(int delay, RedFaceState newState) {

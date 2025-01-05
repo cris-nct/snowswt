@@ -10,51 +10,51 @@ public abstract class AbstractMovableObject {
     private int alpha = 255;
     private boolean pause = false;
 
-    public void setPause(boolean pause) {
-        this.pause = pause;
-    }
-
     public boolean isPause() {
         return pause;
     }
 
-    public void setAlpha(int alpha) {
-        this.alpha = alpha;
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     public int getAlpha() {
         return alpha;
     }
 
-    public void setColor(RGB color) {
-        this.color = color;
-    }
-
-    public void setLocation(Point2D location) {
-        this.location = location;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setAlpha(int alpha) {
+        this.alpha = alpha;
     }
 
     public double getSpeed() {
         return speed;
     }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
     public int getSize() {
         return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public Point2D getLocation() {
         return location;
     }
 
+    public void setLocation(Point2D location) {
+        this.location = location;
+    }
+
     public RGB getColor() {
         return color;
+    }
+
+    public void setColor(RGB color) {
+        this.color = color;
     }
 }

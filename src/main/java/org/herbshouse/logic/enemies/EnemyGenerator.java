@@ -15,18 +15,17 @@ import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
-    private static final int ANGRY_FACE_SIZE = 150;
-    private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     public static final RGB RED_COLOR = new RGB(160, 0, 0);
     public static final RGB FREE_MOVE_COLOR = new RGB(50, 180, 180);
-
+    private static final int ANGRY_FACE_SIZE = 150;
+    private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
     private final List<AnimatedGif> fireGifs = new CopyOnWriteArrayList<>();
+    private final UserInfo userInfo;
     private AnimatedGif angryFace;
     private FlagsConfiguration flagsConfiguration;
     private Rectangle screenBounds;
     private boolean shutdown = false;
-    private final UserInfo userInfo;
 
     public EnemyGenerator(UserInfo userInfo) {
         super();

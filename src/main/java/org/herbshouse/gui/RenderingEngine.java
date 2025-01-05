@@ -13,10 +13,8 @@ public class RenderingEngine implements Runnable, IDrawCompleteListener {
     private final Canvas canvas;
 
     private final AtomicInteger counterFrames = new AtomicInteger(0);
-
-    private int realFPS;
-
     private final Timer timer;
+    private int realFPS;
 
     public RenderingEngine(Canvas canvas) {
         this.canvas = canvas;

@@ -24,11 +24,10 @@ import java.util.List;
  */
 public class SwtImageBuilder implements AutoCloseable {
     public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
-
-    private GC gcImage;
-    private Image image;
     private final FlagsConfiguration config;
     private final UserInfo userInfo;
+    private GC gcImage;
+    private Image image;
     private int counterLogo;
 
     SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {

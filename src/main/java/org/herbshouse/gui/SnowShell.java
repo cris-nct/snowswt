@@ -40,13 +40,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
     private final SwtImageBuilder swtImageBuilder;
-    private Region shellRegion;
-    private Browser browser;
     private final List<String> videos = new ArrayList<>();
-    private int videosIndex;
     private final List<Transform> transforms = new ArrayList<>();
     private final RenderingEngine renderingEngine;
-    private int currentTransformIndex = 0;
+    private final int currentTransformIndex = 0;
+    private Region shellRegion;
+    private Browser browser;
+    private int videosIndex;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);

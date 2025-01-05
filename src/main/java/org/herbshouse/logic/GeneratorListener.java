@@ -39,5 +39,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void switchAttack();
 
-    default void changedSnowingLevel(){}
+    default void changedSnowingLevel() {
+    }
 }

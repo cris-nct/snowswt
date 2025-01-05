@@ -26,8 +26,8 @@ public class SnowingApplication {
         try {
             mbImageSmall = new Image(Display.getDefault(),
                     SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true)
-                    .getImageData()
-                    .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
+                            .getImageData()
+                            .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
             );
 
             SnowShell shell = new SnowShell(userInfo);

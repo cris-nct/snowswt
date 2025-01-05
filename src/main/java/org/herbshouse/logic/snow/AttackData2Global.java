@@ -6,18 +6,12 @@ import java.util.TimerTask;
 public class AttackData2Global {
 
     private static final double INITIAL_COUNTER = 1.0;
-
-    private double counterStepsPhase = INITIAL_COUNTER;
-
-    private double initialMinPhase = 0.4;
-
-    private double initialMaxPhase = 3.0;
-
-    private boolean allArrivedToDestination;
-
-    private double phaseIncrement = initialMinPhase;
-
     private final Timer timer;
+    private double counterStepsPhase = INITIAL_COUNTER;
+    private double initialMinPhase = 0.4;
+    private double initialMaxPhase = 3.0;
+    private boolean allArrivedToDestination;
+    private double phaseIncrement = initialMinPhase;
 
     public AttackData2Global() {
         this.timer = new Timer("AttackData2GlobalTimer");
@@ -84,11 +78,11 @@ public class AttackData2Global {
         return allArrivedToDestination;
     }
 
-    public void increaseCounter() {
-        counterStepsPhase += phaseIncrement;
-    }
-
     public void setAllArrivedToDestination(boolean allArrivedToDestination) {
         this.allArrivedToDestination = allArrivedToDestination;
+    }
+
+    public void increaseCounter() {
+        counterStepsPhase += phaseIncrement;
     }
 }

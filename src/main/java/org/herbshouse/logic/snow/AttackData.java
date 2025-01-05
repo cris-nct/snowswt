@@ -9,24 +9,24 @@ public class AttackData {
 
     private int phase = 0;
 
-    public void setLocationToFollow(Point2D locationToFollow) {
-        this.locationToFollow = locationToFollow;
-    }
-
     public Point2D getLocationToFollow() {
         return locationToFollow;
+    }
+
+    public void setLocationToFollow(Point2D locationToFollow) {
+        this.locationToFollow = locationToFollow;
     }
 
     public int getCounterDegrees() {
         return counterDegrees++ % 360;
     }
 
-    public void setPhase(int phase){
-        this.phase = phase;
-    }
-
     public int getPhase() {
         return phase;
+    }
+
+    public void setPhase(int phase) {
+        this.phase = phase;
     }
 
 }

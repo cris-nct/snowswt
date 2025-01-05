@@ -6,13 +6,10 @@ import org.herbshouse.logic.Point2D;
 
 public class AnimatedGif extends AbstractMovableObject {
 
-    private double imageIndex;
-
     private final double animationSpeed;
-
     private final RGB removeBackgroundColor;
-
     private final String filename;
+    private double imageIndex;
 
     public AnimatedGif(
             String filename,
