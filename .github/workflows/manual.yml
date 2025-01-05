@@ -24,13 +24,12 @@ jobs:
   SetupNewVersion:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+      - env:
+        super_secret: ${{ secrets.PAT }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - uses: actions/push@v3
-      with: # Set the secret as an input
-        super_secret: ${{ secrets.PAT }}
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Send greeting2
