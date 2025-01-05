@@ -40,12 +40,11 @@ jobs:
           git status
           git config user.email "nelucristian2005@gmail.com"
           git config user.name "crisnct"
-          git commit -a -m "Increased version to ${{inputs.name}}"
-          git status
-          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
           git tag ${{inputs.name}}
           git push --tags
           git push --follow-tags
 #          git push origin https://crisnct:$token_push@github.com/crisnct/snowswt.git tag ${{inputs.name}}
-
+          git commit -a -m "Increased version to ${{inputs.name}}"
+          git status
+          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
