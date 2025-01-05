@@ -31,9 +31,9 @@ jobs:
     - name: Send greeting
       run: echo "New version ${{inputs.name}}"
     - name: Send greeting2
-      run: echo "New version $tokenPush"
+      run: echo "New version $token_push"
       env:
-        tokenPush: ${{ secrets.PAT }}
+        token_push: ${{ secrets.PAT }}
     - name: Checkout
       run: git clone https://github.com/crisnct/snowswt.git
     - name: Change version
