@@ -8,6 +8,15 @@ public abstract class AbstractMovableObject {
     private double speed = 1;
     private RGB color = new RGB(255, 255, 255);
     private int alpha = 255;
+    private boolean pause = false;
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
+    public boolean isPause() {
+        return pause;
+    }
 
     public void setAlpha(int alpha) {
         this.alpha = alpha;

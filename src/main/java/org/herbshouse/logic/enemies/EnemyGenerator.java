@@ -17,7 +17,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private static final int ANGRY_FACE_SIZE = 150;
     private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     public static final RGB RED_COLOR = new RGB(160, 0, 0);
-    public static final RGB INACTIVE_COLOR = new RGB(150, 150, 150);
     public static final RGB FREE_MOVE_COLOR = new RGB(50, 180, 180);
 
     private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
@@ -90,21 +89,19 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
                 redFaces.remove(redFace);
                 continue;
             }
-            if (redFace.getKissingGif() == null
-                    && Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc()) > redFace.getSize() / 2.0d) {
-                switch (redFace.getState()) {
-                    case FOLLOW_MOUSE -> {
-                        redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
-                        redFace.move();
-                    }
-                    case FREE -> redFace.move();
-                }
+            boolean isMouseInTheBall
+                    = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc()) < redFace.getSize() / 2.0d;
+            if (isMouseInTheBall){
+                redFace.startKissing();
             } else {
-                if (redFace.getState() != RedFaceState.WAITING) {
-                    redFace.startKissing();
+                redFace.stopKissing();
+                if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
+                    redFace.setDirection(Utils.angleOfPath(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
                 }
+                redFace.move();
             }
         }
+
         for (AnimatedGif fire : fireGifs) {
             fire.setLocation(new Point2D(fire.getLocation().x, fire.getLocation().y - fire.getSpeed()));
             if (fire.getLocation().y < 0) {
@@ -182,11 +179,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private RedFace generateRedFace() {
         RedFace redFace = new RedFace();
         int size = 50 + (int) (Math.random() * 100);
-        redFace.setLocation(new Point2D(screenBounds.width - size - 10, screenBounds.height - size - 10));
+        redFace.setLocation(new Point2D(screenBounds.width, screenBounds.height));
         redFace.setSize(size);
         redFace.setLife((int) Utils.linearInterpolation(size, 50, 30, 150, 120));
         redFace.setSpeed(1);
-        redFace.setDirection(Math.toRadians(190));
+        redFace.setDirection(Math.toRadians(89 + Math.random() * 91));
         redFace.setState(RedFaceState.FREE);
         redFace.setStateLazy(10000, RedFaceState.FOLLOW_MOUSE);
         redFaces.add(redFace);
@@ -228,37 +225,72 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             //Check collision with walls
             RedFace redFace1 = redFaces.get(i);
             this.checkWallCollision(redFace1);
-            this.checkAngryFaceCollision(redFace1);
             this.checkFireCollision(redFace1);
-//            for (int j = i + 1; j < redFaces.size(); j++) {
-//                RedFace redFace2 = redFaces.get(j);
-//                if (isColliding(redFace1, redFace2)) {
-//                    if (redFace2.getKissingGif() != null || redFace1.getKissingGif() != null) {
-//                        if (redFace1.getState() != RedFaceState.WAITING) {
-//                            redFace1.startKissing();
-//                        }
-//                        if (redFace2.getState() != RedFaceState.WAITING) {
-//                            redFace2.startKissing();
-//                        }
-//                    } else {
-//                        redFace1.setDirection(redFace1.getDirection() + Math.PI);
-//                        redFace1.setState(RedFaceState.WAITING, 5000);
-//                    }
-//                }
-//            }
+            for (int j = i + 1; j < redFaces.size(); j++) {
+                RedFace redFace2 = redFaces.get(j);
+                if (isColliding(redFace1, redFace2)) {
+                    this.computeNewDirections(redFace1, redFace2);
+                }
+            }
+        }
+    }
+
+    private void computeNewDirections(RedFace redFace1, RedFace redFace2) {
+        double m1 = redFace1.getSize(); // mass of ball 1
+        double m2 = redFace2.getSize(); // mass of ball 2
+
+        Point2D vel1 = Utils.moveToDirection(new Point2D(0, 0), redFace1.getSpeed(), redFace1.getDirection());
+        Point2D vel2 = Utils.moveToDirection(new Point2D(0, 0), redFace2.getSpeed(), redFace2.getDirection());
+
+        double[] u1 = {vel1.x, vel1.y}; // initial velocity of ball 1 (vx, vy)
+        double[] u2 = {vel2.x, vel2.y}; // initial velocity of ball 2 (vx, vy)
+
+        double[] v1 = new double[2]; // final velocity of ball 1 (vx, vy)
+        double[] v2 = new double[2]; // final velocity of ball 2 (vx, vy)
+
+        // Calculate the velocity of the center of mass
+        double[] Vcm = {(m1 * u1[0] + m2 * u2[0]) / (m1 + m2), (m1 * u1[1] + m2 * u2[1]) / (m1 + m2)};
+
+        // Calculate the velocities relative to the center of mass
+        double[] u1_rel = {u1[0] - Vcm[0], u1[1] - Vcm[1]};
+        double[] u2_rel = {u2[0] - Vcm[0], u2[1] - Vcm[1]};
+
+        // Reverse the relative velocities (for elastic collision)
+        double[] v1_rel = {-u1_rel[0], -u1_rel[1]};
+        double[] v2_rel = {-u2_rel[0], -u2_rel[1]};
+
+        // Convert the relative velocities back to the lab frame
+        v1[0] = v1_rel[0] + Vcm[0];
+        v1[1] = v1_rel[1] + Vcm[1];
+        v2[0] = v2_rel[0] + Vcm[0];
+        v2[1] = v2_rel[1] + Vcm[1];
+
+        // Calculate the angles (directions) of the final velocities
+        double angle1 = Math.atan2(v1[1], v1[0]);
+        double angle2 = Math.atan2(v2[1], v2[0]);
+
+        Point2D newLoc1 = Utils.moveToDirection(redFace1.getLocation(), 5, angle1);
+        Point2D newLoc2 = Utils.moveToDirection(redFace2.getLocation(), 5, angle2);
+        if (Utils.distance(newLoc1, newLoc2) > (redFace1.getSize() + redFace2.getSize()) / 2.0 + 2) {
+            if (!redFace1.isPause()) {
+                redFace1.setDirection(angle1);
+            }
+            if (!redFace2.isPause()) {
+                redFace2.setDirection(angle2);
+            }
         }
     }
 
     private void checkFireCollision(RedFace redFace) {
         for (AnimatedGif fire : fireGifs) {
             if (this.isColliding(redFace, fire)) {
-                if (redFace.getState() == RedFaceState.FREE || redFace.getState() == RedFaceState.WAITING) {
+                if (redFace.getState() == RedFaceState.FREE) {
                     redFace.decreaseLife(20);
                     if (redFace.getLife() == 0) {
                         redFaces.remove(redFace);
                     } else {
                         redFace.setState(RedFaceState.DAMAGED);
-                        redFace.setStateLazy(1000, RedFaceState.FREE);
+                        redFace.setStateLazy(3000, RedFaceState.FREE);
                     }
                 } else if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
                     redFace.setState(RedFaceState.DAMAGED);
@@ -268,12 +300,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
                 fireGifs.remove(fire);
                 break;
             }
-        }
-    }
-
-    private void checkAngryFaceCollision(RedFace redFace) {
-        if (isColliding(redFace, angryFace)) {
-            redFace.increaseLife(10);
         }
     }
 

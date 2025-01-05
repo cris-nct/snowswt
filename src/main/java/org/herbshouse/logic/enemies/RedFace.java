@@ -48,7 +48,7 @@ public class RedFace extends AbstractMovableObject {
 
     public void startKissing() {
         if (kissingGif == null) {
-            direction = -1;
+            setPause(true);
             kissingGif = new AnimatedGif("kissing.gif", 7, null);
             kissingGif.setSize((int) (getSize() * 0.3));
             updateKissingGif();
@@ -56,7 +56,10 @@ public class RedFace extends AbstractMovableObject {
     }
 
     public void stopKissing() {
-        kissingGif = null;
+        if (kissingGif != null) {
+            setPause(false);
+            kissingGif = null;
+        }
     }
 
     public AnimatedGif getKissingGif() {
@@ -75,7 +78,9 @@ public class RedFace extends AbstractMovableObject {
     }
 
     public void move() {
-        this.setLocation(Utils.moveToDirection(getLocation(), getSpeed(), direction));
+        if (!isPause()) {
+            this.setLocation(Utils.moveToDirection(getLocation(), getSpeed(), direction));
+        }
     }
 
     public void update() {
@@ -115,7 +120,7 @@ public class RedFace extends AbstractMovableObject {
     }
 
     private void updateLeftPupil() {
-        Point2D leftEyePupilLoc = this.getDirection() == -1 ? leftEyeLocation
+        Point2D leftEyePupilLoc = isPause() ? leftEyeLocation
                 : Utils.moveToDirection(leftEyeLocation, distToMovePupil, this.getDirection());
         double locX = Math.max(leftEyeLocation.x - eyesSize.x / 2 + pupilSize / 2, leftEyePupilLoc.x);
 
@@ -126,7 +131,7 @@ public class RedFace extends AbstractMovableObject {
     }
 
     private void updateRightPupil() {
-        Point2D rightEyePupilLoc = this.getDirection() == -1 ? rightEyeLocation
+        Point2D rightEyePupilLoc = isPause() ? rightEyeLocation
                 : Utils.moveToDirection(rightEyeLocation, distToMovePupil, this.getDirection());
         double locX = Math.max(rightEyeLocation.x - eyesSize.x / 2 + pupilSize / 2, rightEyePupilLoc.x);
 
@@ -166,12 +171,12 @@ public class RedFace extends AbstractMovableObject {
 
     public void setState(RedFaceState newState) {
         this.state = newState;
+        this.setPause(false);
         switch (newState) {
             case FOLLOW_MOUSE -> setColor(EnemyGenerator.RED_COLOR);
             case FREE -> setColor(EnemyGenerator.FREE_MOVE_COLOR);
-            case WAITING -> setColor(EnemyGenerator.INACTIVE_COLOR);
             case DAMAGED -> {
-                direction = -1;
+                setPause(true);
                 update();
             }
         }
