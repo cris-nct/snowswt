@@ -30,7 +30,7 @@ jobs:
     # Runs a single command using the runners shell
     - name: Change version
       run: |
-          echo "PWD: $token_push, $token_push2"
+          echo "PWD: $test_var, $TEST, ${{TEST}}, $token_push, $token_push2"
 #          git clone https://github.com/crisnct/snowswt.git
 #          cd snowswt
 #          mvn versions:set -DnewVersion="${{inputs.name}}"
@@ -48,4 +48,5 @@ jobs:
       env:
         token_push: ${{ secrets.PAT }}
         token_push2: ${{ secrets.PAT30days }}
+        test_var: ${{TEST}}
 
