@@ -45,10 +45,11 @@ jobs:
     - name: Git push
       run: |
           git config --global user.email "nelucristian2005@gmail.com"
-          git config --global user.password "${{secrets.PAT}}"
+          git config --global user.password "$token_push"
           git config --global user.name "NCT"
           cd snowswt
-          git push https://crisnct:${{secrets.PAT}}@github.com/crisnct/snowswt.git
+          git commit -m "Increased version to ${{inputs.name}}"
+          git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
     - name: Create git tag
       run: cd snowswt; git tag ${{inputs.name}}
     - name: Push git tag
