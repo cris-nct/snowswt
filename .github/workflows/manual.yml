@@ -31,6 +31,11 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
+    - name: Configure Git
+      run : |
+        git config user.name "crisnct"
+        git config user.email "nelucristian2005@gmail.com"
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -38,11 +43,8 @@ jobs:
       run: |
           mvn versions:set -DnewVersion="${{inputs.name}}"
           mvn versions:commit
-          git status
-          git config user.name "crisnct"
           echo "Git commit"
           git commit -a -m "Increased version to ${{inputs.name}}"
-          git status
           echo "Git push commits"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
@@ -50,12 +52,11 @@ jobs:
       run: |
           echo "Create release branch"
           git branch release/${{inputs.name}}
-        
-          git config user.email "nelucristian2005@gmail.com"
-          git config user.name "crisnct"
           git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
           git push --set-upstream origin release/${{inputs.name}}
-          
+
+    - name: Setup tag
+      run: |
           echo "Create tag"
           git tag ${{inputs.name}}
           echo "Git push tag"
