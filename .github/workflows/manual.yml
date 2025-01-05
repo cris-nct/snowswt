@@ -43,7 +43,7 @@ jobs:
           git config --global user.email "nelucristian2005@gmail.com"
           git config --global user.password "$token_push"
           git config --global user.name "NCT"
-          git commit -m "Increased version to ${{inputs.name}}"
+          git commit -a -m "Increased version to ${{inputs.name}}"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
       env:
         token_push: ${{ secrets.PAT }}
