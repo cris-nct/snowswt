@@ -2,11 +2,11 @@
 name: Setup new release workflow
 permissions:
   contents: write
+  deployments: write
 
   #permission controls access to the actions and workflows in your repository
   actions: read
   checks: read
-  deployments: write
 
   pull-requests: none
   id-token: none
