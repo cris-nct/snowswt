@@ -1,9 +1,6 @@
 package org.herbshouse.logic;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +46,7 @@ public class Utils {
         return area;
     }
 
-    public static String getPCIdentifier() {
+    public static String getPCIdentifier() throws IOException {
         @SuppressWarnings("StringBufferReplaceableByString")
         StringBuilder cpuid = new StringBuilder();
         cpuid.append("CPU: ");
@@ -117,10 +114,10 @@ public class Utils {
         if (Math.abs(degAngle) >= (360 - EPS)) {
             degAngle = degAngle % 360;
             if (degAngle < 0) {
-                degAngle = degAngle + (((((int) degAngle) / 360) + 1) * 360);
+                degAngle = degAngle + ((((double) ((int) degAngle) / 360) + 1) * 360);
             }
         } else if (degAngle < 0) {
-            degAngle = degAngle + (((((int) degAngle) / 360) + 1) * 360);
+            degAngle = degAngle + ((((double) ((int) degAngle) / 360) + 1) * 360);
         }
         return Math.toRadians(degAngle);
     }
@@ -135,32 +132,34 @@ public class Utils {
         return Math.abs(a - b) <= EPS;
     }
 
-    public static String getMotherboardSN() {
-        String result = "";
-        try {
-            File file = File.createTempFile("realhowto", ".vbs");
-            file.deleteOnExit();
-            FileWriter fw = new FileWriter(file);
+    public static String getMotherboardSN() throws IOException {
+        StringBuilder result = new StringBuilder();
+        File file = File.createTempFile("realhowto", ".vbs");
+        file.deleteOnExit();
+        FileWriter fw = new FileWriter(file);
+        String vbs = """
+                Set objWMIService = GetObject("winmgmts:\\\\.\\root\\cimv2")
+                Set colItems = objWMIService.ExecQuery _\s
+                   ("Select * from Win32_BaseBoard")\s
+                For Each objItem in colItems\s
+                    Wscript.Echo objItem.SerialNumber\s
+                    exit for  ' do the first cpu only!\s
+                Next\s
+                """;
 
-            String vbs = "Set objWMIService = GetObject(\"winmgmts:\\\\.\\root\\cimv2\")\n"
-                    + "Set colItems = objWMIService.ExecQuery _ \n"
-                    + "   (\"Select * from Win32_BaseBoard\") \n" + "For Each objItem in colItems \n"
-                    + "    Wscript.Echo objItem.SerialNumber \n"
-                    + "    exit for  ' do the first cpu only! \n" + "Next \n";
+        fw.write(vbs);
+        fw.close();
 
-            fw.write(vbs);
-            fw.close();
-            Process p = Runtime.getRuntime().exec("cscript //NoLogo " + file.getPath());
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        ProcessBuilder processBuilder = new ProcessBuilder("cscript //NoLogo", file.getPath());
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = input.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
-            input.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return result.trim();
+        return result.toString().trim();
     }
 
     public static double angleOfPath(double x1, double y1, double x2, double y2) {

@@ -14,7 +14,6 @@ public class FlagsConfiguration {
     private boolean happyWind;
     private boolean debug;
     private boolean attack;
-    private int attackType = 1;
     private boolean flipImage;
     private boolean bigBalls;
     private boolean freezeSnowflakes;
@@ -22,6 +21,7 @@ public class FlagsConfiguration {
     private boolean enemies = false;
     private boolean youtube;
     private boolean objectsTail;
+    private int attackType = 1;
 
     private int snowingLevel = 5;
     private Point2D mouseLoc = new Point2D();
