@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: Setup new version workflow
+name: Setup new release workflow
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'New version'
+        description: 'New release'
         default: '0.0.0'
         required: true
         type: string
@@ -35,35 +35,28 @@ jobs:
         git config user.name "crisnct"
         git config user.email "nelucristian2005@gmail.com"
 
-    - name: Set up JDK 22
-      uses: actions/setup-java@v4
-      with:
-        java-version: '22'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
-
-    - name: Increase version
-      run: |
-          mvn versions:set -DnewVersion="${{inputs.name}}"
-          mvn versions:commit
-          echo "Git commit"
-          git commit -a -m "Increased version to ${{inputs.name}}"
-          echo "Git push commits"
-          git push
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-
-    - name: Setup release
-      run: |
-          echo "Create release branch"
-          git branch release/${{inputs.name}}
-          git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
-          git push --set-upstream origin release/${{inputs.name}}
+#    - name: Set up JDK 22
+#      uses: actions/setup-java@v4
+#      with:
+#        java-version: '22'
+#        distribution: 'temurin'
+#        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+#        settings-path: ${{ github.workspace }} # location for the settings.xml file
+#
+#    - name: Increase version
+#      run: |
+#          mvn versions:set -DnewVersion="${{inputs.name}}"
+#          mvn versions:commit
+#          echo "Git commit"
+#          git commit -a -m "Increased version to ${{inputs.name}}"
+#          echo "Git push commits"
+#          git push
+#
+#    - name: Build with Maven
+#      run: mvn -B package --file pom.xml
+#
+#    - name: Publish to GitHub Packages Apache Maven
+#      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
 
     - name: Setup tag
       run: |
@@ -71,4 +64,22 @@ jobs:
           git tag ${{inputs.name}}
           echo "Git push tag"
           git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
-  
+
+#    - name: Create release branch
+#      run: |
+#        echo "Create release branch"
+#        git branch release/${{inputs.name}}
+#        git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
+#        git push --set-upstream origin release/${{inputs.name}}
+
+    - name: Create github release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: false
