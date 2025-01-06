@@ -3,6 +3,7 @@ name: Setup new release workflow
 permissions:
   contents: write
   deployments: write
+  packages: write
 
   #permission controls access to the actions and workflows in your repository
   actions: read
@@ -12,7 +13,6 @@ permissions:
   id-token: none
   issues: none
   discussions: none
-  packages: none
   pages: none
   repository-projects: none
   security-events: none
