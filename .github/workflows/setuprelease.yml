@@ -6,7 +6,7 @@ permissions:
   #permission controls access to the actions and workflows in your repository
   actions: read
   checks: read
-  deployments: read
+  deployments: write
 
   pull-requests: none
   id-token: none
