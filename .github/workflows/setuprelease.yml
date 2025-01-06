@@ -43,15 +43,15 @@ jobs:
 #        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
 #        settings-path: ${{ github.workspace }} # location for the settings.xml file
 #
-#    - name: Increase version
-#      run: |
-#          mvn versions:set -DnewVersion="${{inputs.name}}"
-#          mvn versions:commit
-#          echo "Git commit"
-#          git commit -a -m "Increased version to ${{inputs.name}}"
-#          echo "Git push commits"
-#          git push
-#
+    - name: Increase version
+      run: |
+          mvn versions:set -DnewVersion="${{inputs.name}}"
+          mvn versions:commit
+          echo "Git commit"
+          git commit -a -m "Increased version to ${{inputs.name}}"
+          echo "Git push commits"
+          git push
+
 #    - name: Build with Maven
 #      run: mvn -B package --file pom.xml
 #
@@ -80,7 +80,6 @@ jobs:
         branch: release/${{inputs.name}}
         body: |
           Changes in this Release
-          - First Change
-          - Second Change
+          https://github.com/crisnct/snowswt/commits/${{inputs.name}}
         draft: false
         prerelease: false
