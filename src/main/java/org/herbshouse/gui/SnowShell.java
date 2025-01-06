@@ -203,6 +203,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     }
 
     private void initVideos() {
+        this.videos.add(loadResourceAsString("embededLetItSnow.html"));
         this.videos.add(loadResourceAsString("embededChristmasMusic.html"));
         this.videos.add(loadResourceAsString("embededMusicSensual.html"));
     }
