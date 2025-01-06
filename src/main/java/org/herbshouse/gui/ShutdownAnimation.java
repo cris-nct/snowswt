@@ -20,22 +20,14 @@ public class ShutdownAnimation {
     private final List<Integer> valuesToAlternate = Arrays.asList(6, 26, 70);
 
     private final LinkedList<String> messages = new LinkedList<>();
-
-    private int phaseIndexShacking = 0;
-
-    private int alphaMainImage = 255;
-
-    private boolean startCrackFading;
-
-    private int alphaCrackImage = 255;
-
-    private int counterNewMessage;
-
-    private String message;
-
     private final Shell shell;
-
     private final AnimatedGif flame;
+    private int phaseIndexShacking = 0;
+    private int alphaMainImage = 255;
+    private boolean startCrackFading;
+    private int alphaCrackImage = 255;
+    private int counterNewMessage;
+    private String message;
 
     public ShutdownAnimation(Shell shell) {
         this.messages.addAll(Arrays.asList("Now ", "Now what ", "Now what will ", "Now what will you ", "Now what will you do?"));

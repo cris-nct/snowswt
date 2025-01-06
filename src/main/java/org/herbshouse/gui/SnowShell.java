@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The provided code defines a graphical user interface (GUI) for a snow simulation application using the SWT
@@ -41,14 +42,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
     private final SwtImageBuilder swtImageBuilder;
     private final List<String> videos = new ArrayList<>();
-    private final List<Transform> transforms = new ArrayList<>();
     private final RenderingEngine renderingEngine;
-    private final int currentTransformIndex = 0;
+    private final ShutdownAnimation shutdownAnimation;
+    private final Transform transform;
     private Region shellRegion;
     private Browser browser;
     private int videosIndex;
     private boolean startShutdown;
-    private ShutdownAnimation shutdownAnimation;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
@@ -56,8 +56,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
 
+        transform = new Transform(Display.getDefault());
+        transform.scale(1, -1);
+        transform.translate(0, -GuiUtils.SCREEN_BOUNDS.height);
+
         this.initVideos();
-        this.initTransforms();
 
         this.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).numColumns(1).create());
 
@@ -98,7 +101,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         if (flagsConfiguration.isFlipImage()) {
                             flagsConfiguration.setTransform(null);
                         } else {
-                            flagsConfiguration.setTransform(transforms.get(currentTransformIndex));
+                            flagsConfiguration.setTransform(transform);
                         }
                         flagsConfiguration.switchFlipImage();
                         break;
@@ -150,7 +153,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case 'Y':
                         flagsConfiguration.switchYoutube();
                         updateBrowser(flagsConfiguration.isYoutube());
-                        if (flagsConfiguration.isYoutube()){
+                        if (flagsConfiguration.isYoutube()) {
                             playNext();
                         }
                         break;
@@ -182,13 +185,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.registerListener(renderingEngine);
 
         this.shutdownAnimation = new ShutdownAnimation(this);
-        this.addDisposeListener(e -> {
-            for (Transform transform : transforms) {
-                if (!transform.isDisposed()) {
-                    transform.dispose();
-                }
-            }
-            transforms.clear();
+        this.addDisposeListener(_ -> {
+            transform.dispose();
             if (!shellRegion.isDisposed()) {
                 shellRegion.dispose();
             }
@@ -200,18 +198,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         int locY = y;
         if (flagsConfiguration.isFlipImage()) {
             float[] data = {locX, locY};
-            transforms.get(currentTransformIndex).transform(data);
+            transform.transform(data);
             locX = (int) data[0];
             locY = (int) data[1];
         }
         return new Point(locX, locY);
-    }
-
-    private void initTransforms() {
-        Transform transform = new Transform(Display.getDefault());
-        transform.scale(1, -1);
-        transform.translate(0, -GuiUtils.SCREEN_BOUNDS.height);
-        transforms.add(transform);
     }
 
     private void initVideos() {
@@ -244,7 +235,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         try {
             try (InputStream is = SnowingApplication.class.getClassLoader().getResourceAsStream(filename)) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ByteStreams.copy(is, baos);
+                ByteStreams.copy(Objects.requireNonNull(is), baos);
                 baos.close();
                 return baos.toString(StandardCharsets.UTF_8);
             }

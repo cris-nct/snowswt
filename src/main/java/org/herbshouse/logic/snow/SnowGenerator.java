@@ -456,7 +456,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         for (int x = -1; x < 2; x++) {
             Point screenLoc = GuiUtils.toScreenCoord((int) snowflake.getLocation().x + x,
                     (int) snowflake.getLocation().y);
-            colors.add(GuiUtils.getPixelColor(imageData,screenLoc.x, screenLoc.y));
+            colors.add(GuiUtils.getPixelColor(imageData, screenLoc.x, screenLoc.y));
         }
         return colors.stream().anyMatch(p -> p.equals(GuiUtils.FREEZE_COLOR));
     }
