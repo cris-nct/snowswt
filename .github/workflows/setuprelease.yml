@@ -39,6 +39,14 @@ jobs:
         git config user.name "crisnct"
         git config user.email "nelucristian2005@gmail.com"
 
+    - name: Set up JDK 22
+      uses: actions/setup-java@v4
+      with:
+        java-version: '22'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
     - name: Increase version
       run: |
           mvn versions:set -DnewVersion="${{inputs.name}}"
@@ -48,8 +56,11 @@ jobs:
           echo "Git push commits"
           git push https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
-    - name: Deploy new package
-      run: mvn deploy
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
 
     - name: Setup release
       run: |
