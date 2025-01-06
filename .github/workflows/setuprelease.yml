@@ -65,18 +65,19 @@ jobs:
           echo "Git push tag"
           git push --tags https://crisnct:$token_push@github.com/crisnct/snowswt.git
 
-#    - name: Create release branch
-#      run: |
-#        echo "Create release branch"
-#        git branch release/${{inputs.name}}
-#        git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
-#        git push --set-upstream origin release/${{inputs.name}}
+    - name: Create release branch
+      run: |
+        echo "Create release branch"
+        git branch release/${{inputs.name}}
+        git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
+        git push --set-upstream origin release/${{inputs.name}}
 
     - name: Create github release
       uses: actions/create-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{inputs.name}}
+        release_name: Release ${{inputs.name}}
+        branch: release/${{inputs.name}}
         body: |
           Changes in this Release
           - First Change
