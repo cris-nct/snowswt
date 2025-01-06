@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'New release'
+        description: 'New release version'
         default: '0.0.0'
         required: true
         type: string

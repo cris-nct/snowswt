@@ -47,6 +47,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     private Region shellRegion;
     private Browser browser;
     private int videosIndex;
+    private boolean startShutdown;
+    private ShutdownAnimation shutdownAnimation;
 
     public SnowShell(UserInfo userInfo) {
         super(Display.getDefault(), SWT.NO_TRIM);
@@ -148,6 +150,9 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                     case 'Y':
                         flagsConfiguration.switchYoutube();
                         updateBrowser(flagsConfiguration.isYoutube());
+                        if (flagsConfiguration.isYoutube()){
+                            playNext();
+                        }
                         break;
                     case 'e':
                     case 'E':
@@ -161,7 +166,13 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case 'q':
                     case 'Q':
-                        getShell().dispose();
+                        if (!flagsConfiguration.isYoutube()) {
+                            updateBrowser(true);
+                        }
+                        browser.setText(loadResourceAsString("embededGoodBye.html"), true);
+                        canvas.removeKeyListener(this);
+                        listeners.forEach(GeneratorListener::shutdown);
+                        startShutdown = true;
                         break;
                 }
             }
@@ -170,6 +181,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.renderingEngine = new RenderingEngine(canvas);
         this.registerListener(renderingEngine);
 
+        this.shutdownAnimation = new ShutdownAnimation(this);
         this.addDisposeListener(e -> {
             for (Transform transform : transforms) {
                 if (!transform.isDisposed()) {
@@ -222,7 +234,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         browser.setSize(width, height);
         browser.setLocation(locX, locY);
         browser.setEnabled(false);
-        this.playNext();
     }
 
     private void playNext() {
@@ -274,6 +285,10 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     @Override
     public void paintControl(PaintEvent paintEvent) {
         GC gc = paintEvent.gc;
+        //Draw background
+        gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+        gc.fillRectangle(GuiUtils.SCREEN_BOUNDS);
+
         try (var imageBuilder = swtImageBuilder.drawBaseElements()) {
             //Draw objects from each listener
             for (GeneratorListener<? extends AbstractMovableObject> listener : listeners) {
@@ -293,8 +308,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             imageBuilder.addMinimap();
             Image image = imageBuilder.build();
             ImageData imageData = image.getImageData();
-            gc.drawImage(image, 0, 0);
-
+            if (startShutdown) {
+                this.shutdownAnimation.draw(gc, image);
+            } else {
+                gc.drawImage(image, 0, 0);
+            }
             for (GeneratorListener<?> generatorListener : listeners) {
                 generatorListener.provideImageData(imageData);
             }
