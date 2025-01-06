@@ -144,9 +144,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
 
     private void move(Snowflake snowflake, Snowflake prevSnowFlake, int index) {
-        if (flagsConfiguration.isDebug()) {
-            snowflake.registerHistoryLocation();
-        }
+        snowflake.getSnowTail().registerHistoryLocation();
         if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 1) {
             this.moveSnowflakeAttack1(snowflake, prevSnowFlake);
         } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2) {
@@ -248,7 +246,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         } else {
             size = 2 + (int) (Math.random() * 6);
         }
-        double speed = Math.min(Utils.linearInterpolation(size, 1, 0.3, 4, 1), 1);
+        final double speed;
+        int snowingLevel = flagsConfiguration.getSnowingLevel();
+        if (snowingLevel < 3){
+            speed = 0.5 + Math.random();
+        } else if (snowingLevel < 6){
+            speed = 0.5 + Math.random() * 2;
+        } else {
+            speed = 0.7 + Math.random() * 2.5;
+        }
         return generateNewSnowflake(size, speed);
     }
 

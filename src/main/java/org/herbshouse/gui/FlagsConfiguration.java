@@ -21,6 +21,7 @@ public class FlagsConfiguration {
     private boolean mercedesSnowflakes;
     private boolean enemies = false;
     private boolean youtube;
+    private boolean objectsTail;
 
     private int snowingLevel = 5;
     private Point2D mouseLoc = new Point2D();
@@ -56,6 +57,15 @@ public class FlagsConfiguration {
 
     void switchEnemies() {
         this.enemies = !enemies;
+    }
+
+
+    public void switchObjectsTail() {
+        objectsTail = !objectsTail;
+    }
+
+    public boolean isObjectsTail() {
+        return objectsTail;
     }
 
     void switchDebug() {
@@ -141,4 +151,5 @@ public class FlagsConfiguration {
     public boolean isAttack() {
         return attack;
     }
+
 }

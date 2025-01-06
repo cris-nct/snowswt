@@ -190,10 +190,16 @@ public class SwtImageBuilder implements AutoCloseable {
             } else {
                 GuiUtils.draw(gcImage, snowflake);
             }
-            if (config.isDebug()) {
-                for (Point2D loc : snowflake.getHistoryLocations()) {
-                    GuiUtils.draw(gcImage, snowflake, loc);
+            if (config.isDebug() || config.isObjectsTail()) {
+                int counterAlpha = 0;
+                int origAlpha = snowflake.getAlpha();
+                int points = snowflake.getSnowTail().getHistoryLocations().size();
+                for (Point2D oldLoc : snowflake.getSnowTail().getHistoryLocations()) {
+                    snowflake.setAlpha((int) Utils.linearInterpolation(counterAlpha, 0, 0, points, 160));
+                    GuiUtils.draw(gcImage, snowflake, oldLoc);
+                    counterAlpha++;
                 }
+                snowflake.setAlpha(origAlpha);
             }
         }
         return this;

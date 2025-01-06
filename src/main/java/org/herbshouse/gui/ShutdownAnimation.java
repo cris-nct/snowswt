@@ -73,13 +73,13 @@ public class ShutdownAnimation {
         Image imageBlueCrack
                 = SWTResourceManager.getImage(SnowingApplication.class, "crack-1080.png", true);
         ImageData imageDataCrack = imageBlueCrack.getImageData();
-        int locXCrack = (imageData.width - imageDataCrack.width) / 2 - 50;
+        int locXCrack = (imageData.width - imageDataCrack.width) / 2 - 230;
         int locYCrack = (imageData.height - imageDataCrack.height) / 2;
         gc.drawImage(imageBlueCrack, locXCrack, locYCrack);
     }
 
     private void drawText(GC gc) {
-        gc.setFont(SWTResourceManager.getFont("Arial", 70, SWT.BOLD));
+        gc.setFont(SWTResourceManager.getFont("Arial", 90, SWT.BOLD));
         gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         gc.setTextAntialias(SWT.DEFAULT);
         gc.setAdvanced(true);

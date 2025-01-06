@@ -123,6 +123,10 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         flagsConfiguration.switchDebug();
                         listeners.forEach(GeneratorListener::switchDebug);
                         break;
+                    case 'T':
+                    case 't':
+                        flagsConfiguration.switchObjectsTail();
+                        break;
                     case 'A':
                     case 'a':
                         flagsConfiguration.switchAttack();
@@ -206,6 +210,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     }
 
     private void initVideos() {
+        this.videos.add(loadResourceAsString("embededLetItSnow2.html"));
         this.videos.add(loadResourceAsString("embededLetItSnow.html"));
         this.videos.add(loadResourceAsString("embededChristmasMusic.html"));
         this.videos.add(loadResourceAsString("embededMusicSensual.html"));
