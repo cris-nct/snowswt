@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ShutdownAnimation {
 
-    private final List<Integer> valuesToAlternate = Arrays.asList(6, 26, 70);
+    private final List<Integer> valuesToAlternate = Arrays.asList(-6, 86);
 
     private final LinkedList<String> messages = new LinkedList<>();
     private final Shell shell;
@@ -43,6 +43,7 @@ public class ShutdownAnimation {
         } else {
             this.drawImage(gc, image);
         }
+        this.drawFlame(gc);
     }
 
     private void drawImage(GC gc, Image image) {
@@ -57,8 +58,6 @@ public class ShutdownAnimation {
             int locYMainImage = (GuiUtils.SCREEN_BOUNDS.height - heightMinimap) / 2;
             gc.drawImage(image, 0, 0, imageData.width, imageData.height,
                     locXMainImage, locYMainImage, widthMinimap, heightMinimap);
-            //Draw flame
-            this.drawFlame(gc);
             phaseIndexShacking = ++phaseIndexShacking % valuesToAlternate.size();
             if (alphaMainImage < 100) {
                 startCrackFading = true;
@@ -111,6 +110,7 @@ public class ShutdownAnimation {
         Point screenLoc = GuiUtils.toScreenCoord(flame.getLocation());
         screenLoc.x -= flame.getSize() / 2;
         screenLoc.y -= flame.getSize() / 2;
+        gc.setAlpha(255);
         gc.drawImage(img, screenLoc.x, screenLoc.y);
         flame.increaseImageIndex();
     }

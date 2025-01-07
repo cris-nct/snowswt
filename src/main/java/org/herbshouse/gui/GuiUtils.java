@@ -98,6 +98,13 @@ public final class GuiUtils {
         gc.setAlpha(prevAlpha);
     }
 
+    public static void drawGradientRectangle(GC gc, Point2D loc, double width, double height) {
+        Point screenObjLoc = toScreenCoord(loc);
+        gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+        gc.fillGradientRectangle(screenObjLoc.x, screenObjLoc.y, (int) width, (int) height, true);
+    }
+
     public static Point toScreenCoord(Point2D loc) {
         return toScreenCoord(loc.x, loc.y);
     }

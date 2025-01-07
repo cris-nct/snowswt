@@ -66,7 +66,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                 Utils.sleep(FlagsConfiguration.SLEEP_SNOWFLAKE_GENERATOR);
             }
         }
+        this.snowflakes.clear();
         attackData2Global.shutdown();
+        taskSnowing.cancel();
         timer.cancel();
         timer.purge();
     }
