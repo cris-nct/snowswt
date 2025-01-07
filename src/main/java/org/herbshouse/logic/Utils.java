@@ -108,6 +108,13 @@ public class Utils {
         return p;
     }
 
+    public static Point2D pointRotation(Point2D fixPoint, Point2D point, double angle) {
+        double distance = distance(fixPoint.x, fixPoint.y, point.x, point.y);
+        double angCurrent = angleOfPath(fixPoint.x, fixPoint.y, point.x, point.y);
+        angCurrent = normAngle(angCurrent - normAngle(angle));
+        return moveToDirection(fixPoint.x, fixPoint.y, distance, angCurrent);
+    }
+
     public static double normAngle(double angle) {
         double degAngle = Math.toDegrees(angle);
         degAngle = formatNDecimals(degAngle, NR_DECIMALS_FORMAT_DEGREES);

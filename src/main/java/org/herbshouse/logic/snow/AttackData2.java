@@ -2,7 +2,7 @@ package org.herbshouse.logic.snow;
 
 import org.herbshouse.logic.Point2D;
 
-public class AttackData {
+public class AttackData2 {
     private Point2D locationToFollow;
 
     private int counterDegrees;

@@ -134,8 +134,12 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case '1':
                     case '2':
+                    case '3':
                         int type = Integer.parseInt(String.valueOf(e.character));
                         flagsConfiguration.setAttackType(type);
+                        if (e.character == '3' && !flagsConfiguration.isObjectsTail()){
+                            flagsConfiguration.switchObjectsTail();
+                        }
                         break;
                     case 'M':
                     case 'm':

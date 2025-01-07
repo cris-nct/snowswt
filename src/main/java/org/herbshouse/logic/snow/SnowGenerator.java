@@ -84,7 +84,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                 continue;
             }
             this.move(snowflake, prevSnowFlake, snowflakeindex);
-            if (snowflake.getLocation().y <= 0) {
+            if (snowflake.getLocation().y <= 0 && !flagsConfiguration.isAttack()) {
                 toRemove.add(snowflake);
             } else {
                 prevSnowFlake = snowflake;
@@ -96,19 +96,18 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             toRemove.clear();
         }
 
-        if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2) {
-            postprocessingAttack2();
+        if (flagsConfiguration.isAttack() && (flagsConfiguration.getAttackType() == 2 || flagsConfiguration.getAttackType() == 3)) {
+            postprocessingAttack();
         }
     }
 
-    private void postprocessingAttack2() {
+    private void postprocessingAttack() {
         boolean allArrivedToDestination = true;
         for (Snowflake snowflake : snowflakes) {
-            if (snowflake.isFreezed() || snowflake.getAttackData().getLocationToFollow() == null) {
+            if (snowflake.isFreezed() || snowflake.getAttackData2().getLocationToFollow() == null) {
                 continue;
             }
-            allArrivedToDestination
-                    = Utils.distance(snowflake.getLocation(), snowflake.getAttackData().getLocationToFollow()) < 5;
+            allArrivedToDestination = Utils.distance(snowflake.getLocation(), snowflake.getAttackData2().getLocationToFollow()) < 5;
             if (!allArrivedToDestination) {
                 break;
             }
@@ -151,6 +150,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             this.moveSnowflakeAttack1(snowflake, prevSnowFlake);
         } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2) {
             this.moveSnowflakeAttack2(snowflake);
+        } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 3 && index < 20) {
+            this.moveSnowflakeAttack3(snowflake);
         } else if (flagsConfiguration.isHappyWind()) {
             this.moveSnowflakeHappyWind(snowflake);
         } else if (flagsConfiguration.isNormalWind()) {
@@ -204,14 +205,14 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             }
         }
         if (move) {
-            double distance = Math.abs(Math.sin(Math.toRadians(snowflake.getAttackData().getCounterDegrees())));
+            double distance = Math.abs(Math.sin(Math.toRadians(snowflake.getAttackData2().getCounterDegrees())));
             Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), distance, directionToTarget);
             snowflake.setLocation(newLoc);
         }
     }
 
     private void moveSnowflakeAttack2(Snowflake snowflake) {
-        AttackData data = snowflake.getAttackData();
+        AttackData2 data = snowflake.getAttackData2();
         Point2D dest = data.getLocationToFollow();
         Point2D newLoc;
         if (dest == null) {
@@ -240,6 +241,84 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         snowflake.setLocation(newLoc);
     }
 
+    private void moveSnowflakeAttack3(Snowflake snowflake) {
+        AttackData3 data = snowflake.getAttackData3();
+        Point2D dest = data.getLocationToFollow();
+        Point2D newLoc = snowflake.getLocation();
+        if (dest == null) {
+            dest = Utils.moveToDirection(flagsConfiguration.getMouseLoc(), 600, Math.toRadians(Math.random() * 360));
+            data.setPhase(0);
+            data.setLocationToFollow(dest);
+        } else if (attackData2Global.isAllArrivedToDestination()) {
+            if (data.getPhase() == 0) {
+                dest = flagsConfiguration.getMouseLoc();
+                data.setLocationToFollow(dest);
+                data.setSpeedPhase1(Math.random() + 0.3);
+                data.setCounter(0);
+                data.setPhase(1);
+            } else if (data.getPhase() == 1) {
+                dest = flagsConfiguration.getMouseLoc();
+                data.setSpeedPhase1(Math.random() / 2 + 0.3);
+                data.setLocationToFollow(dest);
+                data.setPhase(2);
+            } else if (data.getPhase() == 2) {
+                dest = new Point2D(screenBounds.width * Math.random(), screenBounds.height * Math.random());
+                data.setLocationToFollow(dest);
+                data.setPhase(3);
+            } else if (data.getPhase() == 3) {
+                dest = flagsConfiguration.getMouseLoc();
+                data.setSpeedPhase1(1);
+                data.setLocationToFollow(dest);
+                data.setPhase(4);
+            } else if (data.getPhase() == 4) {
+                data.setLocationToFollow(null);
+                data.setPhase(-1);
+            }
+        } else {
+            if (data.getPhase() == 0) {
+                double distToTarget = Utils.distance(snowflake.getLocation(), dest);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), 0.5, directionToTarget);
+                double func = Math.tanh(distToTarget * 0.01);
+                func = Math.tanh(distToTarget * 0.5) * 5 / distToTarget;
+                newLoc = Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
+            } else if (data.getPhase() == 1) {
+                double distToTarget = Utils.distance(snowflake.getLocation(), dest);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), data.getSpeedPhase1(), directionToTarget);
+                double func = Math.sin(distToTarget * 0.15);
+                newLoc = Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
+            } else if (data.getPhase() == 2) {
+                double distToTarget = Utils.distance(snowflake.getLocation(), dest);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
+                double func = 2 * Math.tanh(distToTarget * 0.5);
+                newLoc = Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
+                data.setLocationToFollow(flagsConfiguration.getMouseLoc());
+            } else if (data.getPhase() == 3) {
+                double distToTarget = Utils.distance(snowflake.getLocation(), dest);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), data.getSpeedPhase1(), directionToTarget);
+                double func = Math.tanh(distToTarget * 0.5) * 5 / distToTarget;
+                newLoc = Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
+            } else if (data.getPhase() == 4) {
+                double distToTarget = Utils.distance(snowflake.getLocation(), dest);
+                double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
+                newLoc = Utils.moveToDirection(snowflake.getLocation(), data.getSpeedPhase1(), directionToTarget);
+                double func = Math.sin(distToTarget * 0.030) + 1 / distToTarget;
+                newLoc = Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
+                if (data.getCounter() % 200 == 0) {
+                    data.setLocationToFollow(new Point2D(screenBounds.width * Math.random(), screenBounds.height * Math.random()));
+                }
+                if (data.getCounter() > 10000) {
+                    data.setLocationToFollow(flagsConfiguration.getMouseLoc());
+                }
+            }
+        }
+
+        snowflake.setLocation(newLoc);
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     private Snowflake generateNewSnowflake() {
         final int size;
@@ -250,9 +329,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         }
         final double speed;
         int snowingLevel = flagsConfiguration.getSnowingLevel();
-        if (snowingLevel < 3){
+        if (snowingLevel < 3) {
             speed = 0.5 + Math.random();
-        } else if (snowingLevel < 6){
+        } else if (snowingLevel < 6) {
             speed = 0.5 + Math.random() * 2;
         } else {
             speed = 0.7 + Math.random() * 2.5;
@@ -444,17 +523,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {
-                    if (!snowflake.isFreezed()
-                            && snowflake.getLocation().x > screenBounds.width / 2.0d - 150
-                            && snowflake.getLocation().x < screenBounds.width / 2.0d + 150
-                            && this.isColliding(snowflake, imageData)) {
+                    if (!snowflake.isFreezed() && snowflake.getLocation().x > screenBounds.width / 2.0d - 150 && snowflake.getLocation().x < screenBounds.width / 2.0d + 150 && this.isColliding(snowflake, imageData)) {
                         snowflake.freeze();
                     }
                 }
                 lockSnowflakes.unlock();
             }
-        } catch (
-                InterruptedException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -462,8 +537,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private boolean isColliding(Snowflake snowflake, ImageData imageData) {
         final Set<RGB> colors = new HashSet<>();
         for (int x = -1; x < 2; x++) {
-            Point screenLoc = GuiUtils.toScreenCoord((int) snowflake.getLocation().x + x,
-                    (int) snowflake.getLocation().y);
+            Point screenLoc = GuiUtils.toScreenCoord((int) snowflake.getLocation().x + x, (int) snowflake.getLocation().y);
             colors.add(GuiUtils.getPixelColor(imageData, screenLoc.x, screenLoc.y));
         }
         return colors.stream().anyMatch(p -> p.equals(GuiUtils.FREEZE_COLOR));
