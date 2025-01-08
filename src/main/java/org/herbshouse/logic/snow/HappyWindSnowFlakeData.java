@@ -3,37 +3,38 @@ package org.herbshouse.logic.snow;
 import org.herbshouse.logic.Point2D;
 
 public class HappyWindSnowFlakeData {
-    private volatile Point2D origLocation;
-    private double angle;
-    private double angleIncrease = 0.02;
-    private int areaToMove;
 
-    public int getAreaToMove() {
-        return areaToMove;
-    }
+  private volatile Point2D origLocation;
+  private double angle;
+  private double angleIncrease = 0.02;
+  private int areaToMove;
 
-    public void setAreaToMove(int areaToMove) {
-        this.areaToMove = areaToMove;
-    }
+  public int getAreaToMove() {
+    return areaToMove;
+  }
 
-    public void setAngleIncrease(double angleIncrease) {
-        this.angleIncrease = angleIncrease;
-    }
+  public void setAreaToMove(int areaToMove) {
+    this.areaToMove = areaToMove;
+  }
 
-    public double getAngle() {
-        return angle;
-    }
+  public void setAngleIncrease(double angleIncrease) {
+    this.angleIncrease = angleIncrease;
+  }
 
-    public Point2D getOrigLocation() {
-        return origLocation;
-    }
+  public double getAngle() {
+    return angle;
+  }
 
-    public void setOrigLocation(Point2D origLocation) {
-        this.origLocation = origLocation;
-    }
+  public Point2D getOrigLocation() {
+    return origLocation;
+  }
 
-    public void increaseAngle() {
-        this.angle += angleIncrease;
-    }
+  public void setOrigLocation(Point2D origLocation) {
+    this.origLocation = origLocation;
+  }
+
+  public void increaseAngle() {
+    this.angle += angleIncrease;
+  }
 
 }

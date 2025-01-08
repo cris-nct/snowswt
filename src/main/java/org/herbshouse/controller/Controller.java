@@ -1,60 +1,59 @@
 package org.herbshouse.controller;
 
+import java.util.List;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.UserInfo;
 
-import java.util.List;
-
 public interface Controller {
 
-    void mouseMove(int x, int y);
+  void mouseMove(int x, int y);
 
-    void mouseDown(int button, int x, int y);
+  void mouseDown(int button, int x, int y);
 
-    void mouseScrolled(int count);
+  void mouseScrolled(int count);
 
-    void switchNormalWind();
+  void switchNormalWind();
 
-    void switchHappyWind();
+  void switchHappyWind();
 
-    void flipImage();
+  void flipImage();
 
-    void pause();
+  void pause();
 
-    UserInfo getUserInfo();
+  UserInfo getUserInfo();
 
-    FlagsConfiguration getFlagsConfiguration();
+  FlagsConfiguration getFlagsConfiguration();
 
-    void registerListener(GeneratorListener<?> listener);
+  void registerListener(GeneratorListener<?> listener);
 
-    List<GeneratorListener<? extends AbstractMovableObject>> getListeners();
+  List<GeneratorListener<? extends AbstractMovableObject>> getListeners();
 
-    void reset();
+  void reset();
 
-    void switchBigBalls();
+  void switchBigBalls();
 
-    void switchDebug();
+  void switchDebug();
 
-    void switchObjectsTail();
+  void switchObjectsTail();
 
-    void switchAttack();
+  void switchAttack();
 
-    void setAttackType(int type);
+  void setAttackType(int type);
 
-    void switchMercedesSnowflakes();
+  void switchMercedesSnowflakes();
 
-    void increaseSnowLevel();
+  void increaseSnowLevel();
 
-    void decreaseSnowLevel();
+  void decreaseSnowLevel();
 
-    void switchYoutube();
+  void switchYoutube();
 
-    void switchEnemies();
+  void switchEnemies();
 
-    void substractAreaFromShell(int[] polygon);
+  void substractAreaFromShell(int[] polygon);
 
-    void resetShellSurface();
+  void resetShellSurface();
 
-    void shutdown();
+  void shutdown();
 }

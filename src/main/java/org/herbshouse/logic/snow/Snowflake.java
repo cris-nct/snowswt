@@ -6,40 +6,41 @@ import org.herbshouse.logic.snow.attack.attack2.AttackData2;
 import org.herbshouse.logic.snow.attack.attack3.AttackData3;
 
 public class Snowflake extends AbstractMovableObject {
-    private final AttackData2 attackData2 = new AttackData2();
-    private final AttackData3 attackData3 = new AttackData3();
-    private final HappyWindSnowFlakeData happyWindData = new HappyWindSnowFlakeData();
-    private final SnowTail snowTail;
-    private boolean freezed = false;
 
-    public Snowflake() {
-        snowTail = new SnowTail(this);
-    }
+  private final AttackData2 attackData2 = new AttackData2();
+  private final AttackData3 attackData3 = new AttackData3();
+  private final HappyWindSnowFlakeData happyWindData = new HappyWindSnowFlakeData();
+  private final SnowTail snowTail;
+  private boolean freezed = false;
 
-    public AttackData3 getAttackData3() {
-        return attackData3;
-    }
+  public Snowflake() {
+    snowTail = new SnowTail(this);
+  }
 
-    public SnowTail getSnowTail() {
-        return snowTail;
-    }
+  public AttackData3 getAttackData3() {
+    return attackData3;
+  }
 
-    public AttackData2 getAttackData2() {
-        return attackData2;
-    }
+  public SnowTail getSnowTail() {
+    return snowTail;
+  }
 
-    public HappyWindSnowFlakeData getHappyWindData() {
-        return happyWindData;
-    }
+  public AttackData2 getAttackData2() {
+    return attackData2;
+  }
 
-    public void freeze() {
-        if (!freezed) {
-            freezed = true;
-            setColor(GuiUtils.FREEZE_COLOR);
-        }
-    }
+  public HappyWindSnowFlakeData getHappyWindData() {
+    return happyWindData;
+  }
 
-    public boolean isFreezed() {
-        return freezed;
+  public void freeze() {
+    if (!freezed) {
+      freezed = true;
+      setColor(GuiUtils.FREEZE_COLOR);
     }
+  }
+
+  public boolean isFreezed() {
+    return freezed;
+  }
 }

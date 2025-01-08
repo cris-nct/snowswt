@@ -8,53 +8,53 @@ import org.herbshouse.logic.Point2D;
 
 public class GuiController extends AbstractController {
 
-    private final GuiListener listener;
+  private final GuiListener listener;
 
-    public GuiController(GuiListener listener) {
-        this.listener = listener;
-    }
+  public GuiController(GuiListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public void mouseMove(int x, int y) {
-        Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
-        getFlagsConfiguration().setMouseCurrentLocation(mouseLoc);
-        getListeners().forEach(l -> l.mouseMove(mouseLoc));
-    }
+  @Override
+  public void mouseMove(int x, int y) {
+    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
+    getFlagsConfiguration().setMouseCurrentLocation(mouseLoc);
+    getListeners().forEach(l -> l.mouseMove(mouseLoc));
+  }
 
-    @Override
-    public void mouseDown(int button, int x, int y) {
-        Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
-        getListeners().forEach(l -> l.mouseDown(button, mouseLoc));
-    }
+  @Override
+  public void mouseDown(int button, int x, int y) {
+    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
+    getListeners().forEach(l -> l.mouseDown(button, mouseLoc));
+  }
 
-    private Point convertLoc(int x, int y) {
-        int locX = x;
-        int locY = y;
-        if (getFlagsConfiguration().isFlipImage()) {
-            float[] data = {locX, locY};
-            getFlagsConfiguration().getTransform().transform(data);
-            locX = (int) data[0];
-            locY = (int) data[1];
-        }
-        return new Point(locX, locY);
+  private Point convertLoc(int x, int y) {
+    int locX = x;
+    int locY = y;
+    if (getFlagsConfiguration().isFlipImage()) {
+      float[] data = {locX, locY};
+      getFlagsConfiguration().getTransform().transform(data);
+      locX = (int) data[0];
+      locY = (int) data[1];
     }
+    return new Point(locX, locY);
+  }
 
-    @Override
-    public void setAttackType(int type) {
-        super.setAttackType(type);
-        if (type == 3 && !getFlagsConfiguration().isObjectsTail()) {
-            getFlagsConfiguration().switchObjectsTail();
-        }
+  @Override
+  public void setAttackType(int type) {
+    super.setAttackType(type);
+    if (type == 3 && !getFlagsConfiguration().isObjectsTail()) {
+      getFlagsConfiguration().switchObjectsTail();
     }
+  }
 
-    @Override
-    public void substractAreaFromShell(int[] polygon) {
-        Display.getDefault().asyncExec(() -> listener.substractAreaFromShell(polygon));
-    }
+  @Override
+  public void substractAreaFromShell(int[] polygon) {
+    Display.getDefault().asyncExec(() -> listener.substractAreaFromShell(polygon));
+  }
 
-    @Override
-    public void resetShellSurface() {
-        Display.getDefault().asyncExec(listener::resetShellSurface);
-    }
+  @Override
+  public void resetShellSurface() {
+    Display.getDefault().asyncExec(listener::resetShellSurface);
+  }
 
 }

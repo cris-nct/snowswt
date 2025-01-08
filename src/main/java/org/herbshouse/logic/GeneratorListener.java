@@ -1,45 +1,44 @@
 package org.herbshouse.logic;
 
+import java.util.List;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.AbstractController;
 import org.herbshouse.controller.FlagsConfiguration;
-import org.herbshouse.gui.GuiListener;
-
-import java.util.List;
 
 public interface GeneratorListener<T extends AbstractMovableObject> {
-    void turnOnHappyWind();
 
-    void freezeMovableObjects();
+  void turnOnHappyWind();
 
-    void switchDebug();
+  void freezeMovableObjects();
 
-    void mouseMove(Point2D mouseLocation);
+  void switchDebug();
 
-    void mouseDown(int button, Point2D mouseLocation);
+  void mouseMove(Point2D mouseLocation);
 
-    void mouseScrolled(int count);
+  void mouseDown(int button, Point2D mouseLocation);
 
-    void reset();
+  void mouseScrolled(int count);
 
-    void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds);
+  void reset();
 
-    default int getCountdown() {
-        return -1;
-    }
+  void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds);
 
-    List<T> getMoveableObjects();
+  default int getCountdown() {
+    return -1;
+  }
 
-    void shutdown();
+  List<T> getMoveableObjects();
 
-    void provideImageData(ImageData imageData);
+  void shutdown();
 
-    void switchAttack();
+  void provideImageData(ImageData imageData);
 
-    default void changedSnowingLevel() {
-    }
+  void switchAttack();
 
-    void setController(AbstractController controller);
+  default void changedSnowingLevel() {
+  }
+
+  void setController(AbstractController controller);
 
 }

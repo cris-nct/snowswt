@@ -7,27 +7,27 @@ import org.herbshouse.logic.snow.SnowGenerator;
 
 public class Tests {
 
-    public static void main(String[] args) {
-        UserInfo userInfo = new UserInfo();
+  public static void main(String[] args) {
+    UserInfo userInfo = new UserInfo();
 
-        SnowGenerator snowGenerator = new SnowGenerator();
-        snowGenerator.skipInitialAnimation();
+    SnowGenerator snowGenerator = new SnowGenerator();
+    snowGenerator.skipInitialAnimation();
 
-        EnemyGenerator enemyGenerator = new EnemyGenerator();
+    EnemyGenerator enemyGenerator = new EnemyGenerator();
 
-        TestController controller = new TestController();
-        controller.setUserInfo(userInfo);
-        controller.registerListener(snowGenerator);
-        controller.registerListener(enemyGenerator);
+    TestController controller = new TestController();
+    controller.setUserInfo(userInfo);
+    controller.registerListener(snowGenerator);
+    controller.registerListener(enemyGenerator);
 
-        snowGenerator.start();
-        enemyGenerator.start();
+    snowGenerator.start();
+    enemyGenerator.start();
 
-        Utils.sleep(10000);
+    Utils.sleep(10000);
 
-        controller.shutdown();
-        snowGenerator.shutdown();
-        enemyGenerator.shutdown();
-    }
+    controller.shutdown();
+    snowGenerator.shutdown();
+    enemyGenerator.shutdown();
+  }
 
 }
