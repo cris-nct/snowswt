@@ -122,9 +122,10 @@ public final class GuiUtils {
     }
 
     public static void drawSnowflakeAsMercedes(GC gc, AbstractMovableObject snowflake) {
+        Point screenLoc = GuiUtils.toScreenCoord(snowflake.getLocation());
         gc.drawImage(SnowingApplication.mbImageSmall,
-                (int) snowflake.getLocation().x - SnowingApplication.MB_ICON_SIZE / 2,
-                (int) snowflake.getLocation().y - SnowingApplication.MB_ICON_SIZE / 2
+                screenLoc.x - SnowingApplication.MB_ICON_SIZE / 2,
+                screenLoc.y - SnowingApplication.MB_ICON_SIZE / 2
         );
     }
 

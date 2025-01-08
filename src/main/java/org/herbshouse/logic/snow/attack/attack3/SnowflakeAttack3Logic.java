@@ -1,7 +1,7 @@
 package org.herbshouse.logic.snow.attack.attack3;
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;

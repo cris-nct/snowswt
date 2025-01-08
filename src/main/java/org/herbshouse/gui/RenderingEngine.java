@@ -3,6 +3,7 @@ package org.herbshouse.gui;
 import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.herbshouse.controller.FlagsConfiguration;
 
 import java.util.Timer;
 import java.util.TimerTask;

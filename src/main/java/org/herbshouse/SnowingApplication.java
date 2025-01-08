@@ -2,6 +2,7 @@ package org.herbshouse;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.herbshouse.controller.GuiController;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.UserInfo;
@@ -17,12 +18,12 @@ public class SnowingApplication {
 
     public static void main(String[] args) {
         boolean skipAnimation = Arrays.asList(args).contains("-skipInitialAnimation");
-        UserInfo userInfo = new UserInfo();
+
         SnowGenerator snowGenerator = new SnowGenerator();
         if (skipAnimation) {
             snowGenerator.skipInitialAnimation();
         }
-        EnemyGenerator enemyGenerator = new EnemyGenerator(userInfo);
+        EnemyGenerator enemyGenerator = new EnemyGenerator();
         try {
             mbImageSmall = new Image(Display.getDefault(),
                     SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true)
@@ -30,10 +31,14 @@ public class SnowingApplication {
                             .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
             );
 
-            SnowShell shell = new SnowShell(userInfo);
-            shell.registerListener(snowGenerator);
-            shell.registerListener(enemyGenerator);
-            enemyGenerator.registerListener(shell);
+            SnowShell shell = new SnowShell();
+
+            GuiController controller = new GuiController(shell);
+            controller.setUserInfo(new UserInfo());
+            controller.registerListener(snowGenerator);
+            controller.registerListener(enemyGenerator);
+
+            shell.setController(controller);
             shell.open();
             snowGenerator.start();
             enemyGenerator.start();

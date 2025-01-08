@@ -1,12 +1,11 @@
 package org.herbshouse.logic.snow;
 
 
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
@@ -303,13 +302,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
 
     @Override
-    public void mouseScrolled(MouseEvent mouseEvent) {
+    public void mouseScrolled(int count) {
         try {
             if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                 for (Snowflake snowflake : snowflakes) {
                     if (!snowflake.isFreezed()) {
                         Point2D newLoc = snowflake.getLocation();
-                        newLoc.y += 10 * mouseEvent.count;
+                        newLoc.y += 10 * count;
                         snowflake.setLocation(newLoc);
                     }
                 }

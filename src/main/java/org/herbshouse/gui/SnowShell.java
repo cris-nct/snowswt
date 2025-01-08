@@ -11,10 +11,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
+import org.herbshouse.controller.Controller;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
-import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
@@ -37,22 +36,22 @@ import java.util.Objects;
  */
 public class SnowShell extends Shell implements PaintListener, GuiListener {
     private final Canvas canvas;
-    private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
     private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
-    private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
-    private final SwtImageBuilder swtImageBuilder;
     private final List<String> videos = new ArrayList<>();
     private final RenderingEngine renderingEngine;
     private final ShutdownAnimation shutdownAnimation;
     private final Transform transform;
+
+    private SwtImageBuilder swtImageBuilder;
+    private Controller controller;
     private Region shellRegion;
     private Browser browser;
     private int videosIndex;
     private boolean startShutdown;
 
-    public SnowShell(UserInfo userInfo) {
+    public SnowShell() {
         super(Display.getDefault(), SWT.NO_TRIM);
-        this.swtImageBuilder = new SwtImageBuilder(flagsConfiguration, userInfo);
+
         this.shellRegion = new Region(Display.getDefault());
         this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
 
@@ -68,18 +67,12 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
         Display.getDefault().timerExec(300, () -> setFullScreen(true));
         this.canvas.addPaintListener(this);
-        this.canvas.addMouseMoveListener(e -> {
-                    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(e.x, e.y));
-                    flagsConfiguration.setMouseCurrentLocation(mouseLoc);
-                    listeners.forEach(l -> l.mouseMove(mouseLoc));
-                }
-        );
-        this.canvas.addMouseWheelListener(e -> listeners.forEach(l -> l.mouseScrolled(e)));
+        this.canvas.addMouseMoveListener(e -> controller.mouseMove(e.x, e.y));
+        this.canvas.addMouseWheelListener(e -> controller.mouseScrolled(e.count));
         this.canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
-                Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(e.x, e.y));
-                listeners.forEach(l -> l.mouseDown(e.button, mouseLoc));
+                controller.mouseDown(e.button, e.x, e.y);
             }
         });
         this.canvas.addKeyListener(new KeyAdapter() {
@@ -87,87 +80,66 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             public void keyPressed(KeyEvent e) {
                 switch (e.character) {
                     case ' ':
-                        flagsConfiguration.switchNormalWind();
+                        controller.switchNormalWind();
                         break;
                     case 'X':
                     case 'x':
-                        if (!flagsConfiguration.isHappyWind()) {
-                            listeners.forEach(GeneratorListener::turnOnHappyWind);
-                        }
-                        flagsConfiguration.switchHappyWind();
+                        controller.switchHappyWind();
                         break;
                     case 'F':
                     case 'f':
-                        if (flagsConfiguration.isFlipImage()) {
-                            flagsConfiguration.setTransform(null);
-                        } else {
-                            flagsConfiguration.setTransform(transform);
-                        }
-                        flagsConfiguration.switchFlipImage();
+                        controller.flipImage();
                         break;
                     case 'P':
                     case 'p':
-                        flagsConfiguration.switchFreezeSnowflakes();
-                        listeners.forEach(GeneratorListener::freezeMovableObjects);
+                        controller.pause();
                         break;
                     case 'R':
                     case 'r':
-                        listeners.forEach(GeneratorListener::reset);
+                        controller.reset();
                         break;
                     case 'B':
                     case 'b':
-                        flagsConfiguration.switchBigBalls();
+                        controller.switchBigBalls();
                         break;
                     case 'D':
                     case 'd':
-                        flagsConfiguration.switchDebug();
-                        listeners.forEach(GeneratorListener::switchDebug);
+                        controller.switchDebug();
                         break;
                     case 'T':
                     case 't':
-                        flagsConfiguration.switchObjectsTail();
+                        controller.switchObjectsTail();
                         break;
                     case 'A':
                     case 'a':
-                        flagsConfiguration.switchAttack();
-                        listeners.forEach(GeneratorListener::switchAttack);
+                        controller.switchAttack();
                         break;
                     case '1':
                     case '2':
                     case '3':
-                        int type = Integer.parseInt(String.valueOf(e.character));
-                        flagsConfiguration.setAttackType(type);
-                        if (e.character == '3' && !flagsConfiguration.isObjectsTail()){
-                            flagsConfiguration.switchObjectsTail();
-                        }
+                        controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
                         break;
                     case 'M':
                     case 'm':
-                        flagsConfiguration.switchMercedesSnowflakes();
+                        controller.switchMercedesSnowflakes();
                         break;
                     case '+':
-                        if (flagsConfiguration.getSnowingLevel() < 10) {
-                            flagsConfiguration.increaseSnowingLevel();
-                            listeners.forEach(GeneratorListener::changedSnowingLevel);
-                        }
+                        controller.increaseSnowLevel();
                         break;
                     case '-':
-                        if (flagsConfiguration.getSnowingLevel() > 0) {
-                            flagsConfiguration.decreaseSnowingLevel();
-                            listeners.forEach(GeneratorListener::changedSnowingLevel);
-                        }
+                        controller.decreaseSnowLevel();
                         break;
                     case 'y':
                     case 'Y':
-                        flagsConfiguration.switchYoutube();
-                        updateBrowser(flagsConfiguration.isYoutube());
-                        if (flagsConfiguration.isYoutube()) {
+                        controller.switchYoutube();
+                        updateBrowser(controller.getFlagsConfiguration().isYoutube());
+                        if (controller.getFlagsConfiguration().isYoutube()) {
                             playNext();
                         }
                         break;
                     case 'e':
                     case 'E':
-                        flagsConfiguration.switchEnemies();
+                        controller.switchEnemies();
                         break;
                     case 'n':
                     case 'N':
@@ -177,12 +149,14 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
                         break;
                     case 'q':
                     case 'Q':
-                        if (!flagsConfiguration.isYoutube()) {
+                        resetShellSurface();
+                        if (!controller.getFlagsConfiguration().isYoutube()) {
                             updateBrowser(true);
                         }
+                        browser.setVisible(false);
                         browser.setText(loadResourceAsString("embededGoodBye.html"), true);
                         canvas.removeKeyListener(this);
-                        listeners.forEach(GeneratorListener::shutdown);
+                        controller.shutdown();
                         startShutdown = true;
                         break;
                 }
@@ -201,16 +175,9 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         });
     }
 
-    private Point convertLoc(int x, int y) {
-        int locX = x;
-        int locY = y;
-        if (flagsConfiguration.isFlipImage()) {
-            float[] data = {locX, locY};
-            transform.transform(data);
-            locX = (int) data[0];
-            locY = (int) data[1];
-        }
-        return new Point(locX, locY);
+    public void setController(Controller controller) {
+        this.controller = controller;
+        this.swtImageBuilder = new SwtImageBuilder(controller);
     }
 
     private void initVideos() {
@@ -271,11 +238,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         this.setLocation(0, 0);
     }
 
-    public void registerListener(GeneratorListener<?> listener) {
-        listener.init(flagsConfiguration, GuiUtils.SCREEN_BOUNDS);
-        listeners.add(listener);
-    }
-
     @Override
     public void open() {
         Display.getDefault().timerExec(100, renderingEngine);
@@ -291,7 +253,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
 
         try (var imageBuilder = swtImageBuilder.drawBaseElements()) {
             //Draw objects from each listener
-            for (GeneratorListener<? extends AbstractMovableObject> listener : listeners) {
+            for (GeneratorListener<? extends AbstractMovableObject> listener : controller.getListeners()) {
                 if (listener instanceof SnowGenerator) {
                     //noinspection unchecked
                     GeneratorListener<Snowflake> generatorListener = (GeneratorListener<Snowflake>) listener;
@@ -313,7 +275,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             } else {
                 gc.drawImage(image, 0, 0);
             }
-            for (GeneratorListener<?> generatorListener : listeners) {
+            for (GeneratorListener<?> generatorListener : controller.getListeners()) {
                 generatorListener.provideImageData(imageData);
             }
         }

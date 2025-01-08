@@ -1,34 +1,23 @@
 package org.herbshouse.logic;
 
-import org.eclipse.swt.widgets.Display;
-import org.herbshouse.gui.GuiListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.herbshouse.controller.AbstractController;
 
 public abstract class AbstractGenerator<T extends AbstractMovableObject>
-        extends Thread implements GeneratorListener<T>, GuiListener {
+        extends Thread implements GeneratorListener<T> {
 
-    private final List<GuiListener> guiListeners = new ArrayList<>();
-
-    @Override
-    public void registerListener(GuiListener gui) {
-        guiListeners.add(gui);
-    }
-
-    @Override
-    public void substractAreaFromShell(int[] polygon) {
-        Display.getDefault().asyncExec(() -> guiListeners.forEach(gui -> gui.substractAreaFromShell(polygon)));
-    }
-
-    @Override
-    public void resetShellSurface() {
-        Display.getDefault().asyncExec(() -> guiListeners.forEach(GuiListener::resetShellSurface));
-    }
+    private AbstractController controller;
 
     public boolean isColliding(AbstractMovableObject obj1, AbstractMovableObject obj2) {
         int sumSize = (obj1.getSize() + obj2.getSize()) / 2 + 2;
         return Utils.distance(obj1.getLocation(), obj2.getLocation()) < sumSize;
     }
 
+    @Override
+    public void setController(AbstractController controller) {
+        this.controller = controller;
+    }
+
+    public AbstractController getController() {
+        return controller;
+    }
 }

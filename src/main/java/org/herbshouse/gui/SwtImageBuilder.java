@@ -7,6 +7,8 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
+import org.herbshouse.controller.Controller;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.*;
 import org.herbshouse.logic.enemies.AnimatedGif;
 import org.herbshouse.logic.enemies.RedFace;
@@ -30,9 +32,9 @@ public class SwtImageBuilder implements AutoCloseable {
     private Image image;
     private int counterLogo;
 
-    SwtImageBuilder(FlagsConfiguration config, UserInfo userInfo) {
-        this.config = config;
-        this.userInfo = userInfo;
+    SwtImageBuilder(Controller controller) {
+        this.config = controller.getFlagsConfiguration();
+        this.userInfo = controller.getUserInfo();
     }
 
     public SwtImageBuilder drawBaseElements() {

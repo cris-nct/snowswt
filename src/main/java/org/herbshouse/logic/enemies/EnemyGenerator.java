@@ -1,10 +1,9 @@
 package org.herbshouse.logic.enemies;
 
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.*;
 
@@ -21,16 +20,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
     private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
     private final List<AnimatedGif> fireGifs = new CopyOnWriteArrayList<>();
-    private final UserInfo userInfo;
     private AnimatedGif angryFace;
     private FlagsConfiguration flagsConfiguration;
     private Rectangle screenBounds;
     private boolean shutdown = false;
-
-    public EnemyGenerator(UserInfo userInfo) {
-        super();
-        this.userInfo = userInfo;
-    }
 
     @Override
     public void run() {
@@ -55,8 +48,8 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
                             redFace.decreaseLife(1);
                         } else {
                             switch (redFace.getState()) {
-                                case FOLLOW_MOUSE -> userInfo.decreasePoints(1);
-                                case FREE -> userInfo.increasePoints(1);
+                                case FOLLOW_MOUSE -> getController().getUserInfo().decreasePoints(1);
+                                case FREE -> getController().getUserInfo().increasePoints(1);
                             }
                         }
                     }
@@ -85,7 +78,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             if (redFace.getLife() == 0) {
                 double[] circlePoints
                         = Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d, redFace.getSize(), 0);
-                substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
+                getController().substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
                 redFaces.remove(redFace);
                 continue;
             }
@@ -144,7 +137,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }
 
     @Override
-    public void mouseScrolled(MouseEvent mouseEvent) {
+    public void mouseScrolled(int count) {
 
     }
 
@@ -152,7 +145,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     public void reset() {
         cleanup();
         this.generateRedFace();
-        resetShellSurface();
+        this.getController().resetShellSurface();
     }
 
     private void cleanup() {

@@ -1,9 +1,9 @@
 package org.herbshouse.logic;
 
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.controller.AbstractController;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiListener;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void mouseDown(int button, Point2D mouseLocation);
 
-    void mouseScrolled(MouseEvent mouseEvent);
+    void mouseScrolled(int count);
 
     void reset();
 
@@ -35,10 +35,11 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
     void provideImageData(ImageData imageData);
 
-    void registerListener(GuiListener gui);
-
     void switchAttack();
 
     default void changedSnowingLevel() {
     }
+
+    void setController(AbstractController controller);
+
 }

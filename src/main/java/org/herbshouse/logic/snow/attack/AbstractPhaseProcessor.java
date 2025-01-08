@@ -1,7 +1,7 @@
 package org.herbshouse.logic.snow.attack;
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.gui.FlagsConfiguration;
+import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 
 public abstract class AbstractPhaseProcessor<T extends AbstractAttackData> implements IAttackPhaseProcessor<T> {
