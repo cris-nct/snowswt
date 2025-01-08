@@ -64,10 +64,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       if (flagsConfiguration.isEnemies()) {
         this.move();
         this.checkCollisions();
-        Utils.sleep(FlagsConfiguration.SLEEP_ENEMY_GENERATOR);
+        Utils.sleep(getSleepDuration());
       } else {
         this.cleanup();
-        Utils.sleep(FlagsConfiguration.SLEEP_GENERATOR_DOING_NOTHING);
+        Utils.sleep(getSleepDurationDoingNothing());
       }
     }
 
@@ -341,5 +341,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     redFace.setLocation(new Point2D(x, y));
     redFace.setDirection(Math.atan2(vel.y, vel.x));
+  }
+
+  @Override
+  protected int getSleepDuration() {
+    return 2;
   }
 }

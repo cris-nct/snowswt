@@ -34,11 +34,6 @@ public abstract class AbstractController implements Controller {
 
   @Override
   public void flipImage() {
-    if (flagsConfiguration.isFlipImage()) {
-      flagsConfiguration.setTransform(null);
-    } else {
-      flagsConfiguration.setTransform(flagsConfiguration.getTransform());
-    }
     flagsConfiguration.switchFlipImage();
   }
 

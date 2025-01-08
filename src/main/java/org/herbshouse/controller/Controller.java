@@ -29,6 +29,8 @@ public interface Controller {
 
   List<GeneratorListener<? extends AbstractMovableObject>> getListeners();
 
+  int getDesiredFps();
+
   void reset();
 
   void switchBigBalls();

@@ -1,6 +1,7 @@
 package org.herbshouse.controller;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.gui.GuiListener;
 import org.herbshouse.gui.GuiUtils;
@@ -10,8 +11,22 @@ public class GuiController extends AbstractController {
 
   private final GuiListener listener;
 
+  private final Transform transform;
+
+  private int desiredFPS;
+
   public GuiController(GuiListener listener) {
     this.listener = listener;
+    this.transform = listener.getTransform();
+  }
+
+  public void setDesiredFPS(int desiredFPS) {
+    this.desiredFPS = desiredFPS;
+  }
+
+  @Override
+  public int getDesiredFps() {
+    return desiredFPS;
   }
 
   @Override
@@ -32,7 +47,7 @@ public class GuiController extends AbstractController {
     int locY = y;
     if (getFlagsConfiguration().isFlipImage()) {
       float[] data = {locX, locY};
-      getFlagsConfiguration().getTransform().transform(data);
+      transform.transform(data);
       locX = (int) data[0];
       locY = (int) data[1];
     }

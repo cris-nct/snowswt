@@ -1,15 +1,8 @@
 package org.herbshouse.controller;
 
-import org.eclipse.swt.graphics.Transform;
 import org.herbshouse.logic.Point2D;
 
 public class FlagsConfiguration {
-
-  //TODO move it from here
-  public static final int DESIRED_FPS = 60;
-  public static final int SLEEP_SNOWFLAKE_GENERATOR = 5;
-  public static final int SLEEP_ENEMY_GENERATOR = 2;
-  public static final int SLEEP_GENERATOR_DOING_NOTHING = 100;
 
   private boolean normalWind;
   private boolean happyWind;
@@ -26,8 +19,6 @@ public class FlagsConfiguration {
   private int attackType = 1;
   private int snowingLevel = 5;
   private Point2D mouseLoc = new Point2D();
-  //TODO move it from here
-  private Transform transform;
 
   void increaseSnowingLevel() {
     this.snowingLevel++;
@@ -75,14 +66,6 @@ public class FlagsConfiguration {
 
   void switchFlipImage() {
     this.flipImage = !flipImage;
-  }
-
-  public Transform getTransform() {
-    return transform;
-  }
-
-  void setTransform(Transform transform) {
-    this.transform = transform;
   }
 
   void switchNormalWind() {

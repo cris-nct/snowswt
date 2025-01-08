@@ -67,11 +67,12 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         lockSnowflakes.unlock();
       }
       if (flagsConfiguration.getSnowingLevel() == 0) {
-        Utils.sleep(FlagsConfiguration.SLEEP_GENERATOR_DOING_NOTHING);
+        Utils.sleep(getSleepDurationDoingNothing());
       } else {
-        Utils.sleep(FlagsConfiguration.SLEEP_SNOWFLAKE_GENERATOR);
+        Utils.sleep(getSleepDuration());
       }
     }
+
     this.snowflakes.clear();
     attack2Logic.shutdown();
     taskSnowing.cancel();
@@ -467,4 +468,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     timer.scheduleAtFixedRate(taskSnowing, 0, snowflakesTimeGen);
   }
 
+  @Override
+  protected int getSleepDuration() {
+    return 5;
+  }
 }

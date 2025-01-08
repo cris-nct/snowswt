@@ -15,6 +15,11 @@ public class TestController extends AbstractController {
   }
 
   @Override
+  public int getDesiredFps() {
+    return 60;
+  }
+
+  @Override
   public void substractAreaFromShell(int[] polygon) {
 
   }

@@ -34,6 +34,7 @@ public class SnowingApplication {
       SnowShell shell = new SnowShell();
 
       GuiController controller = new GuiController(shell);
+      controller.setDesiredFPS(60);
       controller.setUserInfo(new UserInfo());
       controller.registerListener(snowGenerator);
       controller.registerListener(enemyGenerator);

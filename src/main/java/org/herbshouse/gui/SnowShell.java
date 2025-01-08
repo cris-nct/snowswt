@@ -47,10 +47,10 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
   private final Canvas canvas;
   private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
   private final List<String> videos = new ArrayList<>();
-  private final RenderingEngine renderingEngine;
   private final ShutdownAnimation shutdownAnimation;
   private final Transform transform;
 
+  private RenderingEngine renderingEngine;
   private SwtImageBuilder swtImageBuilder;
   private Controller controller;
   private Region shellRegion;
@@ -172,9 +172,6 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
       }
     });
 
-    this.renderingEngine = new RenderingEngine(canvas);
-    this.registerListener(renderingEngine);
-
     this.shutdownAnimation = new ShutdownAnimation(this);
     this.addDisposeListener(_ -> {
       transform.dispose();
@@ -184,9 +181,16 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
     });
   }
 
+  @Override
+  public Transform getTransform() {
+    return transform;
+  }
+
   public void setController(Controller controller) {
     this.controller = controller;
-    this.swtImageBuilder = new SwtImageBuilder(controller);
+    this.swtImageBuilder = new SwtImageBuilder(controller, transform);
+    this.renderingEngine = new RenderingEngine(canvas, controller.getDesiredFps());
+    this.registerListener(renderingEngine);
   }
 
   private void initVideos() {

@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.controller.Controller;
@@ -13,7 +14,6 @@ import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.enemies.AnimatedGif;
 import org.herbshouse.logic.enemies.RedFace;
@@ -32,15 +32,15 @@ import org.herbshouse.logic.snow.Snowflake;
 public class SwtImageBuilder implements AutoCloseable {
 
   public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
-  private final FlagsConfiguration config;
-  private final UserInfo userInfo;
   private GC gcImage;
   private Image image;
   private int counterLogo;
+  private final Transform transform;
+  private final Controller controller;
 
-  SwtImageBuilder(Controller controller) {
-    this.config = controller.getFlagsConfiguration();
-    this.userInfo = controller.getUserInfo();
+  SwtImageBuilder(Controller controller, Transform transform) {
+    this.controller = controller;
+    this.transform = transform;
   }
 
   public SwtImageBuilder drawBaseElements() {
@@ -52,7 +52,9 @@ public class SwtImageBuilder implements AutoCloseable {
 //        gcImage.setAdvanced(true);
 //        gcImage.setAntialias(SWT.DEFAULT);
     gcImage.setTextAntialias(SWT.ON);
-    gcImage.setTransform(config.getTransform());
+    if (controller.getFlagsConfiguration().isFlipImage()) {
+      gcImage.setTransform(transform);
+    }
 
     //Draw background
     gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -104,6 +106,7 @@ public class SwtImageBuilder implements AutoCloseable {
     if (gcImage == null) {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
+    FlagsConfiguration config = controller.getFlagsConfiguration();
     //Draw legend
     gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GREEN));
     gcImage.setFont(SWTResourceManager.getFont("Arial", 12, SWT.BOLD));
@@ -129,12 +132,12 @@ public class SwtImageBuilder implements AutoCloseable {
       legendBuilder.append(", Next video(N)");
     }
     legendBuilder.append("\n-------");
-    this.addTextToLegend(legendBuilder, "Your points", userInfo.getPoints());
+    this.addTextToLegend(legendBuilder, "Your points", controller.getUserInfo().getPoints());
     legendBuilder.append("\n-------\n");
     legendBuilder.append("Fire(left button)\n");
     legendBuilder.append("Reset simulation(R)\n");
     legendBuilder.append("-------");
-    this.addTextToLegend(legendBuilder, "Desired FPS", FlagsConfiguration.DESIRED_FPS);
+    this.addTextToLegend(legendBuilder, "Desired FPS", controller.getDesiredFps());
     this.addTextToLegend(legendBuilder, "Real FPS", realFPS);
     legendBuilder.append("\nExit(Q)");
     gcImage.drawText(legendBuilder.toString(), GuiUtils.SCREEN_BOUNDS.width - 240, 10, true);
@@ -193,6 +196,7 @@ public class SwtImageBuilder implements AutoCloseable {
     gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
     List<Snowflake> snowflakes = generatorListener.getMoveableObjects();
+    FlagsConfiguration config = controller.getFlagsConfiguration();
     for (Snowflake snowflake : snowflakes) {
       if (config.isMercedesSnowflakes()) {
         GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);

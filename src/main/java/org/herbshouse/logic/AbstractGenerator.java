@@ -20,4 +20,11 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
   public void setController(AbstractController controller) {
     this.controller = controller;
   }
+
+  protected abstract int getSleepDuration();
+
+  protected int getSleepDurationDoingNothing() {
+    return 100;
+  }
+
 }
