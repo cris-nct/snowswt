@@ -1,13 +1,13 @@
-package org.herbshouse.logic.snow.attack3;
+package org.herbshouse.logic.snow.attack;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 
-public abstract class AbstractPhaseProcessor implements IAttack3PhaseProcessor {
+public abstract class AbstractPhaseProcessor<T extends AbstractAttackData> implements IAttackPhaseProcessor<T> {
     private final FlagsConfiguration flagsConfiguration;
     private final Rectangle screenBounds;
-    private AbstractPhaseProcessor nextPhase;
+    private AbstractPhaseProcessor<T> nextPhase;
 
     protected AbstractPhaseProcessor(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
         this.flagsConfiguration = flagsConfiguration;
@@ -16,11 +16,13 @@ public abstract class AbstractPhaseProcessor implements IAttack3PhaseProcessor {
 
     @Override
     public final void initNextPhase(Snowflake snowflake) {
-        this.prepareNextPhase(snowflake.getAttackData3());
-        snowflake.getAttackData3().setPhase(getNextPhaseProcessor().getCurrentPhaseIndex());
+        this.prepareNextPhase(snowflake);
+        if (getNextPhaseProcessor() != null) {
+            this.getData(snowflake).setPhase(getNextPhaseProcessor().getCurrentPhaseIndex());
+        }
     }
 
-    protected abstract void prepareNextPhase(AttackData3 attackData3);
+    protected abstract void prepareNextPhase(Snowflake snowflake);
 
     protected FlagsConfiguration getFlagsConfiguration() {
         return flagsConfiguration;
@@ -30,12 +32,12 @@ public abstract class AbstractPhaseProcessor implements IAttack3PhaseProcessor {
         return screenBounds;
     }
 
-    public void setNextPhase(AbstractPhaseProcessor nextPhase) {
+    public void setNextPhase(AbstractPhaseProcessor<T> nextPhase) {
         this.nextPhase = nextPhase;
     }
 
     @Override
-    public AbstractPhaseProcessor getNextPhaseProcessor() {
+    public AbstractPhaseProcessor<T> getNextPhaseProcessor() {
         return nextPhase;
     }
 }

@@ -1,28 +1,28 @@
-package org.herbshouse.logic.snow.attack3;
+package org.herbshouse.logic.snow.attack.attack3;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
+import org.herbshouse.logic.snow.attack.IAttackPhaseProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SnowflakeAttack3Logic {
 
-    private final List<IAttack3PhaseProcessor> phases = new ArrayList<>();
+    private final List<IAttackPhaseProcessor<AttackData3>> phases = new ArrayList<>();
 
     private boolean allArrivedToDestination;
 
     public SnowflakeAttack3Logic(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
-
-        Phase0 phase0 = new Phase0(flagsConfiguration, screenBounds);
-        Phase1 phase1 = new Phase1(flagsConfiguration, screenBounds);
-        Phase2 phase2 = new Phase2(flagsConfiguration, screenBounds);
-        Phase3 phase3 = new Phase3(flagsConfiguration, screenBounds);
-        Phase4 phase4 = new Phase4(flagsConfiguration, screenBounds);
-        Phase5 phase5 = new Phase5(flagsConfiguration, screenBounds);
+        A3Phase0 phase0 = new A3Phase0(flagsConfiguration, screenBounds);
+        A3Phase1 phase1 = new A3Phase1(flagsConfiguration, screenBounds);
+        A3Phase2 phase2 = new A3Phase2(flagsConfiguration, screenBounds);
+        A3Phase3 phase3 = new A3Phase3(flagsConfiguration, screenBounds);
+        A3Phase4 phase4 = new A3Phase4(flagsConfiguration, screenBounds);
+        A3Phase5 phase5 = new A3Phase5(flagsConfiguration, screenBounds);
 
         phase0.setNextPhase(phase1);
         phase1.setNextPhase(phase2);
@@ -43,7 +43,7 @@ public class SnowflakeAttack3Logic {
         AttackData3 data = snowflake.getAttackData3();
         Point2D newLoc = snowflake.getLocation();
         //noinspection OptionalGetWithoutIsPresent
-        IAttack3PhaseProcessor phaseProcessor = phases.stream()
+        IAttackPhaseProcessor<AttackData3> phaseProcessor = phases.stream()
                 .filter(p -> p.getCurrentPhaseIndex() == data.getPhase())
                 .findFirst().get();
         if (allArrivedToDestination || data.getLocationToFollow() == null) {
@@ -67,7 +67,4 @@ public class SnowflakeAttack3Logic {
         }
     }
 
-    public void setAllArrivedToDestination(boolean allArrivedToDestination) {
-        this.allArrivedToDestination = allArrivedToDestination;
-    }
 }

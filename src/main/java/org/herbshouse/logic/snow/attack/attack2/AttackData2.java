@@ -1,13 +1,12 @@
-package org.herbshouse.logic.snow;
+package org.herbshouse.logic.snow.attack.attack2;
 
 import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.snow.attack.AbstractAttackData;
 
-public class AttackData2 {
+public class AttackData2 extends AbstractAttackData {
     private Point2D locationToFollow;
 
     private int counterDegrees;
-
-    private int phase = 0;
 
     public Point2D getLocationToFollow() {
         return locationToFollow;
@@ -19,14 +18,6 @@ public class AttackData2 {
 
     public int getCounterDegrees() {
         return counterDegrees++ % 360;
-    }
-
-    public int getPhase() {
-        return phase;
-    }
-
-    public void setPhase(int phase) {
-        this.phase = phase;
     }
 
 }

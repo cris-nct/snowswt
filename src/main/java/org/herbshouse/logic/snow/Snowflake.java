@@ -2,7 +2,8 @@ package org.herbshouse.logic.snow;
 
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractMovableObject;
-import org.herbshouse.logic.snow.attack3.AttackData3;
+import org.herbshouse.logic.snow.attack.attack2.AttackData2;
+import org.herbshouse.logic.snow.attack.attack3.AttackData3;
 
 public class Snowflake extends AbstractMovableObject {
     private final AttackData2 attackData2 = new AttackData2();

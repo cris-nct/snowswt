@@ -11,7 +11,8 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
-import org.herbshouse.logic.snow.attack3.SnowflakeAttack3Logic;
+import org.herbshouse.logic.snow.attack.attack2.SnowflakeAttack2Logic;
+import org.herbshouse.logic.snow.attack.attack3.SnowflakeAttack3Logic;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,9 +24,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
     private final List<Snowflake> toRemove = new ArrayList<>();
     private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
-    private final AttackData2Global attackData2Global = new AttackData2Global();
+    private SnowflakeAttack2Logic attack2Logic;
+    private SnowflakeAttack3Logic attack3Logic;
     private final Timer timer;
-    private SnowflakeAttack3Logic snowflakeAttack3Logic;
     private Rectangle screenBounds;
     private boolean shutdown = false;
     private FlagsConfiguration flagsConfiguration;
@@ -69,7 +70,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             }
         }
         this.snowflakes.clear();
-        attackData2Global.shutdown();
+        attack2Logic.shutdown();
         taskSnowing.cancel();
         timer.cancel();
         timer.purge();
@@ -98,27 +99,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             toRemove.clear();
         }
 
-        if (flagsConfiguration.isAttack() && (flagsConfiguration.getAttackType() == 2 || flagsConfiguration.getAttackType() == 3)) {
-            if (flagsConfiguration.getAttackType() == 3) {
-                snowflakeAttack3Logic.postProcessing(snowflakes);
-            } else {
-                postprocessingAttack2();
+        if (flagsConfiguration.isAttack()) {
+            if (flagsConfiguration.getAttackType() == 2) {
+                attack2Logic.postProcessing(snowflakes);
+            } else if (flagsConfiguration.getAttackType() == 3) {
+                attack3Logic.postProcessing(snowflakes);
             }
         }
-    }
-
-    private void postprocessingAttack2() {
-        boolean allArrivedToDestination = true;
-        for (Snowflake snowflake : snowflakes) {
-            if (snowflake.isFreezed() || snowflake.getAttackData2().getLocationToFollow() == null) {
-                continue;
-            }
-            allArrivedToDestination = Utils.distance(snowflake.getLocation(), snowflake.getAttackData2().getLocationToFollow()) < 5;
-            if (!allArrivedToDestination) {
-                break;
-            }
-        }
-        attackData2Global.setAllArrivedToDestination(allArrivedToDestination);
     }
 
     private void initialAnimation() {
@@ -155,9 +142,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 1) {
             this.moveSnowflakeAttack1(snowflake, prevSnowFlake);
         } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 2) {
-            this.moveSnowflakeAttack2(snowflake);
+            snowflake.setLocation(attack2Logic.computeNextLocation(snowflake));
         } else if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 3 && index < 20) {
-            snowflake.setLocation(snowflakeAttack3Logic.computeNextLocation(snowflake));
+            snowflake.setLocation(attack3Logic.computeNextLocation(snowflake));
         } else if (flagsConfiguration.isHappyWind()) {
             this.moveSnowflakeHappyWind(snowflake);
         } else if (flagsConfiguration.isNormalWind()) {
@@ -215,36 +202,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), distance, directionToTarget);
             snowflake.setLocation(newLoc);
         }
-    }
-
-    private void moveSnowflakeAttack2(Snowflake snowflake) {
-        AttackData2 data = snowflake.getAttackData2();
-        Point2D dest = data.getLocationToFollow();
-        Point2D newLoc;
-        if (dest == null) {
-            dest = Utils.moveToDirection(flagsConfiguration.getMouseLoc(), 250, Math.toRadians(Math.random() * 360));
-            data.setPhase(0);
-            data.setLocationToFollow(dest);
-        } else if (attackData2Global.isAllArrivedToDestination()) {
-            if (data.getPhase() == 0) {
-                double dir = Utils.angleOfPath(snowflake.getLocation(), flagsConfiguration.getMouseLoc());
-                dest = Utils.moveToDirection(snowflake.getLocation(), 50, dir);
-                data.setPhase(1);
-            } else if (data.getPhase() == 1) {
-                double dir = Utils.angleOfPath(snowflake.getLocation(), flagsConfiguration.getMouseLoc());
-                dest = Utils.moveToDirection(snowflake.getLocation(), 150, dir);
-                data.setPhase(2);
-            } else if (data.getPhase() == 2) {
-                double direction = attackData2Global.getCounterStepsPhase() * Math.toRadians(data.getCounterDegrees());
-                dest = Utils.moveToDirection(flagsConfiguration.getMouseLoc(), 250, direction);
-                attackData2Global.increaseCounter();
-            }
-            data.setLocationToFollow(dest);
-        }
-
-        double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), dest);
-        newLoc = Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
-        snowflake.setLocation(newLoc);
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -381,7 +338,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     public void init(FlagsConfiguration flagsConfiguration, Rectangle drawingSurface) {
         this.flagsConfiguration = flagsConfiguration;
         this.screenBounds = drawingSurface;
-        this.snowflakeAttack3Logic = new SnowflakeAttack3Logic(flagsConfiguration, screenBounds);
+        this.attack2Logic = new SnowflakeAttack2Logic(flagsConfiguration, screenBounds);
+        this.attack3Logic = new SnowflakeAttack3Logic(flagsConfiguration, screenBounds);
     }
 
     @Override
@@ -412,14 +370,14 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             try {
                 if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
                     snowflakes.removeAll(snowflakes.stream().filter(Snowflake::isFreezed).toList());
-                    attackData2Global.updateIncrementsBounds(flagsConfiguration.getSnowingLevel());
+                    attack2Logic.updateIncrementsBounds(flagsConfiguration.getSnowingLevel());
                     lockSnowflakes.unlock();
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            attackData2Global.resetTimers();
+            attack2Logic.resetTimers();
             pauseSnowing = false;
         }
     }

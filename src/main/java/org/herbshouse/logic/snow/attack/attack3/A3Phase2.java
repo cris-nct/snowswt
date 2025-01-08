@@ -1,14 +1,15 @@
-package org.herbshouse.logic.snow.attack3;
+package org.herbshouse.logic.snow.attack.attack3;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.gui.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
+import org.herbshouse.logic.snow.attack.AbstractPhaseProcessor;
 
-public class Phase2 extends AbstractPhaseProcessor {
+public class A3Phase2 extends AbstractPhaseProcessor<AttackData3> {
 
-    protected Phase2(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
+    protected A3Phase2(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
         super(flagsConfiguration, screenBounds);
     }
 
@@ -23,9 +24,15 @@ public class Phase2 extends AbstractPhaseProcessor {
     }
 
     @Override
-    protected void prepareNextPhase(AttackData3 attackData3) {
-        attackData3.setSpeedPhase1(Math.random() / 2 + 0.3);
-        attackData3.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
+    protected void prepareNextPhase(Snowflake snowflake) {
+        AttackData3 attackData = this.getData(snowflake);
+        attackData.setSpeedPhase1(Math.random() / 2 + 0.3);
+        attackData.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
+    }
+
+    @Override
+    public AttackData3 getData(Snowflake snowflake) {
+        return snowflake.getAttackData3();
     }
 
     @Override
