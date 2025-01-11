@@ -121,7 +121,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       if (data instanceof AbstractPhaseAttackData) {
         phase = ((AbstractPhaseAttackData) data).getPhase();
       }
-      getController().setAttackPhase(phase);
+      getLogicController().setCurrentAttackPhase(phase);
     }
   }
 

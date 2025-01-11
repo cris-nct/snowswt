@@ -27,7 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.controller.Controller;
+import org.herbshouse.controller.LogicController;
+import org.herbshouse.controller.ViewController;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.enemies.EnemyGenerator;
@@ -42,7 +43,7 @@ import org.herbshouse.logic.snow.Snowflake;
  * various features such as wind effects, image rotation, debugging options, and snowflake freezing.
  * The application continuously updates the display to simulate falling snowflakes.
  */
-public class SnowShell extends Shell implements PaintListener, LogicListener {
+public class SnowShell extends Shell implements PaintListener, ViewController {
 
   private final Canvas canvas;
   private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
@@ -52,16 +53,16 @@ public class SnowShell extends Shell implements PaintListener, LogicListener {
 
   private RenderingEngine renderingEngine;
   private SwtImageBuilder swtImageBuilder;
-  private Controller controller;
+  private LogicController controller;
   private Region shellRegion;
   private Browser browser;
   private int videosIndex;
   private boolean startShutdown;
-  private int currentAttackPhase;
 
-  public SnowShell() {
+  public SnowShell(Transform transform) {
     super(Display.getDefault(), SWT.NO_TRIM);
 
+    this.transform = transform;
     this.shellRegion = new Region(Display.getDefault());
     this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
 
@@ -176,24 +177,13 @@ public class SnowShell extends Shell implements PaintListener, LogicListener {
 
     this.shutdownAnimation = new ShutdownAnimation(this);
     this.addDisposeListener(_ -> {
-      transform.dispose();
       if (!shellRegion.isDisposed()) {
         shellRegion.dispose();
       }
     });
   }
 
-  @Override
-  public Transform getTransform() {
-    return transform;
-  }
-
-  @Override
-  public void setAttackPhase(int currentAttackPhase) {
-    this.currentAttackPhase = currentAttackPhase;
-  }
-
-  public void setController(Controller controller) {
+  public void setController(LogicController controller) {
     this.controller = controller;
     this.swtImageBuilder = new SwtImageBuilder(controller, transform);
     this.renderingEngine = new RenderingEngine(canvas, controller.getDesiredFps());
@@ -243,20 +233,24 @@ public class SnowShell extends Shell implements PaintListener, LogicListener {
 
   @Override
   public void substractAreaFromShell(int[] polygon) {
-    this.shellRegion.subtract(polygon);
-    this.setRegion(shellRegion);
-    this.setLocation(0, 0);
+    Display.getDefault().asyncExec(() -> {
+      shellRegion.subtract(polygon);
+      setRegion(shellRegion);
+      setLocation(0, 0);
+    });
   }
 
   @Override
   public void resetScreenSurface() {
-    if (!shellRegion.isDisposed()) {
-      shellRegion.dispose();
-    }
-    this.shellRegion = new Region(Display.getDefault());
-    this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
-    this.setRegion(shellRegion);
-    this.setLocation(0, 0);
+    Display.getDefault().asyncExec(() -> {
+      if (!shellRegion.isDisposed()) {
+        shellRegion.dispose();
+      }
+      shellRegion = new Region(Display.getDefault());
+      shellRegion.add(GuiUtils.SCREEN_BOUNDS);
+      setRegion(shellRegion);
+      setLocation(0, 0);
+    });
   }
 
   @Override
@@ -286,8 +280,7 @@ public class SnowShell extends Shell implements PaintListener, LogicListener {
         }
       }
 
-      //TODO move parameters to a class
-      imageBuilder.addLegend(this.renderingEngine.getRealFPS(), currentAttackPhase);
+      imageBuilder.addLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
       imageBuilder.addLogo();
       imageBuilder.addMinimap();
       Image image = imageBuilder.build();

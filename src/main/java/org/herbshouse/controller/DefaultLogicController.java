@@ -2,22 +2,26 @@ package org.herbshouse.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Transform;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.UserInfo;
 
-public abstract class AbstractController implements Controller {
+public class DefaultLogicController implements LogicController {
 
   private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
-
   private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();
-
+  private int desiredFPS;
   private UserInfo userInfo;
+  private Transform transform;
+  private int currentAttackPhase;
 
   @Override
   public void registerListener(GeneratorListener<?> listener) {
-    listener.setController(this);
+    listener.setLogicController(this);
     listener.init(flagsConfiguration, GuiUtils.SCREEN_BOUNDS);
     listeners.add(listener);
   }
@@ -152,6 +156,57 @@ public abstract class AbstractController implements Controller {
   @Override
   public void shutdown() {
     listeners.forEach(GeneratorListener::shutdown);
+  }
+
+  public Transform getTransform() {
+    return transform;
+  }
+
+  public void setTransform(Transform transform) {
+    this.transform = transform;
+  }
+
+  @Override
+  public int getCurrentAttackPhase() {
+    return currentAttackPhase;
+  }
+
+  public void setCurrentAttackPhase(int currentAttackPhase) {
+    this.currentAttackPhase = currentAttackPhase;
+  }
+
+  public void setDesiredFPS(int desiredFPS) {
+    this.desiredFPS = desiredFPS;
+  }
+
+  @Override
+  public int getDesiredFps() {
+    return desiredFPS;
+  }
+
+  @Override
+  public void mouseMove(int x, int y) {
+    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
+    getFlagsConfiguration().setMouseCurrentLocation(mouseLoc);
+    getListeners().forEach(l -> l.mouseMove(mouseLoc));
+  }
+
+  @Override
+  public void mouseDown(int button, int x, int y) {
+    Point2D mouseLoc = GuiUtils.toWorldCoord(convertLoc(x, y));
+    getListeners().forEach(l -> l.mouseDown(button, mouseLoc));
+  }
+
+  private Point convertLoc(int x, int y) {
+    int locX = x;
+    int locY = y;
+    if (getFlagsConfiguration().isFlipImage()) {
+      float[] data = {locX, locY};
+      getTransform().transform(data);
+      locX = (int) data[0];
+      locY = (int) data[1];
+    }
+    return new Point(locX, locY);
   }
 
 }

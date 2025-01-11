@@ -16,7 +16,7 @@ import org.herbshouse.logic.enemies.AnimatedGif;
 
 public class ShutdownAnimation {
 
-  private final List<Integer> valuesToAlternate = Arrays.asList(-6, 86);
+  private final List<Integer> valuesToAlternate = Arrays.asList(-30, 86);
 
   private final LinkedList<String> messages = new LinkedList<>();
   private final Shell shell;

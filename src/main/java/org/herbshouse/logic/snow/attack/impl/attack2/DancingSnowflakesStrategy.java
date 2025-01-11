@@ -17,11 +17,11 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
 
   private final Timer timer;
   private final FlagsConfiguration flagsConfiguration;
+  private final Rectangle screenBounds;
   private double counterStepsPhase = INITIAL_COUNTER;
   private double initialMinPhase = 0.4;
   private double initialMaxPhase = 3.0;
   private double phaseIncrement = initialMinPhase;
-  private final Rectangle screenBounds;
 
   public DancingSnowflakesStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
     this.flagsConfiguration = flagsConfiguration;

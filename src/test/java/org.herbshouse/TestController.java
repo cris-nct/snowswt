@@ -1,8 +1,8 @@
 package org.herbshouse;
 
-import org.herbshouse.controller.AbstractController;
+import org.herbshouse.controller.DefaultLogicController;
 
-public class TestController extends AbstractController {
+public class TestController extends DefaultLogicController {
 
   @Override
   public void mouseMove(int x, int y) {

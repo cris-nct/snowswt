@@ -3,7 +3,7 @@ package org.herbshouse.logic;
 import java.util.List;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.controller.AbstractController;
+import org.herbshouse.controller.DefaultLogicController;
 import org.herbshouse.controller.FlagsConfiguration;
 
 public interface GeneratorListener<T extends AbstractMovableObject> {
@@ -41,6 +41,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
   void changeAttackType();
 
-  void setController(AbstractController controller);
+  void setLogicController(DefaultLogicController logicController);
 
 }

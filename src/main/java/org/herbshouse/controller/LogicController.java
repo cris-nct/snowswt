@@ -5,7 +5,7 @@ import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.UserInfo;
 
-public interface Controller {
+public interface LogicController {
 
   void mouseMove(int x, int y);
 
@@ -53,13 +53,8 @@ public interface Controller {
 
   void switchEnemies();
 
+  int getCurrentAttackPhase();
+
   void shutdown();
-
-  //TOOD move next 3 to other interface because it's about logic controlling the gui
-  void substractAreaFromShell(int[] polygon);
-
-  void resetShellSurface();
-
-  void setAttackPhase(int currentPhase);
 
 }

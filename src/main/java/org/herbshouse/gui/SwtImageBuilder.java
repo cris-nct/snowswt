@@ -9,8 +9,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.controller.Controller;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.controller.LogicController;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
@@ -33,12 +33,12 @@ public class SwtImageBuilder implements AutoCloseable {
 
   public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
   private final Transform transform;
-  private final Controller controller;
+  private final LogicController controller;
   private GC gcImage;
   private Image image;
   private int counterLogo;
 
-  SwtImageBuilder(Controller controller, Transform transform) {
+  SwtImageBuilder(LogicController controller, Transform transform) {
     this.controller = controller;
     this.transform = transform;
   }
