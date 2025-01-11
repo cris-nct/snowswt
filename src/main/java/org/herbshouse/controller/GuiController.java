@@ -3,19 +3,19 @@ package org.herbshouse.controller;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
-import org.herbshouse.gui.GuiListener;
 import org.herbshouse.gui.GuiUtils;
+import org.herbshouse.gui.LogicListener;
 import org.herbshouse.logic.Point2D;
 
 public class GuiController extends AbstractController {
 
-  private final GuiListener listener;
+  private final LogicListener listener;
 
   private final Transform transform;
 
   private int desiredFPS;
 
-  public GuiController(GuiListener listener) {
+  public GuiController(LogicListener listener) {
     this.listener = listener;
     this.transform = listener.getTransform();
   }
@@ -61,7 +61,7 @@ public class GuiController extends AbstractController {
 
   @Override
   public void resetShellSurface() {
-    Display.getDefault().asyncExec(listener::resetShellSurface);
+    Display.getDefault().asyncExec(listener::resetScreenSurface);
   }
 
   @Override

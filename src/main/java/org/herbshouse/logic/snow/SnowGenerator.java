@@ -21,13 +21,15 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
-import org.herbshouse.logic.snow.attack.attack1.BigWormAttackStrategy;
-import org.herbshouse.logic.snow.attack.attack2.DancingSnowflakesStrategy;
-import org.herbshouse.logic.snow.attack.attack3.ParasitesAttackStrategy;
-import org.herbshouse.logic.snow.attack.attack4.YinYangAttackLogic;
-import org.herbshouse.logic.snow.attack.data.AbstractAttackData;
-import org.herbshouse.logic.snow.attack.data.AbstractPhaseAttackData;
-import org.herbshouse.logic.snow.attack.strategies.AttackStrategy;
+import org.herbshouse.logic.snow.attack.AbstractPhaseAttackData;
+import org.herbshouse.logic.snow.attack.AttackStrategy;
+import org.herbshouse.logic.snow.attack.impl.attack1.BigWormAttackStrategy;
+import org.herbshouse.logic.snow.attack.impl.attack2.DancingSnowflakesStrategy;
+import org.herbshouse.logic.snow.attack.impl.attack3.ParasitesAttackStrategy;
+import org.herbshouse.logic.snow.attack.impl.attack4.YinYangAttackLogic;
+import org.herbshouse.logic.snow.data.AbstractAttackData;
+import org.herbshouse.logic.snow.data.HappyWindSnowFlakeData;
+import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
@@ -198,12 +200,21 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   private void moveSnowflakeHappyWind(Snowflake snowflake) {
     Point2D newLoc = snowflake.getLocation().clone();
-    HappyWindSnowFlakeData data = snowflake.getHappyWindData();
+    HappyWindSnowFlakeData data = getHappyWindData(snowflake);
     newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
     data.increaseAngle();
     newLoc.x = Math.min(newLoc.x, screenBounds.width);
     newLoc.y -= snowflake.getSpeed();
     snowflake.setLocation(newLoc);
+  }
+
+  private HappyWindSnowFlakeData getHappyWindData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData("HAPPYWIND");
+    if (data == null) {
+      data = new HappyWindSnowFlakeData();
+      snowflake.setData("HAPPYWIND", data);
+    }
+    return (HappyWindSnowFlakeData) data;
   }
 
   @SuppressWarnings("UnusedReturnValue")
@@ -255,7 +266,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   }
 
   private void initializeSnowFlakeHappyWind(Snowflake snowflake) {
-    HappyWindSnowFlakeData data = snowflake.getHappyWindData();
+    HappyWindSnowFlakeData data = getHappyWindData(snowflake);
     data.setOrigLocation(snowflake.getLocation().clone());
     int maxAreaToMove = 50;
     if (flagsConfiguration.isDebug()) {
@@ -403,7 +414,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   private void cleanupAttackData() {
     for (Snowflake snowflake : snowflakes) {
-      snowflake.cleanupAttackData();
+      snowflake.cleanup();
     }
   }
 

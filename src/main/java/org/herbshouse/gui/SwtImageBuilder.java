@@ -32,11 +32,11 @@ import org.herbshouse.logic.snow.Snowflake;
 public class SwtImageBuilder implements AutoCloseable {
 
   public static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
+  private final Transform transform;
+  private final Controller controller;
   private GC gcImage;
   private Image image;
   private int counterLogo;
-  private final Transform transform;
-  private final Controller controller;
 
   SwtImageBuilder(Controller controller, Transform transform) {
     this.controller = controller;

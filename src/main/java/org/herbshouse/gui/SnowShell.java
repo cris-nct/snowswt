@@ -42,7 +42,7 @@ import org.herbshouse.logic.snow.Snowflake;
  * various features such as wind effects, image rotation, debugging options, and snowflake freezing.
  * The application continuously updates the display to simulate falling snowflakes.
  */
-public class SnowShell extends Shell implements PaintListener, GuiListener {
+public class SnowShell extends Shell implements PaintListener, LogicListener {
 
   private final Canvas canvas;
   private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
@@ -160,7 +160,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
             break;
           case 'q':
           case 'Q':
-            resetShellSurface();
+            resetScreenSurface();
             if (!controller.getFlagsConfiguration().isYoutube()) {
               updateBrowser(true);
             }
@@ -249,7 +249,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
   }
 
   @Override
-  public void resetShellSurface() {
+  public void resetScreenSurface() {
     if (!shellRegion.isDisposed()) {
       shellRegion.dispose();
     }
