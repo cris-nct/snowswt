@@ -1,5 +1,7 @@
 package org.herbshouse;
 
+import org.herbshouse.controller.DefaultLogicController;
+import org.herbshouse.controller.ViewController;
 import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.enemies.EnemyGenerator;
@@ -15,11 +17,23 @@ public class Tests {
 
     EnemyGenerator enemyGenerator = new EnemyGenerator();
 
-    TestController controller = new TestController();
+    DefaultLogicController controller = new DefaultLogicController();
     controller.setUserInfo(userInfo);
+    controller.setDesiredFPS(60);
     controller.registerListener(snowGenerator);
     controller.registerListener(enemyGenerator);
 
+    enemyGenerator.setViewController(new ViewController() {
+      @Override
+      public void substractAreaFromShell(int[] polygon) {
+
+      }
+
+      @Override
+      public void resetScreenSurface() {
+
+      }
+    });
     snowGenerator.start();
     enemyGenerator.start();
 

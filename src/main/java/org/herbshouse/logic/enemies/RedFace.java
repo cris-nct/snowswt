@@ -192,10 +192,6 @@ public class RedFace extends AbstractMovableObject {
     this.life = life;
   }
 
-  public void increaseLife(int life) {
-    this.life += life;
-  }
-
   public void decreaseLife(int life) {
     this.life = Math.max(this.life - life, 0);
   }
