@@ -5,7 +5,7 @@ import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
-import org.herbshouse.logic.snow.attack.AbstractPhaseProcessor;
+import org.herbshouse.logic.snow.attack.phase.AbstractPhaseProcessor;
 
 /**
  * Snoflakes joined together and follows mouse position

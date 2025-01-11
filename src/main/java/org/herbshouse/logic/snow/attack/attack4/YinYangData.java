@@ -1,6 +1,6 @@
 package org.herbshouse.logic.snow.attack.attack4;
 
-import org.herbshouse.logic.snow.attack.AbstractAttackData;
+import org.herbshouse.logic.snow.attack.data.AbstractAttackData;
 
 public class YinYangData extends AbstractAttackData {
 

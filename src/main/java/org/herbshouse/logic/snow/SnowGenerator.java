@@ -21,11 +21,13 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
-import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.attack1.BigWormAttackStrategy;
 import org.herbshouse.logic.snow.attack.attack2.DancingSnowflakesStrategy;
 import org.herbshouse.logic.snow.attack.attack3.ParasitesAttackStrategy;
 import org.herbshouse.logic.snow.attack.attack4.YinYangAttackLogic;
+import org.herbshouse.logic.snow.attack.data.AbstractAttackData;
+import org.herbshouse.logic.snow.attack.data.AbstractPhaseAttackData;
+import org.herbshouse.logic.snow.attack.strategies.AttackStrategy;
 
 public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
@@ -112,7 +114,12 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     if (flagsConfiguration.isAttack() && !snowflakes.isEmpty()) {
       AttackStrategy<?> strategy = this.getAttackStrategy();
       strategy.afterUpdate(snowflakes);
-      getController().setAttackPhase(strategy.getData(snowflakes.getFirst()).getPhase());
+      AbstractAttackData data = strategy.getData(snowflakes.getFirst());
+      int phase = 0;
+      if (data instanceof AbstractPhaseAttackData) {
+        phase = ((AbstractPhaseAttackData) data).getPhase();
+      }
+      getController().setAttackPhase(phase);
     }
   }
 

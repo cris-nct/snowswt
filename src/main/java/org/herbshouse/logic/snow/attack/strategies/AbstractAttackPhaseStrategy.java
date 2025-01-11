@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack;
+package org.herbshouse.logic.snow.attack.strategies;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,8 +6,10 @@ import java.util.List;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
+import org.herbshouse.logic.snow.attack.data.AbstractPhaseAttackData;
+import org.herbshouse.logic.snow.attack.phase.AttackPhaseProcessor;
 
-public abstract class AbstractAttackPhaseStrategy<T extends AbstractAttackData> implements
+public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackData> implements
     AttackStrategy<T> {
 
   private final List<AttackPhaseProcessor<T>> phases = new ArrayList<>();

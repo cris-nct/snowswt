@@ -4,7 +4,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
-import org.herbshouse.logic.snow.attack.AbstractAttackPhaseStrategy;
+import org.herbshouse.logic.snow.attack.strategies.AbstractAttackPhaseStrategy;
 
 public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackData3> {
 

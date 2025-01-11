@@ -1,7 +1,8 @@
-package org.herbshouse.logic.snow.attack;
+package org.herbshouse.logic.snow.attack.phase;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.logic.snow.attack.data.AbstractAttackData;
 
 public abstract class AbstractPhaseProcessor<T extends AbstractAttackData> implements
     AttackPhaseProcessor<T> {

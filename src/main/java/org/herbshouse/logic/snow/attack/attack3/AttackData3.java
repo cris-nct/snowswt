@@ -1,8 +1,8 @@
 package org.herbshouse.logic.snow.attack.attack3;
 
-import org.herbshouse.logic.snow.attack.AbstractAttackData;
+import org.herbshouse.logic.snow.attack.data.AbstractPhaseAttackData;
 
-public class AttackData3 extends AbstractAttackData {
+public class AttackData3 extends AbstractPhaseAttackData {
 
   private double speedPhase1;
 

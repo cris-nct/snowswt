@@ -5,14 +5,11 @@ import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
-import org.herbshouse.logic.snow.attack.AbstractAttackData;
-import org.herbshouse.logic.snow.attack.AttackStrategy;
+import org.herbshouse.logic.snow.attack.strategies.AbstractNoPhaseAttackStrategy;
 
-public class BigWormAttackStrategy implements AttackStrategy<AbstractAttackData> {
+public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackData1> {
 
   private final FlagsConfiguration flagsConfiguration;
-
-  private boolean started = false;
 
   public BigWormAttackStrategy(FlagsConfiguration flagsConfiguration) {
     this.flagsConfiguration = flagsConfiguration;
@@ -46,11 +43,6 @@ public class BigWormAttackStrategy implements AttackStrategy<AbstractAttackData>
   }
 
   @Override
-  public void beforeStart(List<Snowflake> snowflakeList) {
-    started = true;
-  }
-
-  @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
 
   }
@@ -66,12 +58,8 @@ public class BigWormAttackStrategy implements AttackStrategy<AbstractAttackData>
   }
 
   @Override
-  public AbstractAttackData getData(Snowflake snowflake) {
+  public AttackData1 getData(Snowflake snowflake) {
     return snowflake.getAttackData1();
   }
 
-  @Override
-  public boolean isStarted() {
-    return started;
-  }
 }

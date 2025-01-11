@@ -1,8 +1,8 @@
 package org.herbshouse.logic.snow.attack.attack2;
 
-import org.herbshouse.logic.snow.attack.AbstractAttackData;
+import org.herbshouse.logic.snow.attack.data.AbstractPhaseAttackData;
 
-public class AttackData2 extends AbstractAttackData {
+public class AttackData2 extends AbstractPhaseAttackData {
 
   private int counterDegrees;
 

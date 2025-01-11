@@ -6,7 +6,7 @@ import java.util.TimerTask;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
-import org.herbshouse.logic.snow.attack.AbstractAttackPhaseStrategy;
+import org.herbshouse.logic.snow.attack.strategies.AbstractAttackPhaseStrategy;
 
 public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<AttackData2> implements
     IAttack2Global {

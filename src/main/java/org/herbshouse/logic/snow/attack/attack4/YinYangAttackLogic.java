@@ -6,13 +6,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
-import org.herbshouse.logic.snow.attack.AttackStrategy;
+import org.herbshouse.logic.snow.attack.strategies.AbstractNoPhaseAttackStrategy;
 
-public class YinYangAttackLogic implements AttackStrategy<YinYangData> {
+public class YinYangAttackLogic extends AbstractNoPhaseAttackStrategy<YinYangData> {
 
   private final Rectangle screenBounds;
-
-  private boolean started = false;
 
   public YinYangAttackLogic(Rectangle screenBounds) {
     this.screenBounds = screenBounds;
@@ -44,6 +42,7 @@ public class YinYangAttackLogic implements AttackStrategy<YinYangData> {
 
   @Override
   public void beforeStart(List<Snowflake> snowflakeList) {
+    super.beforeStart(snowflakeList);
     int circleRadius = 160;
     int index = 0;
     for (Snowflake snowflake : snowflakeList) {
@@ -62,7 +61,6 @@ public class YinYangAttackLogic implements AttackStrategy<YinYangData> {
       }
       index++;
     }
-    started = true;
   }
 
   @Override
@@ -85,8 +83,4 @@ public class YinYangAttackLogic implements AttackStrategy<YinYangData> {
     return snowflake.getAttackData4();
   }
 
-  @Override
-  public boolean isStarted() {
-    return started;
-  }
 }

@@ -1,8 +1,9 @@
-package org.herbshouse.logic.snow.attack;
+package org.herbshouse.logic.snow.attack.strategies;
 
 import java.util.List;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.snow.Snowflake;
+import org.herbshouse.logic.snow.attack.data.AbstractAttackData;
 
 public interface AttackStrategy<T extends AbstractAttackData> {
 
