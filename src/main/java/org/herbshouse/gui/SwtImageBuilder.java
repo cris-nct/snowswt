@@ -102,7 +102,7 @@ public class SwtImageBuilder implements AutoCloseable {
     }
   }
 
-  public SwtImageBuilder addLegend(int realFPS) {
+  public SwtImageBuilder addLegend(int realFPS, int currentAttackPhase) {
     if (gcImage == null) {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
@@ -117,12 +117,16 @@ public class SwtImageBuilder implements AutoCloseable {
     this.addTextToLegend(legendBuilder, "Flip image(F)", config.isFlipImage());
     this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
     this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
+    this.addTextToLegend(legendBuilder, "Snowflakes tail(T)", config.isObjectsTail());
     this.addTextToLegend(legendBuilder, "Attack mode (A)", config.isAttack());
     if (config.isAttack()) {
       legendBuilder.append(", type: ");
       legendBuilder.append(config.getAttackType());
+      legendBuilder.append("\n");
+      legendBuilder.append("Attack phase: ");
+      legendBuilder.append(currentAttackPhase);
     } else {
-      legendBuilder.append("\nAttack types: 1-3");
+      legendBuilder.append("\nAttack types: 1-4");
     }
     this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
     this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
@@ -203,12 +207,12 @@ public class SwtImageBuilder implements AutoCloseable {
       } else {
         GuiUtils.draw(gcImage, snowflake);
       }
-      if (config.isDebug() || config.isObjectsTail()) {
+      if (!snowflake.isFreezed() && (config.isDebug() || config.isObjectsTail())) {
         int counterAlpha = 0;
         int origAlpha = snowflake.getAlpha();
         int points = snowflake.getSnowTail().getHistoryLocations().size();
         for (Point2D oldLoc : snowflake.getSnowTail().getHistoryLocations()) {
-          snowflake.setAlpha((int) Utils.linearInterpolation(counterAlpha, 0, 0, points, 160));
+          snowflake.setAlpha((int) Utils.linearInterpolation(counterAlpha, 0, 0, points, 80));
           GuiUtils.draw(gcImage, snowflake, oldLoc);
           counterAlpha++;
         }

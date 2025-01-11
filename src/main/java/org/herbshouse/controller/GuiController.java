@@ -55,14 +55,6 @@ public class GuiController extends AbstractController {
   }
 
   @Override
-  public void setAttackType(int type) {
-    super.setAttackType(type);
-    if (type == 3 && !getFlagsConfiguration().isObjectsTail()) {
-      getFlagsConfiguration().switchObjectsTail();
-    }
-  }
-
-  @Override
   public void substractAreaFromShell(int[] polygon) {
     Display.getDefault().asyncExec(() -> listener.substractAreaFromShell(polygon));
   }
@@ -70,6 +62,11 @@ public class GuiController extends AbstractController {
   @Override
   public void resetShellSurface() {
     Display.getDefault().asyncExec(listener::resetShellSurface);
+  }
+
+  @Override
+  public void setAttackPhase(int currentPhase) {
+    Display.getDefault().asyncExec(() -> listener.setAttackPhase(currentPhase));
   }
 
 }

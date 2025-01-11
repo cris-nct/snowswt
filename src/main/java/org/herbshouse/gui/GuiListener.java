@@ -9,4 +9,6 @@ public interface GuiListener {
   void resetShellSurface();
 
   Transform getTransform();
+
+  void setAttackPhase(int currentAttackPhase);
 }

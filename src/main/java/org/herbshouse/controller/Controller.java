@@ -53,9 +53,13 @@ public interface Controller {
 
   void switchEnemies();
 
+  void shutdown();
+
+  //TOOD move next 3 to other interface because it's about logic controlling the gui
   void substractAreaFromShell(int[] polygon);
 
   void resetShellSurface();
 
-  void shutdown();
+  void setAttackPhase(int currentPhase);
+
 }

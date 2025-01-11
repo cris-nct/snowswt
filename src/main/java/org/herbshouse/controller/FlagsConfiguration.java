@@ -52,7 +52,7 @@ public class FlagsConfiguration {
     this.enemies = !enemies;
   }
 
-  public void switchObjectsTail() {
+  protected void switchObjectsTail() {
     objectsTail = !objectsTail;
   }
 

@@ -93,12 +93,29 @@ public abstract class AbstractController implements Controller {
   @Override
   public void switchAttack() {
     flagsConfiguration.switchAttack();
+    beforeAttack();
     listeners.forEach(GeneratorListener::switchAttack);
+  }
+
+  private void beforeAttack() {
+    if (flagsConfiguration.isAttack()
+        && flagsConfiguration.getAttackType() == 4
+        && !flagsConfiguration.isObjectsTail()) {
+      flagsConfiguration.switchObjectsTail();
+    } else if (!flagsConfiguration.isAttack() && flagsConfiguration.isObjectsTail()) {
+      flagsConfiguration.switchObjectsTail();
+    } else if (flagsConfiguration.getAttackType() == 3 && !flagsConfiguration.isObjectsTail()) {
+      getFlagsConfiguration().switchObjectsTail();
+    }
   }
 
   @Override
   public void setAttackType(int type) {
     flagsConfiguration.setAttackType(type);
+    beforeAttack();
+    if (flagsConfiguration.isAttack()) {
+      listeners.forEach(GeneratorListener::changeAttackType);
+    }
   }
 
   @Override

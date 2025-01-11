@@ -7,10 +7,21 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AbstractPhaseProcessor;
 
+/**
+ * Attack the mouse and snowflakes are moving like worms
+ */
 public class A3Phase2 extends AbstractPhaseProcessor<AttackData3> {
 
   protected A3Phase2(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
     super(flagsConfiguration, screenBounds);
+  }
+
+  @Override
+  public void startPhase(Snowflake snowflake) {
+    AttackData3 attackData = this.getData(snowflake);
+    attackData.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
+    attackData.setSpeedPhase1(Math.random() + 0.3);
+    attackData.setCounter(0);
   }
 
   @Override
@@ -22,13 +33,6 @@ public class A3Phase2 extends AbstractPhaseProcessor<AttackData3> {
         snowflake.getAttackData3().getSpeedPhase1(), directionToTarget);
     double func = Math.sin(distToTarget * 0.15);
     return Utils.moveToDirection(newLoc, func, directionToTarget + Math.PI / 2);
-  }
-
-  @Override
-  protected void prepareNextPhase(Snowflake snowflake) {
-    AttackData3 attackData = this.getData(snowflake);
-    attackData.setSpeedPhase1(Math.random() / 2 + 0.3);
-    attackData.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
   }
 
   @Override

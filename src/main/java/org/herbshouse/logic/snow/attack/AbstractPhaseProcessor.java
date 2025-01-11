@@ -2,10 +2,9 @@ package org.herbshouse.logic.snow.attack;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
-import org.herbshouse.logic.snow.Snowflake;
 
 public abstract class AbstractPhaseProcessor<T extends AbstractAttackData> implements
-    IAttackPhaseProcessor<T> {
+    AttackPhaseProcessor<T> {
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
@@ -15,16 +14,6 @@ public abstract class AbstractPhaseProcessor<T extends AbstractAttackData> imple
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
   }
-
-  @Override
-  public final void initNextPhase(Snowflake snowflake) {
-    this.prepareNextPhase(snowflake);
-    if (getNextPhaseProcessor() != null) {
-      this.getData(snowflake).setPhase(getNextPhaseProcessor().getCurrentPhaseIndex());
-    }
-  }
-
-  protected abstract void prepareNextPhase(Snowflake snowflake);
 
   protected FlagsConfiguration getFlagsConfiguration() {
     return flagsConfiguration;

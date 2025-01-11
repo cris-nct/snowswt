@@ -220,4 +220,10 @@ public class Utils {
       // nothing to do
     }
   }
+
+  public static boolean isColliding(AbstractMovableObject obj1, AbstractMovableObject obj2) {
+    int sumSize = (obj1.getSize() + obj2.getSize()) / 2 + 2;
+    return Utils.distance(obj1.getLocation(), obj2.getLocation()) < sumSize;
+  }
+
 }

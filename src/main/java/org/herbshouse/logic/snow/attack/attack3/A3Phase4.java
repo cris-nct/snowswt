@@ -7,6 +7,9 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AbstractPhaseProcessor;
 
+/**
+ * Move snowflakes on a circle around mouse position. Snowflakes looks like fireworks
+ */
 public class A3Phase4 extends AbstractPhaseProcessor<AttackData3> {
 
   protected A3Phase4(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
@@ -14,10 +17,10 @@ public class A3Phase4 extends AbstractPhaseProcessor<AttackData3> {
   }
 
   @Override
-  protected void prepareNextPhase(Snowflake snowflake) {
+  public void startPhase(Snowflake snowflake) {
     AttackData3 attackData = this.getData(snowflake);
-    attackData.setSpeedPhase1(1);
-    attackData.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
+    attackData.setLocationToFollow(new Point2D(getScreenBounds().width * Math.random(),
+        getScreenBounds().height * Math.random()));
   }
 
   @Override

@@ -6,7 +6,7 @@ import org.herbshouse.logic.Utils;
 
 public class SnowTail {
 
-  private final CircularQueue<Point2D> historyLocations = new CircularQueue<>(100);
+  private CircularQueue<Point2D> historyLocations = new CircularQueue<>(100);
   private final Snowflake snowflake;
   private Point2D prevPointRegistered;
 
@@ -16,6 +16,11 @@ public class SnowTail {
 
   public CircularQueue<Point2D> getHistoryLocations() {
     return historyLocations;
+  }
+
+  public void setTailLength(int length) {
+    historyLocations.clear();
+    historyLocations = new CircularQueue<>(length);
   }
 
   public void registerHistoryLocation() {

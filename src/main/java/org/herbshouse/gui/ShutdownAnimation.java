@@ -47,13 +47,13 @@ public class ShutdownAnimation {
   }
 
   private void drawImage(GC gc, Image image) {
+    //Draw the main image
     ImageData imageData = image.getImageData();
     double aspRatio = (double) imageData.width / imageData.height;
     int heightMinimap =
         GuiUtils.SCREEN_BOUNDS.height - 2 * valuesToAlternate.get(phaseIndexShacking);
     int widthMinimap = (int) (heightMinimap * aspRatio);
     if (heightMinimap > 1 && widthMinimap > 1) {
-      //Draw the main image
       gc.setAlpha(alphaMainImage -= 7);
       int locXMainImage = (GuiUtils.SCREEN_BOUNDS.width - widthMinimap) / 2;
       int locYMainImage = (GuiUtils.SCREEN_BOUNDS.height - heightMinimap) / 2;
@@ -76,6 +76,15 @@ public class ShutdownAnimation {
     int locXCrack = (imageData.width - imageDataCrack.width) / 2 - 230;
     int locYCrack = (imageData.height - imageDataCrack.height) / 2;
     gc.drawImage(imageBlueCrack, locXCrack, locYCrack);
+
+    //Draw glass crack
+    gc.drawImage(SWTResourceManager.getImage(SnowingApplication.class, "glasscrack.png", true), 0,
+        0);
+    gc.drawImage(SWTResourceManager.getImage(SnowingApplication.class, "glasscrack.png", true), 700,
+        500);
+    gc.drawImage(SWTResourceManager.getImage(SnowingApplication.class, "glasscrack.png", true),
+        1480,
+        100);
   }
 
   private void drawText(GC gc) {

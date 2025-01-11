@@ -57,6 +57,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
   private Browser browser;
   private int videosIndex;
   private boolean startShutdown;
+  private int currentAttackPhase;
 
   public SnowShell() {
     super(Display.getDefault(), SWT.NO_TRIM);
@@ -126,6 +127,7 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
           case '1':
           case '2':
           case '3':
+          case '4':
             controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
             break;
           case 'M':
@@ -184,6 +186,11 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
   @Override
   public Transform getTransform() {
     return transform;
+  }
+
+  @Override
+  public void setAttackPhase(int currentAttackPhase) {
+    this.currentAttackPhase = currentAttackPhase;
   }
 
   public void setController(Controller controller) {
@@ -279,7 +286,8 @@ public class SnowShell extends Shell implements PaintListener, GuiListener {
         }
       }
 
-      imageBuilder.addLegend(this.renderingEngine.getRealFPS());
+      //TODO move parameters to a class
+      imageBuilder.addLegend(this.renderingEngine.getRealFPS(), currentAttackPhase);
       imageBuilder.addLogo();
       imageBuilder.addMinimap();
       Image image = imageBuilder.build();

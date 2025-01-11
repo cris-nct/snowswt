@@ -219,6 +219,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   }
 
+  @Override
+  public void changeAttackType() {
+
+  }
+
   private void checkCollisions() {
     for (int i = 0; i < redFaces.size(); i++) {
       //Check collision with walls
@@ -227,7 +232,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       this.checkFireCollision(redFace1);
       for (int j = i + 1; j < redFaces.size(); j++) {
         RedFace redFace2 = redFaces.get(j);
-        if (isColliding(redFace1, redFace2)) {
+        if (Utils.isColliding(redFace1, redFace2)) {
           this.computeNewDirections(redFace1, redFace2);
         }
       }
@@ -294,7 +299,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   private void checkFireCollision(RedFace redFace) {
     for (AnimatedGif fire : fireGifs) {
-      if (this.isColliding(redFace, fire)) {
+      if (Utils.isColliding(redFace, fire)) {
         if (redFace.getState() == RedFaceState.FREE) {
           redFace.decreaseLife(50);
           if (redFace.getLife() == 0) {

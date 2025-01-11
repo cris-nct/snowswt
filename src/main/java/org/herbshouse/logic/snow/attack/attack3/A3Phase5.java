@@ -7,6 +7,9 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AbstractPhaseProcessor;
 
+/**
+ * Snoflakes moves randomly. Looks like worms
+ */
 public class A3Phase5 extends AbstractPhaseProcessor<AttackData3> {
 
   protected A3Phase5(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
@@ -14,9 +17,10 @@ public class A3Phase5 extends AbstractPhaseProcessor<AttackData3> {
   }
 
   @Override
-  protected void prepareNextPhase(Snowflake snowflake) {
+  public void startPhase(Snowflake snowflake) {
     AttackData3 attackData = this.getData(snowflake);
-    attackData.setLocationToFollow(null);
+    attackData.setSpeedPhase1(1);
+    attackData.setLocationToFollow(getFlagsConfiguration().getMouseLoc());
   }
 
   @Override
@@ -29,7 +33,7 @@ public class A3Phase5 extends AbstractPhaseProcessor<AttackData3> {
     Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), attackData3.getSpeedPhase1(),
         directionToTarget);
     double func = Math.sin(distToTarget * 0.030) + 1 / distToTarget;
-    if (attackData3.getCounter() % 200 == 0) {
+    if (attackData3.getCounter() % 1000 == 0) {
       attackData3.setLocationToFollow(new Point2D(getScreenBounds().width * Math.random(),
           getScreenBounds().height * Math.random()));
     }
