@@ -248,51 +248,40 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     Point2D vel2 = Utils.moveToDirection(new Point2D(0, 0), redFace2.getSpeed(),
         redFace2.getDirection());
 
-    double[] u1 = {vel1.x, vel1.y}; // initial velocity of ball 1 (vx, vy)
-    double[] u2 = {vel2.x, vel2.y}; // initial velocity of ball 2 (vx, vy)
-
-    double[] v1 = new double[2]; // final velocity of ball 1 (vx, vy)
-    double[] v2 = new double[2]; // final velocity of ball 2 (vx, vy)
-
     // Calculate the velocity of the center of mass
-    double[] Vcm = {(m1 * u1[0] + m2 * u2[0]) / (m1 + m2), (m1 * u1[1] + m2 * u2[1]) / (m1 + m2)};
+    double VcmX = (m1 * vel1.x + m2 * vel2.x) / (m1 + m2);
+    double VcmY = (m1 * vel1.y + m2 * vel2.y) / (m1 + m2);
 
-    // Calculate the velocities relative to the center of mass
-    double[] u1_rel = {u1[0] - Vcm[0], u1[1] - Vcm[1]};
-    double[] u2_rel = {u2[0] - Vcm[0], u2[1] - Vcm[1]};
-
-    // Reverse the relative velocities (for elastic collision)
-    double[] v1_rel = {-u1_rel[0], -u1_rel[1]};
-    double[] v2_rel = {-u2_rel[0], -u2_rel[1]};
-
-    // Convert the relative velocities back to the lab frame
-    v1[0] = v1_rel[0] + Vcm[0];
-    v1[1] = v1_rel[1] + Vcm[1];
-    v2[0] = v2_rel[0] + Vcm[0];
-    v2[1] = v2_rel[1] + Vcm[1];
+    // Calculate the final velocities in the lab frame
+    double finalVelocity1X = -vel1.x + VcmX;
+    double finalVelocity1Y = -vel1.y + VcmY;
+    double finalVelocity2X = -vel2.x + VcmX;
+    double finalVelocity2Y = -vel2.y + VcmY;
 
     // Calculate the angles (directions) of the final velocities
-    double angle1 = Math.atan2(v1[1], v1[0]);
-    double angle2 = Math.atan2(v2[1], v2[0]);
+    double angle1 = Math.atan2(finalVelocity1Y, finalVelocity1X);
+    double angle2 = Math.atan2(finalVelocity2Y, finalVelocity2X);
 
     Point2D newLoc1 = Utils.moveToDirection(redFace1.getLocation(), 5, angle1);
     Point2D newLoc2 = Utils.moveToDirection(redFace2.getLocation(), 5, angle2);
-    if (Utils.distance(newLoc1, newLoc2) > (redFace1.getSize() + redFace2.getSize()) / 2.0 + 2) {
-      if (!redFace1.isPause()) {
-        redFace1.setDirection(angle1);
-        if (redFace1.getState() == RedFaceState.FOLLOW_MOUSE) {
-          redFace1.setState(RedFaceState.FREE);
-          redFace1.setStateLazy(10000, RedFaceState.DAMAGED);
-          redFace1.setStateLazy(11000, RedFaceState.FOLLOW_MOUSE);
-        }
-      }
-      if (!redFace2.isPause()) {
-        redFace2.setDirection(angle2);
-        if (redFace2.getState() == RedFaceState.FOLLOW_MOUSE) {
-          redFace2.setState(RedFaceState.FREE);
-          redFace2.setStateLazy(10000, RedFaceState.DAMAGED);
-          redFace2.setStateLazy(11000, RedFaceState.FOLLOW_MOUSE);
-        }
+
+    double distance = Utils.distance(newLoc1, newLoc2);
+    double collisionDistance = (redFace1.getSize() + redFace2.getSize()) / 2.0 + 2;
+
+    // Early return if the distance is too small
+    if (distance > collisionDistance) {
+      updateRedFace(redFace1, angle1);
+      updateRedFace(redFace2, angle2);
+    }
+  }
+
+  private void updateRedFace(RedFace redFace, double angle) {
+    if (!redFace.isPause()) {
+      redFace.setDirection(angle);
+      if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
+        redFace.setState(RedFaceState.FREE);
+        redFace.setStateLazy(10000, RedFaceState.DAMAGED);
+        redFace.setStateLazy(11000, RedFaceState.FOLLOW_MOUSE);
       }
     }
   }

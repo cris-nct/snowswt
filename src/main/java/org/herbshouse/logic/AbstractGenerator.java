@@ -29,10 +29,12 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
     this.viewController = viewController;
   }
 
+  @Override
   public void substractAreaFromShell(int[] polygon) {
     viewController.substractAreaFromShell(polygon);
   }
 
+  @Override
   public void resetScreenSurface() {
     viewController.resetScreenSurface();
   }

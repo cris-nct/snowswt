@@ -29,25 +29,24 @@ import org.herbshouse.logic.snow.attack.impl.attack3.ParasitesAttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.attack4.YinYangAttackLogic;
 import org.herbshouse.logic.snow.data.AbstractAttackData;
 import org.herbshouse.logic.snow.data.HappyWindSnowFlakeData;
-import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   private final List<Snowflake> snowflakes = new CopyOnWriteArrayList<>();
-
   private final ReentrantLock lockSnowflakes = new ReentrantLock(false);
   private final Timer timer;
   private final Map<Integer, AttackStrategy<?>> attackStrategies = new HashMap<>();
+
   private Rectangle screenBounds;
-  private boolean shutdown = false;
   private FlagsConfiguration flagsConfiguration;
-  private int countdown;
   private ImageData imageData;
+  private TimerTask taskSnowing;
+  private int countdown;
+  private boolean shutdown = false;
   private boolean skipInitialAnimation;
+  private boolean pauseSnowing;
   private int counterFreezeSnowklakes;
   private int snowflakesTimeGen = 100;
-  private TimerTask taskSnowing;
-  private boolean pauseSnowing;
 
   public SnowGenerator() {
     timer = new Timer("SnowGeneratorTimer");
@@ -209,12 +208,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   }
 
   private HappyWindSnowFlakeData getHappyWindData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("HAPPYWIND");
+    HappyWindSnowFlakeData data = (HappyWindSnowFlakeData) snowflake.getData("HAPPYWIND");
     if (data == null) {
       data = new HappyWindSnowFlakeData();
+      data.setOrigLocation(snowflake.getLocation().clone());
       snowflake.setData("HAPPYWIND", data);
     }
-    return (HappyWindSnowFlakeData) data;
+    return data;
   }
 
   @SuppressWarnings("UnusedReturnValue")
@@ -393,7 +393,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
           //Removed all freezed snoflakes
           snowflakes.removeAll(snowflakes.stream().filter(Snowflake::isFreezed).toList());
-          this.cleanupAttackData();
+          this.cleanupSnowflakesData();
           this.getAttackStrategy().beforeStart(snowflakes);
           lockSnowflakes.unlock();
         }
@@ -402,17 +402,17 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       }
     } else {
       pauseSnowing = false;
-      this.cleanupAttackData();
+      this.cleanupSnowflakesData();
     }
   }
 
   @Override
   public void changeAttackType() {
-    this.cleanupAttackData();
+    this.cleanupSnowflakesData();
     this.getAttackStrategy().beforeStart(snowflakes);
   }
 
-  private void cleanupAttackData() {
+  private void cleanupSnowflakesData() {
     for (Snowflake snowflake : snowflakes) {
       snowflake.cleanup();
     }

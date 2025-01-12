@@ -11,10 +11,12 @@ import java.util.Objects;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -29,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
 import org.herbshouse.controller.LogicController;
 import org.herbshouse.controller.ViewController;
+import org.herbshouse.gui.imageBuilder.SwtImageBuilder;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.enemies.EnemyGenerator;
@@ -43,7 +46,9 @@ import org.herbshouse.logic.snow.Snowflake;
  * various features such as wind effects, image rotation, debugging options, and snowflake freezing.
  * The application continuously updates the display to simulate falling snowflakes.
  */
-public class SnowShell extends Shell implements PaintListener, ViewController {
+public class SnowShell extends Shell implements
+    PaintListener, MouseListener, MouseMoveListener, MouseWheelListener, KeyListener,
+    ViewController {
 
   private final Canvas canvas;
   private final List<IDrawCompleteListener> drawCompleteListeners = new ArrayList<>();
@@ -61,14 +66,10 @@ public class SnowShell extends Shell implements PaintListener, ViewController {
 
   public SnowShell(Transform transform) {
     super(Display.getDefault(), SWT.NO_TRIM);
-
     this.transform = transform;
+
     this.shellRegion = new Region(Display.getDefault());
     this.shellRegion.add(GuiUtils.SCREEN_BOUNDS);
-
-    transform = new Transform(Display.getDefault());
-    transform.scale(1, -1);
-    transform.translate(0, -GuiUtils.SCREEN_BOUNDS.height);
 
     this.initVideos();
 
@@ -76,104 +77,13 @@ public class SnowShell extends Shell implements PaintListener, ViewController {
 
     this.canvas = new Canvas(this, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.FOCUSED);
     this.canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
-    Display.getDefault().timerExec(300, () -> setFullScreen(true));
     this.canvas.addPaintListener(this);
-    this.canvas.addMouseMoveListener(e -> controller.mouseMove(e.x, e.y));
-    this.canvas.addMouseWheelListener(e -> controller.mouseScrolled(e.count));
-    this.canvas.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseDown(MouseEvent e) {
-        controller.mouseDown(e.button, e.x, e.y);
-      }
-    });
-    this.canvas.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        switch (e.character) {
-          case ' ':
-            controller.switchNormalWind();
-            break;
-          case 'X':
-          case 'x':
-            controller.switchHappyWind();
-            break;
-          case 'F':
-          case 'f':
-            controller.flipImage();
-            break;
-          case 'P':
-          case 'p':
-            controller.pause();
-            break;
-          case 'R':
-          case 'r':
-            controller.reset();
-            break;
-          case 'B':
-          case 'b':
-            controller.switchBigBalls();
-            break;
-          case 'D':
-          case 'd':
-            controller.switchDebug();
-            break;
-          case 'T':
-          case 't':
-            controller.switchObjectsTail();
-            break;
-          case 'A':
-          case 'a':
-            controller.switchAttack();
-            break;
-          case '1':
-          case '2':
-          case '3':
-          case '4':
-            controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
-            break;
-          case 'M':
-          case 'm':
-            controller.switchMercedesSnowflakes();
-            break;
-          case '+':
-            controller.increaseSnowLevel();
-            break;
-          case '-':
-            controller.decreaseSnowLevel();
-            break;
-          case 'y':
-          case 'Y':
-            controller.switchYoutube();
-            updateBrowser(controller.getFlagsConfiguration().isYoutube());
-            if (controller.getFlagsConfiguration().isYoutube()) {
-              playNext();
-            }
-            break;
-          case 'e':
-          case 'E':
-            controller.switchEnemies();
-            break;
-          case 'n':
-          case 'N':
-            if (browser != null) {
-              playNext();
-            }
-            break;
-          case 'q':
-          case 'Q':
-            resetScreenSurface();
-            if (!controller.getFlagsConfiguration().isYoutube()) {
-              updateBrowser(true);
-            }
-            browser.setVisible(false);
-            browser.setText(loadResourceAsString("embededGoodBye.html"), true);
-            canvas.removeKeyListener(this);
-            controller.shutdown();
-            startShutdown = true;
-            break;
-        }
-      }
-    });
+    this.canvas.addMouseMoveListener(this);
+    this.canvas.addMouseWheelListener(this);
+    this.canvas.addMouseListener(this);
+    this.canvas.addKeyListener(this);
+
+    Display.getDefault().timerExec(300, () -> setFullScreen(true));
 
     this.shutdownAnimation = new ShutdownAnimation(this);
     this.addDisposeListener(_ -> {
@@ -281,7 +191,8 @@ public class SnowShell extends Shell implements PaintListener, ViewController {
       }
 
       imageBuilder.addLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
-      imageBuilder.addLogo();
+
+      imageBuilder.drawLogo();
       imageBuilder.addMinimap();
       Image image = imageBuilder.build();
       ImageData imageData = image.getImageData();
@@ -306,4 +217,120 @@ public class SnowShell extends Shell implements PaintListener, ViewController {
     this.drawCompleteListeners.add(listener);
   }
 
+  @Override
+  public void mouseDoubleClick(MouseEvent e) {
+
+  }
+
+  @Override
+  public void mouseDown(MouseEvent e) {
+    controller.mouseDown(e.button, e.x, e.y);
+  }
+
+  @Override
+  public void mouseUp(MouseEvent e) {
+
+  }
+
+  @Override
+  public void mouseMove(MouseEvent e) {
+    controller.mouseMove(e.x, e.y);
+  }
+
+  @Override
+  public void mouseScrolled(MouseEvent e) {
+    controller.mouseScrolled(e.count);
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    switch (e.character) {
+      case ' ':
+        controller.switchNormalWind();
+        break;
+      case 'X':
+      case 'x':
+        controller.switchHappyWind();
+        break;
+      case 'F':
+      case 'f':
+        controller.flipImage();
+        break;
+      case 'P':
+      case 'p':
+        controller.pause();
+        break;
+      case 'R':
+      case 'r':
+        controller.reset();
+        break;
+      case 'B':
+      case 'b':
+        controller.switchBigBalls();
+        break;
+      case 'D':
+      case 'd':
+        controller.switchDebug();
+        break;
+      case 'T':
+      case 't':
+        controller.switchObjectsTail();
+        break;
+      case 'A':
+      case 'a':
+        controller.switchAttack();
+        break;
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+        controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
+        break;
+      case 'M':
+      case 'm':
+        controller.switchMercedesSnowflakes();
+        break;
+      case '+':
+        controller.increaseSnowLevel();
+        break;
+      case '-':
+        controller.decreaseSnowLevel();
+        break;
+      case 'y':
+      case 'Y':
+        controller.switchYoutube();
+        updateBrowser(controller.getFlagsConfiguration().isYoutube());
+        if (controller.getFlagsConfiguration().isYoutube()) {
+          playNext();
+        }
+        break;
+      case 'e':
+      case 'E':
+        controller.switchEnemies();
+        break;
+      case 'n':
+      case 'N':
+        if (browser != null) {
+          playNext();
+        }
+        break;
+      case 'q':
+      case 'Q':
+        resetScreenSurface();
+        if (!controller.getFlagsConfiguration().isYoutube()) {
+          updateBrowser(true);
+        }
+        browser.setVisible(false);
+        browser.setText(loadResourceAsString("embededGoodBye.html"), true);
+        canvas.removeKeyListener(this);
+        controller.shutdown();
+        startShutdown = true;
+        break;
+    }
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+
+  }
 }

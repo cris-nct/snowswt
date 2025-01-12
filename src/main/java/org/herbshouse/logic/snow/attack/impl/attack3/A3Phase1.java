@@ -19,7 +19,7 @@ public class A3Phase1 extends AbstractPhaseProcessor<AttackData3> {
   @Override
   public void startPhase(Snowflake snowflake) {
     AttackData3 attackData = getStrategy().getData(snowflake);
-    Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), 600,
+    Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), 500,
         Math.toRadians(Math.random() * 360));
     attackData.setLocationToFollow(dest);
   }

@@ -15,21 +15,19 @@ import org.herbshouse.logic.enemies.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
 
 public final class GuiUtils {
-
   public static final RGB FREEZE_COLOR = new RGB(0, 255, 255);
-
   public static final Rectangle SCREEN_BOUNDS = Display.getDefault().getBounds();
+  private static final int FONT_SIZE_LIFE_COUNTER = 15;
+  private static final String FONT_NAME_LIFE_COUNTER = "Arial";
 
   private GuiUtils() {
   }
 
   public static RGB getPixelColor(ImageData imageData, int x, int y) {
-    if (x >= imageData.width || y >= imageData.height || x < 0 || y < 0) {
+    if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height) {
       return new RGB(0, 0, 0);
-    } else {
-      int actualPixel = imageData.getPixel(x, y);
-      return imageData.palette.getRGB(actualPixel);
     }
+    return imageData.palette.getRGB(imageData.getPixel(x, y));
   }
 
   public static void draw(GC gc, AbstractMovableObject movableObject) {
@@ -37,53 +35,43 @@ public final class GuiUtils {
   }
 
   public static void drawRedFace(GC gc, RedFace redFace) {
-    //Draw background
     draw(gc, redFace);
+    drawEyes(gc, redFace);
+    drawLifeCounter(gc, redFace);
+  }
 
-    //Draw eyes border
+  private static void drawEyes(GC gc, RedFace redFace) {
     gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
     gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
     gc.setLineWidth(2);
     drawOval(gc, redFace.getLeftEyeLoc(), redFace.getEyesSize());
     drawOval(gc, redFace.getRightEyeLoc(), redFace.getEyesSize());
-
-    //Draw left eye pupil
     drawFillOval(gc, redFace.getLeftPupilLoc(), redFace.getPupilSize(), redFace.getPupilSize());
-
-    //Draw right eye pupil
     drawFillOval(gc, redFace.getRightPupilLoc(), redFace.getPupilSize(), redFace.getPupilSize());
+  }
 
-    //Draw life counter
+  private static void drawLifeCounter(GC gc, RedFace redFace) {
     if (redFace.getKissingGif() == null) {
       String life = String.valueOf(redFace.getLife());
-      gc.setFont(SWTResourceManager.getFont("Arial", 15, SWT.NORMAL));
+      gc.setFont(
+          SWTResourceManager.getFont(FONT_NAME_LIFE_COUNTER, FONT_SIZE_LIFE_COUNTER, SWT.NORMAL));
       int textLength = gc.textExtent(life).x;
       gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
       Point screenLoc = toScreenCoord(redFace.getLocation());
-      gc.drawText(life,
-          (int) (screenLoc.x - textLength / 2.0d),
-          screenLoc.y,
-          true
-      );
+      gc.drawText(life, (int) (screenLoc.x - textLength / 2.0d), screenLoc.y, true);
     }
   }
 
   public static void drawOval(GC gc, Point2D loc, Point2D size) {
     Point screenLoc = toScreenCoord(loc);
-    gc.drawOval((int) (screenLoc.x - size.x / 2),
-        (int) (screenLoc.y - size.y / 2),
-        (int) size.x,
-        (int) size.y
-    );
+    gc.drawOval((int) (screenLoc.x - size.x / 2), (int) (screenLoc.y - size.y / 2), (int) size.x,
+        (int) size.y);
   }
 
   public static void drawFillOval(GC gc, Point2D loc, double sizeX, double sizeY) {
     Point screenLoc = toScreenCoord(loc);
-    gc.fillOval((int) (screenLoc.x - sizeX / 2),
-        (int) (screenLoc.y - sizeY / 2),
-        (int) sizeX,
-        (int) sizeY
-    );
+    gc.fillOval((int) (screenLoc.x - sizeX / 2), (int) (screenLoc.y - sizeY / 2), (int) sizeX,
+        (int) sizeY);
   }
 
   public static void draw(GC gc, AbstractMovableObject movableObject, Point2D loc) {
@@ -91,12 +79,12 @@ public final class GuiUtils {
     gc.setForeground(SWTResourceManager.getColor(movableObject.getColor()));
     int prevAlpha = gc.getAlpha();
     gc.setAlpha(movableObject.getAlpha());
-
     Point screenObjLoc = toScreenCoord(loc);
     int locX = screenObjLoc.x - movableObject.getSize() / 2;
     int locY = screenObjLoc.y - movableObject.getSize() / 2;
+
     if (movableObject instanceof Snowflake snowflake && snowflake.isFreezed()) {
-      locY = locY + movableObject.getSize() / 3;
+      locY += movableObject.getSize() / 3;
     }
     gc.fillOval(locX, locY, movableObject.getSize(), movableObject.getSize());
     gc.setAlpha(prevAlpha);
@@ -126,11 +114,10 @@ public final class GuiUtils {
   }
 
   public static void drawSnowflakeAsMercedes(GC gc, AbstractMovableObject snowflake) {
-    Point screenLoc = GuiUtils.toScreenCoord(snowflake.getLocation());
+    Point screenLoc = toScreenCoord(snowflake.getLocation());
     gc.drawImage(SnowingApplication.mbImageSmall,
         screenLoc.x - SnowingApplication.MB_ICON_SIZE / 2,
-        screenLoc.y - SnowingApplication.MB_ICON_SIZE / 2
-    );
+        screenLoc.y - SnowingApplication.MB_ICON_SIZE / 2);
   }
 
   public static boolean equalsColors(RGB color1, RGB color2, int eps) {
@@ -140,37 +127,35 @@ public final class GuiUtils {
   }
 
   public static void moveMouseAndClick(int locX, int locY, int origLocX, int origLocY) {
-    Event mouseMoveEvent = new Event();
-    mouseMoveEvent.type = SWT.MouseMove;
-    mouseMoveEvent.x = locX;
-    mouseMoveEvent.y = locY;
-    mouseMoveEvent.doit = true;
-    Display.getDefault().post(mouseMoveEvent);
+    postMouseEvent(SWT.MouseMove, locX, locY);
+    postMouseEvent(SWT.MouseDown, locX, locY, 1);
+    postMouseEvent(SWT.MouseUp, locX, locY, 1);
+    postMouseEvent(SWT.MouseMove, origLocX, origLocY);
+  }
 
-    Event mouseClick1 = new Event();
-    mouseClick1.type = SWT.MouseDown;
-    mouseClick1.button = 1;
-    mouseClick1.doit = true;
-    Display.getDefault().post(mouseClick1);
+  private static void postMouseEvent(int eventType, int x, int y) {
+    Event event = new Event();
+    event.type = eventType;
+    event.x = x;
+    event.y = y;
+    event.doit = true;
+    Display.getDefault().post(event);
+  }
 
-    Event mouseClick2 = new Event();
-    mouseClick2.type = SWT.MouseUp;
-    mouseClick2.button = 1;
-    mouseClick2.doit = true;
-    Display.getDefault().post(mouseClick2);
-
-    Event moveToOrig = new Event();
-    moveToOrig.type = SWT.MouseMove;
-    moveToOrig.x = origLocX;
-    moveToOrig.y = origLocY;
-    moveToOrig.doit = true;
-    Display.getDefault().post(moveToOrig);
+  private static void postMouseEvent(int eventType, int x, int y, int button) {
+    Event event = new Event();
+    event.type = eventType;
+    event.x = x;
+    event.y = y;
+    event.button = button;
+    event.doit = true;
+    Display.getDefault().post(event);
   }
 
   public static int[] toScreenCoord(double[] circlePoints) {
     int[] result = new int[circlePoints.length];
     for (int i = 0; i < circlePoints.length; i += 2) {
-      Point screenLoc = GuiUtils.toScreenCoord(new Point2D(circlePoints[i], circlePoints[i + 1]));
+      Point screenLoc = toScreenCoord(new Point2D(circlePoints[i], circlePoints[i + 1]));
       result[i] = screenLoc.x;
       result[i + 1] = screenLoc.y;
     }

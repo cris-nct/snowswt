@@ -10,62 +10,46 @@ import java.util.List;
 
 public class Utils {
 
-  public static final double EPS = 0.000000000001d;
-
-  public static final double PI = 3.1415926535897932384626433832795d;
-
-  public static final int NR_DECIMALS_FORMAT_DEGREES = 10;
-
+  public static final double EPS = 1e-12;
   public static final int BIG_PRECISION = 12;
 
-  public static double linearInterpolation(double x, double x1, double y1, double x2, double y2) {
-    double value = Double.MAX_VALUE;
-    if (Math.abs(x2 - x1) > EPS) {
-      value = (((x - x2) * (y2 - y1)) / (x2 - x1)) + y2;
-    }
-    return value;
+  private Utils() {
   }
 
-  public static double[] generateCircle(Point2D location,
-      double radius,
-      int nrSegments,
-      double beginAngle
-  ) {
-    List<Point2D> points = new ArrayList<>();
+  public static double linearInterpolation(double x, double x1, double y1, double x2, double y2) {
+    if (Math.abs(x2 - x1) <= EPS) {
+      return Double.MAX_VALUE;
+    }
+    return (((x - x2) * (y2 - y1)) / (x2 - x1)) + y2;
+  }
+
+  public static double[] generateCircle(Point2D location, double radius, int nrSegments,
+      double beginAngle) {
     double angleIncrement = (2 * Math.PI) / nrSegments;
-    double angleTemp = beginAngle;
-    int safetyCounter = 0;
-    do {
-      Point2D point = moveToDirection(location, radius, angleTemp);
-      angleTemp = normAngle(angleTemp + angleIncrement);
-      points.add(point);
-      safetyCounter++;
-    } while (safetyCounter < nrSegments);
+    List<Point2D> points = new ArrayList<>(nrSegments);
+
+    for (int i = 0; i < nrSegments; i++) {
+      double angle = beginAngle + i * angleIncrement;
+      points.add(moveToDirection(location, radius, angle));
+    }
 
     double[] area = new double[points.size() * 2];
-    int i = 0;
-    for (Point2D p : points) {
-      area[i++] = p.x;
-      area[i++] = p.y;
+    for (int i = 0; i < points.size(); i++) {
+      area[2 * i] = points.get(i).x;
+      area[2 * i + 1] = points.get(i).y;
     }
     return area;
   }
 
   public static String getPCIdentifier() throws IOException {
-    @SuppressWarnings("StringBufferReplaceableByString")
-    StringBuilder cpuid = new StringBuilder();
-    cpuid.append("CPU: ");
-    cpuid.append(System.getenv("PROCESSOR_REVISION"));
-    cpuid.append(",");
-    cpuid.append(System.getenv("PROCESSOR_IDENTIFIER"));
-    cpuid.append("|MOTHERBOARD: ");
-    cpuid.append(getMotherboardSN());
-    return cpuid.toString();
+    return String.format("CPU: %s,%s|MOTHERBOARD: %s",
+        System.getenv("PROCESSOR_REVISION"),
+        System.getenv("PROCESSOR_IDENTIFIER"),
+        getMotherboardSN());
   }
 
   public static double distance(double x1, double y1, double x2, double y2) {
-    return formatNDecimals(Math.sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2))),
-        BIG_PRECISION);
+    return formatNDecimals(Math.hypot(x1 - x2, y1 - y2), BIG_PRECISION);
   }
 
   public static double distance(Point2D a, Point2D b) {
@@ -77,68 +61,25 @@ public class Utils {
   }
 
   private static Point2D moveToDirection(double x1, double y1, double distance, double angle) {
-    Point2D p = new Point2D(0, 0);
-    double ang = angle;
-    double degAlpha = Math.toDegrees(normAngle(angle));
-
-    if ((degAlpha >= 0) && (degAlpha < 90)) {
-      p.x = x1 + (distance * Math.cos(ang));
-      p.y = y1 + (distance * Math.sin(ang));
-    } else if ((degAlpha > 90) && (degAlpha < 180)) {
-      ang = Math.toRadians(180 - degAlpha);
-      p.x = x1 - (distance * Math.cos(ang));
-      p.y = y1 + (distance * Math.sin(ang));
-    } else if ((degAlpha > 180) && (degAlpha < 270)) {
-      ang = Math.toRadians(270 - degAlpha);
-      p.x = x1 - (distance * Math.sin(ang));
-      p.y = y1 - (distance * Math.cos(ang));
-    } else if ((degAlpha > 270) && (degAlpha < 360)) {
-      ang = Math.toRadians(360 - degAlpha);
-      p.x = x1 + (distance * Math.cos(ang));
-      p.y = y1 - (distance * Math.sin(ang));
-    }
-
-    if (equalsEPS(degAlpha, 90)) {
-      p.x = x1;
-      p.y = y1 + distance;
-    } else if (equalsEPS(degAlpha, 180)) {
-      p.x = x1 - distance;
-      p.y = y1;
-    } else if (equalsEPS(degAlpha, 270)) {
-      p.x = x1;
-      p.y = y1 - distance;
-    } else if (equalsEPS(degAlpha, 0)) {
-      p.x = x1 + distance;
-      p.y = y1;
-    }
-    return p;
+    double x = x1 + distance * Math.cos(angle);
+    double y = y1 + distance * Math.sin(angle);
+    return new Point2D(x, y);
   }
 
   public static Point2D pointRotation(Point2D fixPoint, Point2D point, double angle) {
-    double distance = distance(fixPoint.x, fixPoint.y, point.x, point.y);
-    double angCurrent = angleOfPath(fixPoint.x, fixPoint.y, point.x, point.y);
-    angCurrent = normAngle(angCurrent - normAngle(angle));
-    return moveToDirection(fixPoint.x, fixPoint.y, distance, angCurrent);
+    double distance = distance(fixPoint, point);
+    double currentAngle = angleOfPath(fixPoint, point);
+    double newAngle = normAngle(currentAngle - angle);
+    return moveToDirection(fixPoint, distance, newAngle);
   }
 
   public static double normAngle(double angle) {
-    double degAngle = Math.toDegrees(angle);
-    degAngle = formatNDecimals(degAngle, NR_DECIMALS_FORMAT_DEGREES);
-    if (Math.abs(degAngle) >= (360 - EPS)) {
-      degAngle = degAngle % 360;
-      if (degAngle < 0) {
-        degAngle = degAngle + ((((double) ((int) degAngle) / 360) + 1) * 360);
-      }
-    } else if (degAngle < 0) {
-      degAngle = degAngle + ((((double) ((int) degAngle) / 360) + 1) * 360);
-    }
-    return Math.toRadians(degAngle);
+    return Math.toRadians((Math.toDegrees(angle) + 360) % 360);
   }
 
-  public static double formatNDecimals(double nr, int precision) {
-    long doublePrecision = (long) Math.pow(10, precision);
-    long n = Math.round(nr * doublePrecision * 10.0d) / 10;
-    return (double) n / (double) doublePrecision;
+  public static double formatNDecimals(double number, int precision) {
+    double scale = Math.pow(10, precision);
+    return Math.round(number * scale) / scale;
   }
 
   public static boolean equalsEPS(double a, double b) {
@@ -146,26 +87,27 @@ public class Utils {
   }
 
   public static String getMotherboardSN() throws IOException {
-    StringBuilder result = new StringBuilder();
     File file = File.createTempFile("realhowto", ".vbs");
     file.deleteOnExit();
-    FileWriter fw = new FileWriter(file);
     String vbs = """
-        Set objWMIService = GetObject("winmgmts:\\\\.\\root\\cimv2")
-        Set colItems = objWMIService.ExecQuery _\s
-           ("Select * from Win32_BaseBoard")\s
-        For Each objItem in colItems\s
-            Wscript.Echo objItem.SerialNumber\s
-            exit for  ' do the first cpu only!\s
-        Next\s
-        """;
+         Set objWMIService = GetObject("winmgmts:\\\\.\\root\\cimv2")
+         Set colItems = objWMIService.ExecQuery _\s
+            ("Select * from Win32_BaseBoard")\s
+         For Each objItem in colItems\s
+             Wscript.Echo objItem.SerialNumber\s
+             exit for  ' do the first cpu only!\s
+         Next\s
+        \s""";
 
-    fw.write(vbs);
-    fw.close();
+    try (FileWriter fw = new FileWriter(file)) {
+      fw.write(vbs);
+    }
 
-    ProcessBuilder processBuilder = new ProcessBuilder("cscript //NoLogo", file.getPath());
+    ProcessBuilder processBuilder = new ProcessBuilder("cscript", "//NoLogo", file.getPath());
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
+
+    StringBuilder result = new StringBuilder();
     try (BufferedReader input = new BufferedReader(
         new InputStreamReader(process.getInputStream()))) {
       String line;
@@ -178,52 +120,40 @@ public class Utils {
 
   public static double angleOfPath(double x1, double y1, double x2, double y2) {
     double path = getPath(x1, y1, x2, y2);
-    double alpha;
-    if ((path == Double.NEGATIVE_INFINITY) || (path == Double.POSITIVE_INFINITY)) {
-      if (path == Double.POSITIVE_INFINITY) {
-        alpha = Math.toRadians(90);
-      } else {
-        alpha = Math.toRadians(270);
-      }
+    if (path == Double.NEGATIVE_INFINITY) {
+      return Math.toRadians(270);
+    } else if (path == Double.POSITIVE_INFINITY) {
+      return Math.toRadians(90);
     } else {
-      alpha = Math.atan(path);
+      double alpha = Math.atan(path);
       if (x1 > x2) {
-        alpha += PI;
+        alpha += Math.PI;
       }
+      return normAngle(alpha);
     }
-    alpha = normAngle(alpha);
-    return alpha;
   }
 
   public static double getPath(double x1, double y1, double x2, double y2) {
-    double ret;
     if (Math.abs(x2 - x1) >= EPS) {
-      ret = (y2 - y1) / (x2 - x1);
-    } else {
-      if (y2 > y1) {
-        ret = Double.POSITIVE_INFINITY;
-      } else {
-        ret = Double.NEGATIVE_INFINITY;
-      }
+      return (y2 - y1) / (x2 - x1);
     }
-    return ret;
+    return (y2 > y1) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
   }
 
   public static double angleOfPath(Point2D p1, Point2D p2) {
     return angleOfPath(p1.x, p1.y, p2.x, p2.y);
   }
 
-  public static void sleep(int i) {
+  public static void sleep(int milliseconds) {
     try {
-      Thread.sleep(i);
-    } catch (Throwable e) {
-      // nothing to do
+      Thread.sleep(milliseconds);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt(); // restore interrupted status
     }
   }
 
   public static boolean isColliding(AbstractMovableObject obj1, AbstractMovableObject obj2) {
-    int sumSize = (obj1.getSize() + obj2.getSize()) / 2 + 2;
-    return Utils.distance(obj1.getLocation(), obj2.getLocation()) < sumSize;
+    double sumSize = (obj1.getSize() + obj2.getSize()) / 2.0 + 2;
+    return distance(obj1.getLocation(), obj2.getLocation()) < sumSize;
   }
-
 }
