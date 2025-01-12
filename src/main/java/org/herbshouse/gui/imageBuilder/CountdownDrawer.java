@@ -11,24 +11,24 @@ import org.herbshouse.logic.GeneratorListener;
 class CountdownDrawer {
 
   public void draw(
-      GC gcImage,
+      GC gc,
       GeneratorListener<? extends AbstractMovableObject> generatorListener,
       String textFromScreen
   ) {
-    if (gcImage == null) {
+    if (gc == null) {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
     //Draw countdown
     if (generatorListener.getCountdown() >= 0) {
       if (generatorListener.getCountdown() >= 4) {
-        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+        gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
       } else {
-        gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+        gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
       }
       String countdown = String.valueOf(generatorListener.getCountdown());
-      Point countdownSize = gcImage.stringExtent(countdown);
-      Point textSize = gcImage.stringExtent(textFromScreen);
-      gcImage.drawText(countdown, (GuiUtils.SCREEN_BOUNDS.width - countdownSize.x) / 2,
+      Point countdownSize = gc.stringExtent(countdown);
+      Point textSize = gc.stringExtent(textFromScreen);
+      gc.drawText(countdown, (GuiUtils.SCREEN_BOUNDS.width - countdownSize.x) / 2,
           GuiUtils.SCREEN_BOUNDS.height / 2 + textSize.y, true);
     }
   }

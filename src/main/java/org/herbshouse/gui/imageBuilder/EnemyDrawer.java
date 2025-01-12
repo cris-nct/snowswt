@@ -15,15 +15,15 @@ import org.herbshouse.logic.enemies.RedFace;
 
 class EnemyDrawer {
 
-  public void draw(GC gcImage, GeneratorListener<AbstractMovableObject> generatorListener) {
-    if (gcImage == null) {
+  public void draw(GC gc, GeneratorListener<AbstractMovableObject> generatorListener) {
+    if (gc == null) {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
-    gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+    gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+    gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
     for (AbstractMovableObject obj : generatorListener.getMoveableObjects()) {
       if (obj instanceof RedFace redFace) {
-        GuiUtils.drawRedFace(gcImage, redFace);
+        GuiUtils.drawRedFace(gc, redFace);
       } else if (obj instanceof AnimatedGif animatedGif) {
         Image img = SWTResourceManager.getGif(SnowingApplication.class,
             animatedGif.getFilename(),
@@ -37,7 +37,7 @@ class EnemyDrawer {
         Point screenLoc = GuiUtils.toScreenCoord(animatedGif.getLocation());
         screenLoc.x -= obj.getSize() / 2;
         screenLoc.y -= obj.getSize() / 2;
-        gcImage.drawImage(img, screenLoc.x, screenLoc.y);
+        gc.drawImage(img, screenLoc.x, screenLoc.y);
         animatedGif.increaseImageIndex();
       }
     }

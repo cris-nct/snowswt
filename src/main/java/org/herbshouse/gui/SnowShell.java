@@ -191,7 +191,6 @@ public class SnowShell extends Shell implements
       }
 
       imageBuilder.addLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
-
       imageBuilder.drawLogo();
       imageBuilder.addMinimap();
       Image image = imageBuilder.build();

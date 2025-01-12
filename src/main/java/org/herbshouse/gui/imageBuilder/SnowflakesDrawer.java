@@ -20,20 +20,20 @@ class SnowflakesDrawer {
     this.controller = controller;
   }
 
-  public void draw(GC gcImage, GeneratorListener<Snowflake> generatorListener) {
-    if (gcImage == null) {
+  public void draw(GC gc, GeneratorListener<Snowflake> generatorListener) {
+    if (gc == null) {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
     //Draw snowflakes
-    gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-    gcImage.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
+    gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+    gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED));
     List<Snowflake> snowflakes = generatorListener.getMoveableObjects();
     FlagsConfiguration config = controller.getFlagsConfiguration();
     for (Snowflake snowflake : snowflakes) {
       if (config.isMercedesSnowflakes()) {
-        GuiUtils.drawSnowflakeAsMercedes(gcImage, snowflake);
+        GuiUtils.drawSnowflakeAsMercedes(gc, snowflake);
       } else {
-        GuiUtils.draw(gcImage, snowflake);
+        GuiUtils.draw(gc, snowflake);
       }
       if (!snowflake.isFreezed() && (config.isDebug() || config.isObjectsTail())) {
         int counterAlpha = 0;
@@ -41,7 +41,7 @@ class SnowflakesDrawer {
         int points = snowflake.getSnowTail().getHistoryLocations().size();
         for (Point2D oldLoc : snowflake.getSnowTail().getHistoryLocations()) {
           snowflake.setAlpha((int) Utils.linearInterpolation(counterAlpha, 0, 0, points, 80));
-          GuiUtils.draw(gcImage, snowflake, oldLoc);
+          GuiUtils.draw(gc, snowflake, oldLoc);
           counterAlpha++;
         }
         snowflake.setAlpha(origAlpha);

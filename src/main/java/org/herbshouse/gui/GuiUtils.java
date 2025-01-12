@@ -15,6 +15,7 @@ import org.herbshouse.logic.enemies.RedFace;
 import org.herbshouse.logic.snow.Snowflake;
 
 public final class GuiUtils {
+
   public static final RGB FREEZE_COLOR = new RGB(0, 255, 255);
   public static final Rectangle SCREEN_BOUNDS = Display.getDefault().getBounds();
   private static final int FONT_SIZE_LIFE_COUNTER = 15;

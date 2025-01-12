@@ -23,14 +23,14 @@ public class ShutdownAnimation {
   private final ArrayList<String> messages = new ArrayList<>();
   private final Shell shell;
   private final AnimatedGif flame;
+  private final Image glassCrackImage;
+  private final Image blueCrackImage;
   private int phaseIndexShacking = 0;
   private int alphaMainImage = 255;
   private int alphaCrackImage = 255;
-  private boolean startCrackFading;
   private int counterNewMessage;
+  private boolean startCrackFading;
   private String message;
-  private final Image glassCrackImage;
-  private final Image blueCrackImage;
 
   public ShutdownAnimation(Shell shell) {
     this.messages.addAll(Arrays.asList("Now ", "Now what ", "Now what will ", "Now what will you ",
