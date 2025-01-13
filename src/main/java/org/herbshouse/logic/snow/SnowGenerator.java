@@ -115,13 +115,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
     if (flagsConfiguration.isAttack() && !snowflakes.isEmpty()) {
       AttackStrategy<?> strategy = this.getAttackStrategy();
-      strategy.afterUpdate(snowflakes);
-      AbstractAttackData data = strategy.getData(snowflakes.getFirst());
-      int phase = 0;
-      if (data instanceof AbstractPhaseAttackData) {
-        phase = ((AbstractPhaseAttackData) data).getPhase();
+      if (strategy.isStarted()) {
+        strategy.afterUpdate(snowflakes);
+        AbstractAttackData data = strategy.getData(snowflakes.getFirst());
+        int phase = 0;
+        if (data instanceof AbstractPhaseAttackData) {
+          phase = ((AbstractPhaseAttackData) data).getPhase();
+        }
+        getLogicController().setCurrentAttackPhase(phase);
       }
-      getLogicController().setCurrentAttackPhase(phase);
     }
 
     if (snowflakes.isEmpty() && flagsConfiguration.isDebug()) {

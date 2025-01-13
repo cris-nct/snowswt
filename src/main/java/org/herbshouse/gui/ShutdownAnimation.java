@@ -18,6 +18,7 @@ public class ShutdownAnimation {
 
   private static final int ALPHA_DECREASE_RATE = 7;
   private static final int CRACK_ALPHA_DECREASE_RATE = 25;
+  private static final String MESSAGE = "It's time for new challenge";
 
   private final List<Integer> valuesToAlternate = Arrays.asList(-30, 86);
   private final ArrayList<String> messages = new ArrayList<>();
@@ -33,8 +34,15 @@ public class ShutdownAnimation {
   private String message;
 
   public ShutdownAnimation(Shell shell) {
-    this.messages.addAll(Arrays.asList("Now ", "Now what ", "Now what will ", "Now what will you ",
-        "Now what will you do?"));
+    String prev = null;
+    for (String msgpart : MESSAGE.split(" ")) {
+      if (prev == null) {
+        prev = msgpart;
+      } else {
+        prev += " " + msgpart;
+      }
+      this.messages.add(prev);
+    }
     this.shell = shell;
     this.flame = new AnimatedGif("fire-flame.gif", 2, null);
     this.flame.setLocation(new Point2D(GuiUtils.SCREEN_BOUNDS.width / 2.0, 50));

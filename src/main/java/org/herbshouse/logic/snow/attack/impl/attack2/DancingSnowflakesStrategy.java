@@ -72,19 +72,31 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
     switch (snowingLevel) {
       case 1 -> {
         initialMinPhase = 1;
-        initialMaxPhase = 1;
+        initialMaxPhase = 2;
       }
       case 2 -> {
         initialMinPhase = 1;
         initialMaxPhase = 2;
       }
-      //TODO
       case 3 -> {
-
+        initialMinPhase = 1;
+        initialMaxPhase = 5;
+      }
+      case 4 -> {
+        initialMinPhase = 1;
+        initialMaxPhase = 6;
+      }
+      case 5 -> {
+        initialMinPhase = 1;
+        initialMaxPhase = 7;
+      }
+      case 6 -> {
+        initialMinPhase = 1;
+        initialMaxPhase = 8;
       }
       case 10 -> {
-        initialMinPhase = 0.1;
-        initialMaxPhase = 1;
+        initialMinPhase = 0.4;
+        initialMaxPhase = 10;
       }
       default -> {
         initialMinPhase = 0.4;
@@ -112,7 +124,7 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
 
   @Override
   public int getMaxSnowflakesInvolved() {
-    return 350;
+    return 1000;
   }
 
   @Override
