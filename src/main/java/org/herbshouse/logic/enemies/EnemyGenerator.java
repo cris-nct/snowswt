@@ -64,6 +64,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       if (flagsConfiguration.isEnemies()) {
         this.move();
         this.checkCollisions();
+        this.cleanupFire();
         Utils.sleep(getSleepDuration());
       } else {
         this.cleanup();
@@ -74,6 +75,18 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     this.cleanup();
     timer.cancel();
     timer.purge();
+  }
+
+  private void cleanupFire() {
+    List<AnimatedGif> toRemove = new ArrayList<>();
+    for (AnimatedGif fire : fireGifs) {
+      if (fire.getLocation().y > screenBounds.height) {
+        toRemove.add(fire);
+      }
+    }
+    if (!toRemove.isEmpty()) {
+      fireGifs.removeAll(toRemove);
+    }
   }
 
   private void removeRedFace(RedFace redFace) {
