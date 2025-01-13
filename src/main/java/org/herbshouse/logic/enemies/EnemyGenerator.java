@@ -76,6 +76,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     timer.purge();
   }
 
+  private void removeRedFace(RedFace redFace) {
+    redFace.stopTimer();
+    redFaces.remove(redFace);
+  }
+
   private void move() {
     for (RedFace redFace : redFaces) {
       if (redFace.getLife() == 0) {
@@ -83,7 +88,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
             = Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d,
             redFace.getSize(), 0);
         substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
-        redFaces.remove(redFace);
+        this.removeRedFace(redFace);
         continue;
       }
       boolean isMouseInTheBall
@@ -292,7 +297,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         if (redFace.getState() == RedFaceState.FREE) {
           redFace.decreaseLife(50);
           if (redFace.getLife() == 0) {
-            redFaces.remove(redFace);
+            this.removeRedFace(redFace);
           } else {
             redFace.setState(RedFaceState.DAMAGED);
             redFace.setStateLazy(3000, RedFaceState.FREE);
