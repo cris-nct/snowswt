@@ -68,7 +68,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     while (!shutdown) {
       if (lockSnowflakes.tryLock()) {
         this.update();
-        if (!flagsConfiguration.isAttack() && counterFreezeSnowklakes < 3000) {
+        if (!flagsConfiguration.isAttack() && counterFreezeSnowklakes < 3000
+            && !flagsConfiguration.isDebug()) {
           this.checkCollisions();
         }
         lockSnowflakes.unlock();
@@ -122,6 +123,11 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       }
       getLogicController().setCurrentAttackPhase(phase);
     }
+
+    if (snowflakes.isEmpty() && flagsConfiguration.isDebug()) {
+      generateNewSnowflake(20, 1);
+    }
+
   }
 
   private AttackStrategy<?> getAttackStrategy() {
