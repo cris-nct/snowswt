@@ -5,7 +5,7 @@ import org.herbshouse.logic.Point2D;
 public class FlagsConfiguration {
 
   private boolean normalWind;
-  private boolean happyWind;
+  private boolean happyWind = true;
   private boolean debug;
   private boolean attack;
   private boolean flipImage;

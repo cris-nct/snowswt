@@ -200,9 +200,11 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   private void moveSnowflakeHappyWind(Snowflake snowflake) {
     Point2D newLoc = snowflake.getLocation().clone();
     HappyWindSnowFlakeData data = getHappyWindData(snowflake);
-    newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
-    data.increaseAngle();
-    newLoc.x = Math.min(newLoc.x, screenBounds.width);
+    if (data.isMoveSinusoidal()) {
+      newLoc.x = data.getOrigLocation().x + data.getAreaToMove() * Math.sin(data.getAngle());
+    } else {
+      newLoc.x += data.getStepX();
+    }
     newLoc.y -= snowflake.getSpeed();
     snowflake.setLocation(newLoc);
   }
@@ -211,8 +213,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     HappyWindSnowFlakeData data = (HappyWindSnowFlakeData) snowflake.getData("HAPPYWIND");
     if (data == null) {
       data = new HappyWindSnowFlakeData();
-      data.setOrigLocation(snowflake.getLocation().clone());
       snowflake.setData("HAPPYWIND", data);
+      this.initializeSnowFlakeHappyWind(snowflake);
     }
     return data;
   }
@@ -268,15 +270,30 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   private void initializeSnowFlakeHappyWind(Snowflake snowflake) {
     HappyWindSnowFlakeData data = getHappyWindData(snowflake);
     data.setOrigLocation(snowflake.getLocation().clone());
-    int maxAreaToMove = 50;
-    if (flagsConfiguration.isDebug()) {
-      data.setAngleIncrease(Math.toRadians(5));
-      data.setAreaToMove(50);
+    final double speed;
+    if (Math.random() > 0.6) {
+      double part = Math.random();
+      double stepX;
+      if (part >= 0.33 && part <= 0.66) {
+        stepX = 0;
+        speed = 0.5 + Math.random();
+      } else {
+        stepX = 0.2 + 0.3 * Math.random();
+        if (part < 0.33) {
+          stepX = -stepX;
+        }
+        speed = Utils.linearInterpolation(Math.abs(stepX), 0, 0.5 + Math.random(), 1,
+            1 + Math.random());
+      }
+      data.setStepX(stepX);
+      data.setMoveSinusoidal(false);
     } else {
-      data.setAngleIncrease(2 * Math.random() / 100);
-      data.setAreaToMove(Math.abs((int) (Math.random() * maxAreaToMove)));
+      speed = 0.5 + Math.random();
+      data.setMoveSinusoidal(true);
+      data.setAngleIncrease(Math.toRadians(0.2 * Math.random()));
+      data.setAreaToMove(50 + (int) (Math.random() * 50));
     }
-    snowflake.setSpeed(Utils.linearInterpolation(data.getAreaToMove(), maxAreaToMove, 2, 1, 0.5));
+    snowflake.setSpeed(speed);
   }
 
   @Override

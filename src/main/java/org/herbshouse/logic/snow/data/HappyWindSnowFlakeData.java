@@ -8,6 +8,24 @@ public class HappyWindSnowFlakeData implements SnowflakeData {
   private double angle;
   private double angleIncrease = 0.02;
   private int areaToMove;
+  private double stepX = 0;
+  private boolean moveSinusoidal = true;
+
+  public void setMoveSinusoidal(boolean moveSinusoidal) {
+    this.moveSinusoidal = moveSinusoidal;
+  }
+
+  public boolean isMoveSinusoidal() {
+    return moveSinusoidal;
+  }
+
+  public void setStepX(double stepX) {
+    this.stepX = stepX;
+  }
+
+  public double getStepX() {
+    return stepX;
+  }
 
   public int getAreaToMove() {
     return areaToMove;
@@ -22,7 +40,7 @@ public class HappyWindSnowFlakeData implements SnowflakeData {
   }
 
   public double getAngle() {
-    return angle;
+    return this.angle += angleIncrease;
   }
 
   public Point2D getOrigLocation() {
@@ -31,10 +49,6 @@ public class HappyWindSnowFlakeData implements SnowflakeData {
 
   public void setOrigLocation(Point2D origLocation) {
     this.origLocation = origLocation;
-  }
-
-  public void increaseAngle() {
-    this.angle += angleIncrease;
   }
 
 }
