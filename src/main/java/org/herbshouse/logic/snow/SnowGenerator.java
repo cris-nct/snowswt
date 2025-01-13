@@ -410,29 +410,36 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   @Override
   public void switchAttack() {
-    if (flagsConfiguration.isAttack()) {
-      pauseSnowing = true;
-      try {
-        if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+    try {
+      if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+        if (flagsConfiguration.isAttack()) {
+          pauseSnowing = true;
           //Removed all freezed snoflakes
           snowflakes.removeAll(snowflakes.stream().filter(Snowflake::isFreezed).toList());
           this.cleanupSnowflakesData();
           this.getAttackStrategy().beforeStart(snowflakes);
-          lockSnowflakes.unlock();
+        } else {
+          pauseSnowing = false;
+          this.cleanupSnowflakesData();
         }
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
+        lockSnowflakes.unlock();
       }
-    } else {
-      pauseSnowing = false;
-      this.cleanupSnowflakesData();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 
   @Override
   public void changeAttackType() {
-    this.cleanupSnowflakesData();
-    this.getAttackStrategy().beforeStart(snowflakes);
+    try {
+      if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+        this.cleanupSnowflakesData();
+        this.getAttackStrategy().beforeStart(snowflakes);
+      }
+      lockSnowflakes.unlock();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void cleanupSnowflakesData() {
@@ -460,7 +467,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       throw new RuntimeException(e);
     }
   }
-
 
   @Override
   public void provideImageData(ImageData imageData) {
