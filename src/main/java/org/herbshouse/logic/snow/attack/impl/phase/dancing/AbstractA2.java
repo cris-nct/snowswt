@@ -15,7 +15,7 @@ abstract class AbstractA2 extends AbstractPhaseProcessor<AttackData2> {
 
   @Override
   public Point2D computeLocation(Snowflake snowflake) {
-    double directionToTarget = Utils.angleOfPath(snowflake.getLocation(),
+    double directionToTarget = Utils.angleOfLine(snowflake.getLocation(),
         getStrategy().getData(snowflake).getLocationToFollow());
     return Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
   }

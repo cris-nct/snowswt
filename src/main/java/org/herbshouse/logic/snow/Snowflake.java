@@ -19,12 +19,12 @@ public class Snowflake extends AbstractMovableObject {
     snowTail = new SnowTail(this);
   }
 
-  public void setIndividualStrategy(AttackStrategy<?> individualStrategy) {
-    this.individualStrategy = individualStrategy;
-  }
-
   public AttackStrategy<?> getIndividualStrategy() {
     return individualStrategy;
+  }
+
+  public void setIndividualStrategy(AttackStrategy<?> individualStrategy) {
+    this.individualStrategy = individualStrategy;
   }
 
   public SnowTail getSnowTail() {

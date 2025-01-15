@@ -68,7 +68,7 @@ public class Utils {
 
   public static Point2D pointRotation(Point2D fixPoint, Point2D point, double angle) {
     double distance = distance(fixPoint, point);
-    double currentAngle = angleOfPath(fixPoint, point);
+    double currentAngle = angleOfLine(fixPoint, point);
     double newAngle = normAngle(currentAngle - angle);
     return moveToDirection(fixPoint, distance, newAngle);
   }
@@ -118,7 +118,7 @@ public class Utils {
     return result.toString().trim();
   }
 
-  public static double angleOfPath(double x1, double y1, double x2, double y2) {
+  public static double angleOfLine(double x1, double y1, double x2, double y2) {
     double path = getPath(x1, y1, x2, y2);
     if (path == Double.NEGATIVE_INFINITY) {
       return Math.toRadians(270);
@@ -140,8 +140,8 @@ public class Utils {
     return (y2 > y1) ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
   }
 
-  public static double angleOfPath(Point2D p1, Point2D p2) {
-    return angleOfPath(p1.x, p1.y, p2.x, p2.y);
+  public static double angleOfLine(Point2D p1, Point2D p2) {
+    return angleOfLine(p1.x, p1.y, p2.x, p2.y);
   }
 
   public static void sleep(int milliseconds) {

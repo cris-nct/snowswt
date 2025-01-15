@@ -8,17 +8,19 @@ import org.eclipse.swt.widgets.Display;
 
 class MinimapDrawer {
 
+  private static final int HEIGHT_MINIMAP = 200;
+
   public void draw(GC gc, Image image) {
     //Draw minimap
     ImageData imageData = image.getImageData();
     double aspRatio = (double) imageData.width / imageData.height;
-    int heightMinimap = 200;
-    int widthMinimap = (int) (heightMinimap * aspRatio);
+
+    int widthMinimap = (int) (HEIGHT_MINIMAP * aspRatio);
     gc.setAlpha(180);
     gc.drawImage(image, 0, 0, imageData.width, imageData.height,
-        0, imageData.height - heightMinimap, widthMinimap, heightMinimap);
+        0, imageData.height - HEIGHT_MINIMAP, widthMinimap, HEIGHT_MINIMAP);
     gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-    gc.drawRectangle(0, imageData.height - heightMinimap, widthMinimap, heightMinimap - 1);
+    gc.drawRectangle(0, imageData.height - HEIGHT_MINIMAP, widthMinimap, HEIGHT_MINIMAP - 1);
     gc.setAlpha(255);
   }
 

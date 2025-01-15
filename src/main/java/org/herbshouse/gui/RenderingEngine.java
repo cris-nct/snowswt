@@ -10,10 +10,10 @@ import org.eclipse.swt.widgets.Display;
 public class RenderingEngine implements Runnable, IDrawCompleteListener {
 
   private final Canvas canvas;
-
   private final AtomicInteger counterFrames = new AtomicInteger(0);
   private final Timer timer;
   private final int desiredFps;
+
   private int realFPS;
 
   public RenderingEngine(Canvas canvas, int desiredFps) {

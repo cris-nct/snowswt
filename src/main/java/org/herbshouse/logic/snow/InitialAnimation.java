@@ -9,9 +9,9 @@ import org.herbshouse.logic.snow.attack.impl.nonphase.FireworksStrategy;
 
 class InitialAnimation {
 
-  private int countdown = -1;
-
   private final SnowGenerator snowGenerator;
+
+  private int countdown = -1;
 
   InitialAnimation(SnowGenerator snowGenerator) {
     this.snowGenerator = snowGenerator;

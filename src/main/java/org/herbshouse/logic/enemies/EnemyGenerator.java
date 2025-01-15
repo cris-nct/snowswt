@@ -21,6 +21,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   public static final RGB FREE_MOVE_COLOR = new RGB(50, 180, 180);
   private static final int ANGRY_FACE_SIZE = 150;
   private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
+
   private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
   private final List<AnimatedGif> fireGifs = new CopyOnWriteArrayList<>();
   private AnimatedGif angryFace;
@@ -113,7 +114,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         redFace.stopKissing();
         if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
           redFace.setDirection(
-              Utils.angleOfPath(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
+              Utils.angleOfLine(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
         }
         redFace.move();
       }

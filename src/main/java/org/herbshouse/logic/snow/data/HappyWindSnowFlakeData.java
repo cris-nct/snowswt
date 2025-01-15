@@ -11,20 +11,20 @@ public class HappyWindSnowFlakeData implements SnowflakeData {
   private double stepX = 0;
   private boolean moveSinusoidal = true;
 
-  public void setMoveSinusoidal(boolean moveSinusoidal) {
-    this.moveSinusoidal = moveSinusoidal;
-  }
-
   public boolean isMoveSinusoidal() {
     return moveSinusoidal;
   }
 
-  public void setStepX(double stepX) {
-    this.stepX = stepX;
+  public void setMoveSinusoidal(boolean moveSinusoidal) {
+    this.moveSinusoidal = moveSinusoidal;
   }
 
   public double getStepX() {
     return stepX;
+  }
+
+  public void setStepX(double stepX) {
+    this.stepX = stepX;
   }
 
   public int getAreaToMove() {

@@ -26,6 +26,7 @@ public class ShutdownAnimation {
   private final AnimatedGif flame;
   private final Image glassCrackImage;
   private final Image blueCrackImage;
+
   private int phaseIndexShacking = 0;
   private int alphaMainImage = 255;
   private int alphaCrackImage = 255;

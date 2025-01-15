@@ -193,7 +193,7 @@ public class SnowShell extends Shell implements
       imageBuilder.addLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
       imageBuilder.drawLogo();
       imageBuilder.addMinimap();
-      Image image = imageBuilder.build();
+      Image image = imageBuilder.getResultedImage();
       ImageData imageData = image.getImageData();
       if (startShutdown) {
         this.shutdownAnimation.draw(gc, image);
@@ -322,6 +322,8 @@ public class SnowShell extends Shell implements
         browser.setVisible(false);
         browser.setText(loadResourceAsString("embededGoodBye.html"), true);
         canvas.removeKeyListener(this);
+        canvas.removeMouseListener(this);
+        canvas.removeMouseWheelListener(this);
         controller.shutdown();
         startShutdown = true;
         break;

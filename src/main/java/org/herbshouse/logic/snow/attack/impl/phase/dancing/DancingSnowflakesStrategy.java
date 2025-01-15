@@ -70,11 +70,7 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
 
   private void updateIncrementsBounds(int snowingLevel) {
     switch (snowingLevel) {
-      case 1 -> {
-        initialMinPhase = 1;
-        initialMaxPhase = 2;
-      }
-      case 2 -> {
+      case 1, 2 -> {
         initialMinPhase = 1;
         initialMaxPhase = 2;
       }

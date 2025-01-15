@@ -19,6 +19,7 @@ public class SnowingApplication {
   public static Image mbImageSmall;
 
   public static void main(String[] args) {
+
     boolean skipAnimation = Arrays.asList(args).contains("-skipInitialAnimation");
 
     SnowGenerator snowGenerator = new SnowGenerator();

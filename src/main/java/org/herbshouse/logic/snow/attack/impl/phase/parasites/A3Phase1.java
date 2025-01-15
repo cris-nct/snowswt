@@ -28,7 +28,7 @@ public class A3Phase1 extends AbstractPhaseProcessor<AttackData3> {
   public Point2D computeLocation(Snowflake snowflake) {
     Point2D locationToFollow = getStrategy().getData(snowflake).getLocationToFollow();
     double distToTarget = Utils.distance(snowflake.getLocation(), locationToFollow);
-    double directionToTarget = Utils.angleOfPath(snowflake.getLocation(), locationToFollow);
+    double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), locationToFollow);
     Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), 0.5, directionToTarget);
     double func = Math.tanh(distToTarget * 0.5) * 5 / distToTarget;
     func = Math.max(func, 0.5);

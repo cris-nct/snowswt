@@ -23,10 +23,10 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
     double directionToTarget;
     boolean move = true;
     if (prevSnowFlake == null) {
-      directionToTarget = Utils.angleOfPath(snowflake.getLocation(),
+      directionToTarget = Utils.angleOfLine(snowflake.getLocation(),
           flagsConfiguration.getMouseLoc());
     } else {
-      directionToTarget = Utils.angleOfPath(snowflake.getLocation(), prevSnowFlake.getLocation());
+      directionToTarget = Utils.angleOfLine(snowflake.getLocation(), prevSnowFlake.getLocation());
       if (Utils.isColliding(snowflake, prevSnowFlake)) {
         move = false;
       }

@@ -47,7 +47,7 @@ public class SwtImageBuilder implements AutoCloseable {
     return this;
   }
 
-  public Image build() {
+  public Image getResultedImage() {
     return image;
   }
 

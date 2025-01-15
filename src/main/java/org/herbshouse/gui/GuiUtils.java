@@ -1,6 +1,7 @@
 package org.herbshouse.gui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -76,8 +77,9 @@ public final class GuiUtils {
   }
 
   public static void draw(GC gc, AbstractMovableObject movableObject, Point2D loc) {
-    gc.setBackground(SWTResourceManager.getColor(movableObject.getColor()));
-    gc.setForeground(SWTResourceManager.getColor(movableObject.getColor()));
+    Color color = SWTResourceManager.getColor(movableObject.getColor());
+    gc.setBackground(color);
+    gc.setForeground(color);
     int prevAlpha = gc.getAlpha();
     gc.setAlpha(movableObject.getAlpha());
     Point screenObjLoc = toScreenCoord(loc);

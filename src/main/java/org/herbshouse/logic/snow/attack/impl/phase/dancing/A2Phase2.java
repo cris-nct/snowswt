@@ -19,7 +19,7 @@ public class A2Phase2 extends AbstractA2 {
   public void startPhase(Snowflake snowflake) {
     AttackData2 attackData = getStrategy().getData(snowflake);
     Point2D mouseLoc = getStrategy().getFlagsConfiguration().getMouseLoc();
-    double dir = Utils.angleOfPath(mouseLoc, snowflake.getLocation());
+    double dir = Utils.angleOfLine(mouseLoc, snowflake.getLocation());
     attackData.setLocationToFollow(Utils.moveToDirection(mouseLoc, 150, dir));
   }
 

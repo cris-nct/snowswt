@@ -20,6 +20,29 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   }
 
   @Override
+  public void beforeStart(List<Snowflake> snowflakeList) {
+    super.beforeStart(snowflakeList);
+    int circleRadius = 160;
+    int index = 0;
+    for (Snowflake snowflake : snowflakeList) {
+      snowflake.setSize(30);
+      snowflake.getSnowTail().setTailLength(100);
+      if (index == 0) {
+        snowflake.setColor(new RGB(70, 70, 240));
+        snowflake.setLocation(
+            new Point2D(screenBounds.width / 2.0, screenBounds.height / 2.0 + circleRadius));
+        getData(snowflake).setAngle(Math.PI);
+      } else if (index == 1) {
+        snowflake.setColor(new RGB(240, 90, 90));
+        snowflake.setLocation(
+            new Point2D(screenBounds.width / 2.0, screenBounds.height / 2.0 - circleRadius));
+        getData(snowflake).setAngle(0);
+      }
+      index++;
+    }
+  }
+
+  @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
     int radius = 160;
     AttackData4 data = getData(snowflake);
@@ -41,29 +64,6 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   @Override
   public int getMaxSnowflakesInvolved() {
     return 2;
-  }
-
-  @Override
-  public void beforeStart(List<Snowflake> snowflakeList) {
-    super.beforeStart(snowflakeList);
-    int circleRadius = 160;
-    int index = 0;
-    for (Snowflake snowflake : snowflakeList) {
-      snowflake.setSize(30);
-      snowflake.getSnowTail().setTailLength(100);
-      if (index == 0) {
-        snowflake.setColor(new RGB(70, 70, 240));
-        snowflake.setLocation(
-            new Point2D(screenBounds.width / 2.0, screenBounds.height / 2.0 + circleRadius));
-        getData(snowflake).setAngle(Math.PI);
-      } else if (index == 1) {
-        snowflake.setColor(new RGB(240, 90, 90));
-        snowflake.setLocation(
-            new Point2D(screenBounds.width / 2.0, screenBounds.height / 2.0 - circleRadius));
-        getData(snowflake).setAngle(0);
-      }
-      index++;
-    }
   }
 
   @Override

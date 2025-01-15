@@ -22,26 +22,17 @@ public class AttackData5 extends AbstractAttackData {
     return originalLocation;
   }
 
-  public void setStepX(double stepX) {
-    this.stepX = stepX;
-  }
-
   public void setOriginalLocation(Point2D loc) {
     this.originalLocation = loc;
   }
 
-  public void setCounter(double counter) {
-    this.counter = counter;
-  }
-
-  public void setAngle(double angle) {
-    this.angle = angle;
+  public void setStepX(double stepX) {
+    this.stepX = stepX;
   }
 
   public double getAngle() {
     return angle += stepAngle;
   }
-
 
   public void setStepAngle(double stepAngle) {
     this.stepAngle = stepAngle;
@@ -51,20 +42,24 @@ public class AttackData5 extends AbstractAttackData {
     return counter += stepX;
   }
 
-  public void setFactorY(double factorY) {
-    this.factorY = factorY;
+  public void setCounter(double counter) {
+    this.counter = counter;
   }
 
   public double getFactorY() {
     return factorY;
   }
 
-  public void setDirectionX(int directionX) {
-    this.directionX = directionX;
+  public void setFactorY(double factorY) {
+    this.factorY = factorY;
   }
 
   public int getDirectionX() {
     return directionX;
+  }
+
+  public void setDirectionX(int directionX) {
+    this.directionX = directionX;
   }
 
 }
