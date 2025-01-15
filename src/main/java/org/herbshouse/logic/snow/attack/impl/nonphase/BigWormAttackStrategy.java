@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack1;
+package org.herbshouse.logic.snow.attack.impl.nonphase;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;

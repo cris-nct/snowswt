@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack2;
+package org.herbshouse.logic.snow.attack.impl.phase.dancing;
 
 @FunctionalInterface
 public interface IAttack2Global {

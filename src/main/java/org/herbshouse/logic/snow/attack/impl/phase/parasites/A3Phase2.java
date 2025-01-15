@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack3;
+package org.herbshouse.logic.snow.attack.impl.phase.parasites;
 
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;

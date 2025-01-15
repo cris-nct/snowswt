@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack2;
+package org.herbshouse.logic.snow.attack.impl.phase.dancing;
 
 import java.util.List;
 import java.util.Timer;
@@ -138,6 +138,7 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
     if (data == null) {
       data = new AttackData2();
       snowflake.setData("ATTACK2", data);
+      this.beforeStart(List.of(snowflake));
     }
     return (AttackData2) data;
   }

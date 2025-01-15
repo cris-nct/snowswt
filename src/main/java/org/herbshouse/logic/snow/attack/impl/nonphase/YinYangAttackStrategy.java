@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack4;
+package org.herbshouse.logic.snow.attack.impl.nonphase;
 
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
@@ -11,11 +11,11 @@ import org.herbshouse.logic.snow.attack.impl.AbstractNoPhaseAttackStrategy;
 import org.herbshouse.logic.snow.data.AttackData4;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class YinYangAttackLogic extends AbstractNoPhaseAttackStrategy<AttackData4> {
+public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackData4> {
 
   private final Rectangle screenBounds;
 
-  public YinYangAttackLogic(Rectangle screenBounds) {
+  public YinYangAttackStrategy(Rectangle screenBounds) {
     this.screenBounds = screenBounds;
   }
 

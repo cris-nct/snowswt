@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack3;
+package org.herbshouse.logic.snow.attack.impl.phase.parasites;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
@@ -61,6 +61,7 @@ public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackD
     if (data == null) {
       data = new AttackData3();
       snowflake.setData("ATTACK3", data);
+      this.beforeStart(List.of(snowflake));
     }
     return (AttackData3) data;
   }

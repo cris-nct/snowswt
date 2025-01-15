@@ -1,4 +1,4 @@
-package org.herbshouse.logic.snow.attack.impl.attack2;
+package org.herbshouse.logic.snow.attack.impl.phase.dancing;
 
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;

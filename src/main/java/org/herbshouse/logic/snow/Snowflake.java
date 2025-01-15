@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractMovableObject;
+import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class Snowflake extends AbstractMovableObject {
@@ -12,9 +13,18 @@ public class Snowflake extends AbstractMovableObject {
 
   private final SnowTail snowTail;
   private boolean freezed = false;
+  private AttackStrategy<?> individualStrategy;
 
   public Snowflake() {
     snowTail = new SnowTail(this);
+  }
+
+  public void setIndividualStrategy(AttackStrategy<?> individualStrategy) {
+    this.individualStrategy = individualStrategy;
+  }
+
+  public AttackStrategy<?> getIndividualStrategy() {
+    return individualStrategy;
   }
 
   public SnowTail getSnowTail() {

@@ -42,7 +42,7 @@ public class SnowingApplication {
       enemyGenerator.setViewController(shell);
 
       DefaultLogicController controller = new DefaultLogicController();
-      controller.setDesiredFPS(40);
+      controller.setDesiredFPS(120);
       controller.setUserInfo(new UserInfo());
       controller.setTransform(transform);
 
