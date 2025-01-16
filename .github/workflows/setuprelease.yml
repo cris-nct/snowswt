@@ -52,8 +52,10 @@ jobs:
       - name: Validate input
         run: |
           if [[ ! ${{ inputs.name }} =~ ^[0-9\.-]+$ ]]; then
-          echo "Invalid input: $1"
-          exit 1
+            echo "Invalid release version pattern: ${{ inputs.name }}"
+            exit 1
+          else 
+            echo "Release version pattern is correct: ${{ inputs.name }}"
           fi
         env:
           INPUT_VALUE: ${{ inputs.name }}
