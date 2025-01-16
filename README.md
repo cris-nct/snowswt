@@ -1,6 +1,6 @@
 **Snowing simulator - demo for SWT capabilities**
 - The executable jar file can be downloaded from https://github.com/crisnct/snowswt/releases
-- It requires at least Java 22 to execute
+- It requires at least Java 22 to execute. Download from here: https://adoptium.net/temurin/releases/?os=windows&arch=x64&package=jre&version=22
 - For developers it requires jdk 22 and the following changes in maven settings.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
