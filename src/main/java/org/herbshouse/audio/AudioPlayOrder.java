@@ -5,6 +5,8 @@ public class AudioPlayOrder {
   private final String filename;
   private AudioPlayType type;
   private final int milliseconds;
+  private float volume = 1.0f;
+  private AudioCallback callback;
 
   public AudioPlayOrder(String filename) {
     this(filename, -1);
@@ -15,6 +17,22 @@ public class AudioPlayOrder {
     this.filename = filename;
     this.milliseconds = milliseconds;
     this.type = AudioPlayType.EFFECT;
+  }
+
+  public void setCallback(AudioCallback callback) {
+    this.callback = callback;
+  }
+
+  public AudioCallback getCallback() {
+    return callback;
+  }
+
+  public void setVolume(float volume) {
+    this.volume = volume;
+  }
+
+  public float getVolume() {
+    return volume;
   }
 
   public void setType(AudioPlayType type) {

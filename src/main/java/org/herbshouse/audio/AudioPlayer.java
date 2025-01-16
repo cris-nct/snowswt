@@ -8,4 +8,6 @@ public interface AudioPlayer {
 
   boolean isPlaying(String filename);
 
+  void shutdown();
+
 }

@@ -64,6 +64,7 @@ public class DefaultLogicController implements LogicController {
     if (flagsConfiguration.isNormalWind()) {
       AudioPlayOrder order = new AudioPlayOrder("wind.wav");
       order.setType(AudioPlayType.BACKGROUND);
+      order.setVolume(0.7f);
       this.audioPlayer.play(order);
     } else {
       this.audioPlayer.stop("wind.wav");
@@ -173,7 +174,9 @@ public class DefaultLogicController implements LogicController {
 
   @Override
   public void shutdown() {
-    this.audioPlayer.play(new AudioPlayOrder("glass-breaking.wav"));
+    AudioPlayOrder order = new AudioPlayOrder("glass-breaking.wav");
+    order.setCallback(() -> audioPlayer.shutdown());
+    this.audioPlayer.play(order);
     listeners.forEach(GeneratorListener::shutdown);
   }
 

@@ -34,6 +34,18 @@ public class DefaultAudioPlayer implements AudioPlayer {
         .anyMatch(t -> t.getOrder().getFilename().equals(filename) && t.isPlaying());
   }
 
+  @Override
+  public void shutdown() {
+    for (AudioPlayerThread playingThread : playingThreads) {
+      if (playingThread.isAlive()) {
+        playingThread.interrupt();
+      } else {
+        playingThread.stopAudio();
+      }
+    }
+    playingThreads.clear();
+  }
+
   private void cleanup() {
     List<AudioPlayerThread> newList = playingThreads.stream().filter(AudioPlayerThread::isPlaying)
         .toList();
