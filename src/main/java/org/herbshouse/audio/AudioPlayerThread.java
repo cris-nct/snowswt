@@ -1,5 +1,6 @@
 package org.herbshouse.audio;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
@@ -23,10 +24,10 @@ class AudioPlayerThread extends Thread {
 
   @Override
   public void run() {
+    //noinspection DataFlowIssue
     try (
-        InputStream is = SnowingApplication.class.getClassLoader()
-            .getResourceAsStream(order.getFilename())) {
-      //noinspection DataFlowIssue
+        InputStream is = new BufferedInputStream(SnowingApplication.class.getClassLoader()
+            .getResourceAsStream(order.getFilename()))) {
       try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(is)) {
         clip = AudioSystem.getClip();
         clip.open(audioIn);
@@ -41,12 +42,15 @@ class AudioPlayerThread extends Thread {
     } catch (
         UnsupportedAudioFileException e) {
       System.err.println("The specified audio file is not supported: " + e.getMessage());
+      e.printStackTrace();
     } catch (
         IOException e) {
       System.err.println("An I/O error occurred: " + e.getMessage());
+      e.printStackTrace();
     } catch (
         LineUnavailableException e) {
       System.err.println("Audio line for playing back is unavailable: " + e.getMessage());
+      e.printStackTrace();
     }
   }
 
