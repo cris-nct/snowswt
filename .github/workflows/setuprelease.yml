@@ -51,7 +51,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Validate input
         run: |
-          if [[ ! ${{ inputs.name }} =~ ^[0-9_-]+$ ]]; then
+          if [[ ! ${{ inputs.name }} =~ ^[0-9\.-]+$ ]]; then
           echo "Invalid input: $1"
           exit 1
           fi
