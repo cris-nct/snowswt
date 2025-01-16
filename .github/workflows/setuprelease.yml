@@ -49,14 +49,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Runs a single command using the runners shell
-      - name: List files
-        run: |
-          ls
-
       - name: Validate input
         run: |
-          chmod +x ./validate_input.sh
-          ./validate_input.sh ${{ inputs.name }}
+          if [[ ! ${{ inputs.name }} =~ ^[0-9_-]+$ ]]; then
+          echo "Invalid input: $1"
+          exit 1
+          fi
         env:
           INPUT_VALUE: ${{ inputs.name }}
 
