@@ -50,7 +50,9 @@ jobs:
     steps:
       # Runs a single command using the runners shell
       - name: List files
-        run: ls -la
+        run: |
+          cd ..
+          ls
 
       - name: Validate input
         run: ./validate_input.sh ${{ inputs.name }}
