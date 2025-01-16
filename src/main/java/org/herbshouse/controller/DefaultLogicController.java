@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
+import org.herbshouse.audio.AudioPlayOrder;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
@@ -18,6 +20,7 @@ public class DefaultLogicController implements LogicController {
   private UserInfo userInfo;
   private Transform transform;
   private int currentAttackPhase;
+  private AudioPlayer audioPlayer;
 
   @Override
   public void registerListener(GeneratorListener<?> listener) {
@@ -155,7 +158,17 @@ public class DefaultLogicController implements LogicController {
 
   @Override
   public void shutdown() {
+    this.audioPlayer.play(new AudioPlayOrder("glass-breaking.wav"));
     listeners.forEach(GeneratorListener::shutdown);
+  }
+
+  @Override
+  public void setAudio(AudioPlayer audioPlayer) {
+    this.audioPlayer = audioPlayer;
+  }
+
+  public AudioPlayer getAudioPlayer() {
+    return audioPlayer;
   }
 
   public Transform getTransform() {

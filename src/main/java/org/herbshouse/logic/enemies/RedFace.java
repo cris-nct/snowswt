@@ -49,19 +49,15 @@ public class RedFace extends AbstractMovableObject {
   }
 
   public void startKissing() {
-    if (kissingGif == null) {
-      setPause(true);
-      kissingGif = new AnimatedGif("kissing.gif", 7, null);
-      kissingGif.setSize((int) (getSize() * 0.3));
-      updateKissingGif();
-    }
+    setPause(true);
+    kissingGif = new AnimatedGif("kissing.gif", 7, null);
+    kissingGif.setSize((int) (getSize() * 0.3));
+    updateKissingGif();
   }
 
   public void stopKissing() {
-    if (kissingGif != null) {
-      setPause(false);
-      kissingGif = null;
-    }
+    setPause(false);
+    kissingGif = null;
   }
 
   public AnimatedGif getKissingGif() {

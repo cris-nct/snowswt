@@ -1,5 +1,6 @@
 package org.herbshouse.logic;
 
+import org.herbshouse.audio.AudioPlayOrder;
 import org.herbshouse.controller.DefaultLogicController;
 import org.herbshouse.controller.ViewController;
 
@@ -32,6 +33,7 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
   @Override
   public void substractAreaFromShell(int[] polygon) {
     viewController.substractAreaFromShell(polygon);
+    getLogicController().getAudioPlayer().play(new AudioPlayOrder("hole-in-shell.wav", 1500));
   }
 
   @Override

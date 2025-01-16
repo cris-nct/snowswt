@@ -1,6 +1,7 @@
 package org.herbshouse.controller;
 
 import java.util.List;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.UserInfo;
@@ -57,4 +58,5 @@ public interface LogicController {
 
   void shutdown();
 
+  void setAudio(AudioPlayer audioPlayer);
 }

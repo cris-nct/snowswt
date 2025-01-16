@@ -4,6 +4,7 @@ import java.util.Arrays;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.herbshouse.audio.DefaultAudioPlayer;
 import org.herbshouse.controller.DefaultLogicController;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
@@ -19,7 +20,6 @@ public class SnowingApplication {
   public static Image mbImageSmall;
 
   public static void main(String[] args) {
-
     boolean skipAnimation = Arrays.asList(args).contains("-skipInitialAnimation");
 
     SnowGenerator snowGenerator = new SnowGenerator();
@@ -28,6 +28,7 @@ public class SnowingApplication {
     }
     EnemyGenerator enemyGenerator = new EnemyGenerator();
     Transform transform = null;
+    DefaultAudioPlayer audioPlayer = new DefaultAudioPlayer();
     try {
       mbImageSmall = new Image(Display.getDefault(),
           SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true)
@@ -46,6 +47,7 @@ public class SnowingApplication {
       controller.setDesiredFPS(120);
       controller.setUserInfo(new UserInfo());
       controller.setTransform(transform);
+      controller.setAudio(audioPlayer);
 
       controller.registerListener(snowGenerator);
       controller.registerListener(enemyGenerator);

@@ -391,6 +391,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
           for (int i = 0; i < 5; i++) {
             Snowflake snowflake = generateNewSnowflake();
             snowflake.setLocation(mouseLocation);
+            snowflake.setSize(7);
+            snowflake.setColor(new RGB(255, 140, 0));
             AttackStrategy<?> strategy = new FireworksStrategy(flagsConfiguration, screenBounds);
             strategy.beforeStart(List.of(snowflake));
             snowflake.setIndividualStrategy(strategy);

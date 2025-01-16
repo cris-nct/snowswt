@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayOrder;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
@@ -96,28 +97,36 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   }
 
   private void move() {
+    boolean kiss = false;
     for (RedFace redFace : redFaces) {
       if (redFace.getLife() == 0) {
         double[] circlePoints
             = Utils.generateCircle(redFace.getLocation(), redFace.getSize() / 2.0d,
             redFace.getSize(), 0);
-        substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
+        this.substractAreaFromShell(GuiUtils.toScreenCoord(circlePoints));
         this.removeRedFace(redFace);
         continue;
       }
       boolean isMouseInTheBall
           = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc())
           < redFace.getSize() / 2.0d;
-      if (isMouseInTheBall) {
+      if (isMouseInTheBall && redFace.getKissingGif() == null) {
         redFace.startKissing();
-      } else {
+      } else if (!isMouseInTheBall && redFace.getKissingGif() != null) {
         redFace.stopKissing();
         if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
           redFace.setDirection(
               Utils.angleOfLine(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
         }
+      } else {
         redFace.move();
       }
+
+      kiss = kiss || redFace.getKissingGif() != null;
+    }
+
+    if (kiss && !getLogicController().getAudioPlayer().isPlaying()) {
+      getLogicController().getAudioPlayer().play(new AudioPlayOrder("kissing.wav"));
     }
 
     for (AnimatedGif fire : fireGifs) {
@@ -146,7 +155,12 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   @Override
   public void mouseMove(Point2D mouseLocation) {
     for (RedFace redFace : redFaces) {
-      redFace.stopKissing();
+      boolean isMouseInTheBall
+          = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc())
+          < redFace.getSize() / 2.0d;
+      if (!isMouseInTheBall && redFace.getKissingGif() != null) {
+        redFace.stopKissing();
+      }
     }
   }
 
@@ -158,6 +172,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       gif.setSize(50);
       gif.setSpeed(2);
       fireGifs.add(gif);
+      getLogicController().getAudioPlayer().play(new AudioPlayOrder("fire.wav", 700));
     }
   }
 
@@ -308,8 +323,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   private void checkFireCollision(RedFace redFace) {
     for (AnimatedGif fire : fireGifs) {
       if (Utils.isColliding(redFace, fire)) {
+        getLogicController().getAudioPlayer().play(new AudioPlayOrder("hurt.wav"));
         if (redFace.getState() == RedFaceState.FREE) {
-          redFace.decreaseLife(50);
+          redFace.decreaseLife(20);
           if (redFace.getLife() == 0) {
             this.removeRedFace(redFace);
           } else {

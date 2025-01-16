@@ -1,7 +1,6 @@
 package org.herbshouse.logic.snow.attack.impl.nonphase;
 
 import java.util.List;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
@@ -24,7 +23,6 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
     for (Snowflake snowflake : snowflakeList) {
-      snowflake.setSize(7);
       AttackData5 attackData = getData(snowflake);
       attackData.setOriginalLocation(snowflake.getLocation().clone());
       attackData.setCounter(0);
@@ -32,11 +30,6 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5
       attackData.setStepAngle(Math.random() * 0.2 + 0.2);
       attackData.setFactorY(400 + Math.random() * 600);
       attackData.setDirectionX(Math.random() < 0.5 ? 1 : -1);
-      if (Math.random() < 0.5) {
-        snowflake.setColor(new RGB(255, 255, 0));
-      } else {
-        snowflake.setColor(new RGB(255, 0, 0));
-      }
     }
   }
 

@@ -2,6 +2,7 @@ package org.herbshouse.logic.snow;
 
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
+import org.herbshouse.audio.AudioPlayOrder;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
@@ -44,19 +45,45 @@ class InitialAnimation {
 
     //Fireworks
     for (int i = 0; i < 20; i++) {
-      Snowflake snowflake = snowGenerator.generateNewSnowflake();
-      snowflake.setLocation(new Point2D(snowGenerator.getScreenBounds().width / 2.0, 1));
-      AttackStrategy<?> strategy = new FireworksStrategy(snowGenerator.getLogicController()
-          .getFlagsConfiguration(), snowGenerator.getScreenBounds());
-      strategy.beforeStart(List.of(snowflake));
-      snowflake.setIndividualStrategy(strategy);
+      generateFireworks(1);
     }
     snowGenerator.getLogicController().switchObjectsTail();
+    snowGenerator.getLogicController().getAudioPlayer()
+        .play(new AudioPlayOrder("fireworks.wav", 5000));
+    int counter = 0;
     while (!snowGenerator.getSnowflakes().isEmpty()) {
       snowGenerator.update();
       Utils.sleep(10);
+      counter++;
+      if (counter % 180 == 0 && counter >= 300 && counter < 2000) {
+        generateFireworks(2);
+        generateFireworks(2);
+        generateFireworks(2);
+        snowGenerator.getLogicController().getAudioPlayer()
+            .play(new AudioPlayOrder("fireworks2.wav", 4000));
+      }
     }
     snowGenerator.getLogicController().switchObjectsTail();
+    snowGenerator.getLogicController().getAudioPlayer().stop();
+  }
+
+  private void generateFireworks(int phase) {
+    Snowflake snowflake = snowGenerator.generateNewSnowflake();
+    snowflake.setSize(7);
+    snowflake.setLocation(new Point2D(snowGenerator.getScreenBounds().width / 2.0, 1));
+    AttackStrategy<?> strategy = new FireworksStrategy(snowGenerator.getLogicController()
+        .getFlagsConfiguration(), snowGenerator.getScreenBounds());
+    strategy.beforeStart(List.of(snowflake));
+    snowflake.setIndividualStrategy(strategy);
+    if (phase == 1) {
+      if (Math.random() < 0.5) {
+        snowflake.setColor(new RGB(255, 255, 0));
+      } else {
+        snowflake.setColor(new RGB(255, 0, 0));
+      }
+    } else if (phase == 2) {
+      snowflake.setColor(new RGB(0, 255, 0));
+    }
   }
 
   int getCountdown() {
