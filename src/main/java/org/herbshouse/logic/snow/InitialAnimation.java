@@ -3,6 +3,7 @@ package org.herbshouse.logic.snow;
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.herbshouse.audio.AudioPlayOrder;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
@@ -48,8 +49,8 @@ class InitialAnimation {
       generateFireworks(1);
     }
     snowGenerator.getLogicController().switchObjectsTail();
-    snowGenerator.getLogicController().getAudioPlayer()
-        .play(new AudioPlayOrder("fireworks.wav", 5000));
+    AudioPlayer audioPlayer = snowGenerator.getLogicController().getAudioPlayer();
+    audioPlayer.play(new AudioPlayOrder("fireworks.wav", 5000));
     int counter = 0;
     while (!snowGenerator.getSnowflakes().isEmpty()) {
       snowGenerator.update();
@@ -59,12 +60,12 @@ class InitialAnimation {
         generateFireworks(2);
         generateFireworks(2);
         generateFireworks(2);
-        snowGenerator.getLogicController().getAudioPlayer()
-            .play(new AudioPlayOrder("fireworks2.wav", 4000));
+        audioPlayer.play(new AudioPlayOrder("fireworks2.wav", 4000));
       }
     }
     snowGenerator.getLogicController().switchObjectsTail();
-    snowGenerator.getLogicController().getAudioPlayer().stop();
+    audioPlayer.stop("fireworks.wav");
+    audioPlayer.stop("fireworks2.wav");
   }
 
   private void generateFireworks(int phase) {

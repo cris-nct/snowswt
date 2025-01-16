@@ -125,7 +125,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       kiss = kiss || redFace.getKissingGif() != null;
     }
 
-    if (kiss && !getLogicController().getAudioPlayer().isPlaying()) {
+    if (kiss && !getLogicController().getAudioPlayer().isPlaying("kissing.wav")) {
       getLogicController().getAudioPlayer().play(new AudioPlayOrder("kissing.wav"));
     }
 

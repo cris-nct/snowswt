@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 import org.herbshouse.audio.AudioPlayOrder;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractMovableObject;
@@ -60,6 +61,13 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchNormalWind() {
     flagsConfiguration.switchNormalWind();
+    if (flagsConfiguration.isNormalWind()) {
+      AudioPlayOrder order = new AudioPlayOrder("wind.wav");
+      order.setType(AudioPlayType.BACKGROUND);
+      this.audioPlayer.play(order);
+    } else {
+      this.audioPlayer.stop("wind.wav");
+    }
   }
 
   @Override
@@ -154,6 +162,13 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchEnemies() {
     flagsConfiguration.switchEnemies();
+    if (flagsConfiguration.isEnemies()) {
+      AudioPlayOrder order = new AudioPlayOrder("drum.wav");
+      order.setType(AudioPlayType.BACKGROUND);
+      this.audioPlayer.play(order);
+    } else {
+      this.audioPlayer.stop("drum.wav");
+    }
   }
 
   @Override

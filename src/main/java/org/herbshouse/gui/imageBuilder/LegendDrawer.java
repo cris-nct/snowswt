@@ -32,15 +32,10 @@ class LegendDrawer {
     this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
     this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
     this.addTextToLegend(legendBuilder, "Snowflakes tail(T)", config.isObjectsTail());
-    this.addTextToLegend(legendBuilder, "Attack mode (A)", config.isAttack());
+    this.addTextToLegend(legendBuilder, "Attack mode (A & 1..4)", config.isAttack());
     if (config.isAttack()) {
-      legendBuilder.append(", type: ");
-      legendBuilder.append(config.getAttackType());
-      legendBuilder.append("\n");
-      legendBuilder.append("Attack phase: ");
-      legendBuilder.append(currentAttackPhase);
-    } else {
-      legendBuilder.append("\nAttack types: 1-4");
+      this.addTextToLegend(legendBuilder, "Attack type", config.getAttackType());
+      this.addTextToLegend(legendBuilder, "Attack phase", currentAttackPhase);
     }
     this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
     this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());

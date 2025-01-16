@@ -4,7 +4,8 @@ public interface AudioPlayer {
 
   void play(AudioPlayOrder order);
 
-  void stop();
+  void stop(String filename);
 
-  boolean isPlaying();
+  boolean isPlaying(String filename);
+
 }

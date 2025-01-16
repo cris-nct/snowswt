@@ -22,6 +22,10 @@ class AudioPlayerThread extends Thread {
     this.setName("AudioFilePlayer" + System.currentTimeMillis());
   }
 
+  public AudioPlayOrder getOrder() {
+    return order;
+  }
+
   @Override
   public void run() {
     //noinspection DataFlowIssue
@@ -31,13 +35,18 @@ class AudioPlayerThread extends Thread {
       try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(is)) {
         clip = AudioSystem.getClip();
         clip.open(audioIn);
-        clip.start();
-        if (order.getMilliseconds() == -1) {
-          Utils.sleep((int) (clip.getMicrosecondLength() / 1000));
+        if (order.getType() == AudioPlayType.BACKGROUND
+            || order.getType() == AudioPlayType.EFFECT_LOOP) {
+          clip.loop(Clip.LOOP_CONTINUOUSLY);
         } else {
-          Utils.sleep(order.getMilliseconds());
+          clip.start();
+          if (order.getMilliseconds() == -1) {
+            Utils.sleep((int) (clip.getMicrosecondLength() / 1000));
+          } else {
+            Utils.sleep(order.getMilliseconds());
+          }
+          clip.stop();
         }
-        clip.stop();
       }
     } catch (
         UnsupportedAudioFileException e) {
@@ -57,9 +66,17 @@ class AudioPlayerThread extends Thread {
   @Override
   public void interrupt() {
     super.interrupt();
+    stopAudio();
+  }
+
+  public void stopAudio() {
     if (clip != null && clip.isRunning()) {
       clip.stop();
     }
+  }
+
+  public boolean isPlaying() {
+    return this.isAlive() || (clip != null && clip.isRunning());
   }
 
 }
