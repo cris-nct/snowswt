@@ -55,8 +55,8 @@ jobs:
 
       - name: Validate input
         run: |
-          chmod +x validate_input.sh
-          validate_input.sh ${{ inputs.name }}
+          chmod +x ./validate_input.sh
+          ./validate_input.sh ${{ inputs.name }}
         env:
           INPUT_VALUE: ${{ inputs.name }}
 
