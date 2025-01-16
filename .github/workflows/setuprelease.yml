@@ -54,7 +54,7 @@ jobs:
           ls
 
       - name: Validate input
-        run: ./validate_input.sh ${{ inputs.name }}
+        run: validate_input.sh ${{ inputs.name }}
         env:
           INPUT_VALUE: ${{ inputs.name }}
 
