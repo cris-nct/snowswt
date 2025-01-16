@@ -61,7 +61,11 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchNormalWind() {
     flagsConfiguration.switchNormalWind();
-    if (flagsConfiguration.isNormalWind()) {
+    this.checkTriggerWind();
+  }
+
+  private void checkTriggerWind() {
+    if (flagsConfiguration.isNormalWind() && !flagsConfiguration.isHappyWind()) {
       AudioPlayOrder order = new AudioPlayOrder("wind.wav");
       order.setType(AudioPlayType.BACKGROUND);
       order.setVolume(0.7f);
@@ -77,6 +81,7 @@ public class DefaultLogicController implements LogicController {
       listeners.forEach(GeneratorListener::turnOnHappyWind);
     }
     flagsConfiguration.switchHappyWind();
+    this.checkTriggerWind();
   }
 
   @Override
