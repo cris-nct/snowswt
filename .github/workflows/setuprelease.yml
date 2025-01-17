@@ -113,11 +113,10 @@ jobs:
           body: |
             Demo for 2D animation capabilities with SWT (Standard Widget Toolkit)
             Changes in this Release:
-            ${{inputs.release_notes}}
-            Download:
+            - ${{inputs.release_notes}}
+            Download executable jar from:
             https://github.com/crisnct/snowswt/releases/download/${{inputs.name}}/snowswt-${{inputs.name}}-jar-with-dependencies.jar
-            Commits:
-            https://github.com/crisnct/snowswt/commits/${{inputs.name}}
+            In order to execute it you must have at least java 22 on your pc.
           draft: false
           prerelease: false
 
