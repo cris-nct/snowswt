@@ -59,4 +59,6 @@ public interface LogicController {
   void shutdown();
 
   void setAudio(AudioPlayer audioPlayer);
+
+  void switchFractals();
 }

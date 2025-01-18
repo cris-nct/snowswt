@@ -15,6 +15,7 @@ public class FlagsConfiguration {
   private boolean enemies = false;
   private boolean youtube;
   private boolean objectsTail;
+  private boolean fractals;
 
   private int attackType = 1;
   private int snowingLevel = 5;
@@ -134,6 +135,14 @@ public class FlagsConfiguration {
 
   public boolean isAttack() {
     return attack;
+  }
+
+  void switchFractals() {
+    this.fractals = !fractals;
+  }
+
+  public boolean isFractals() {
+    return fractals;
   }
 
 }

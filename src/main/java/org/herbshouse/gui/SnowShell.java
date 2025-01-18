@@ -35,6 +35,8 @@ import org.herbshouse.gui.imageBuilder.SwtImageBuilder;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.enemies.EnemyGenerator;
+import org.herbshouse.logic.fractals.FractalsGenerator;
+import org.herbshouse.logic.fractals.Tree;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -90,6 +92,7 @@ public class SnowShell extends Shell implements
       if (!shellRegion.isDisposed()) {
         shellRegion.dispose();
       }
+      swtImageBuilder.shutdown();
     });
   }
 
@@ -187,12 +190,17 @@ public class SnowShell extends Shell implements
         } else if (listener instanceof EnemyGenerator) {
           //noinspection unchecked
           imageBuilder.drawEnemies((GeneratorListener<AbstractMovableObject>) listener);
+        } else if (listener instanceof FractalsGenerator) {
+          //noinspection unchecked
+          imageBuilder.drawFractals((GeneratorListener<Tree>) listener);
         }
       }
 
-      imageBuilder.addLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
+      imageBuilder.drawText();
+      imageBuilder.drawLegend(this.renderingEngine.getRealFPS(),
+          controller.getCurrentAttackPhase());
       imageBuilder.drawLogo();
-      imageBuilder.addMinimap();
+      imageBuilder.drawMinimap();
       Image image = imageBuilder.getResultedImage();
       ImageData imageData = image.getImageData();
       if (startShutdown) {
@@ -251,8 +259,8 @@ public class SnowShell extends Shell implements
       case 'x':
         controller.switchHappyWind();
         break;
-      case 'F':
-      case 'f':
+      case 'L':
+      case 'l':
         controller.flipImage();
         break;
       case 'P':
@@ -312,6 +320,10 @@ public class SnowShell extends Shell implements
         if (browser != null) {
           playNext();
         }
+        break;
+      case 'f':
+      case 'F':
+        controller.switchFractals();
         break;
       case 'q':
       case 'Q':

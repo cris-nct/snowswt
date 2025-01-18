@@ -190,6 +190,11 @@ public class DefaultLogicController implements LogicController {
     this.audioPlayer = audioPlayer;
   }
 
+  @Override
+  public void switchFractals() {
+    flagsConfiguration.switchFractals();
+  }
+
   public AudioPlayer getAudioPlayer() {
     return audioPlayer;
   }

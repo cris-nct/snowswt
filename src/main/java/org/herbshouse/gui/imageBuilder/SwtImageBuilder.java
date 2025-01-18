@@ -10,6 +10,7 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.fractals.Tree;
 import org.herbshouse.logic.snow.Snowflake;
 
 public class SwtImageBuilder implements AutoCloseable {
@@ -22,6 +23,7 @@ public class SwtImageBuilder implements AutoCloseable {
   private final TextDrawer textDrawer;
   private final CountdownDrawer countdownDrawer;
   private final SnowflakesDrawer snowflakesDrawer;
+  private final FractalsDrawer fractalsDrawer;
   private final EnemyDrawer enemyDrawer;
   private final LogoDrawer logoDrawer;
   private final MinimapDrawer minimapDrawer;
@@ -36,6 +38,7 @@ public class SwtImageBuilder implements AutoCloseable {
     this.countdownDrawer = new CountdownDrawer();
     this.snowflakesDrawer = new SnowflakesDrawer(controller);
     this.enemyDrawer = new EnemyDrawer();
+    this.fractalsDrawer = new FractalsDrawer(controller);
     this.logoDrawer = new LogoDrawer();
     this.minimapDrawer = new MinimapDrawer();
   }
@@ -43,7 +46,6 @@ public class SwtImageBuilder implements AutoCloseable {
   public SwtImageBuilder drawBaseElements() {
     initializeGraphics();
     drawBackground();
-    drawText();
     return this;
   }
 
@@ -68,7 +70,7 @@ public class SwtImageBuilder implements AutoCloseable {
     gcImage.fillRectangle(GuiUtils.SCREEN_BOUNDS);
   }
 
-  private void drawText() {
+  public void drawText() {
     textDrawer.drawCenteredText(gcImage, TEXT_MIDDLE_SCREEN,
         SWTResourceManager.getFont("Arial", 25, SWT.BOLD),
         SWT.COLOR_CYAN
@@ -79,7 +81,7 @@ public class SwtImageBuilder implements AutoCloseable {
     countdownDrawer.draw(gcImage, generatorListener, TEXT_MIDDLE_SCREEN);
   }
 
-  public void addLegend(int realFPS, int currentAttackPhase) {
+  public void drawLegend(int realFPS, int currentAttackPhase) {
     legendDrawer.draw(gcImage, realFPS, currentAttackPhase);
   }
 
@@ -91,11 +93,15 @@ public class SwtImageBuilder implements AutoCloseable {
     snowflakesDrawer.draw(gcImage, generatorListener);
   }
 
+  public void drawFractals(GeneratorListener<Tree> generatorListener) {
+    fractalsDrawer.draw(gcImage, generatorListener);
+  }
+
   public void drawLogo() {
     logoDrawer.draw(gcImage);
   }
 
-  public void addMinimap() {
+  public void drawMinimap() {
     minimapDrawer.draw(gcImage, image);
   }
 
@@ -111,4 +117,7 @@ public class SwtImageBuilder implements AutoCloseable {
     }
   }
 
+  public void shutdown() {
+    fractalsDrawer.dispose();
+  }
 }

@@ -20,6 +20,7 @@ class MinimapDrawer {
     gc.drawImage(image, 0, 0, imageData.width, imageData.height,
         0, imageData.height - HEIGHT_MINIMAP, widthMinimap, HEIGHT_MINIMAP);
     gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+    gc.setLineWidth(2);
     gc.drawRectangle(0, imageData.height - HEIGHT_MINIMAP, widthMinimap, HEIGHT_MINIMAP - 1);
     gc.setAlpha(255);
   }

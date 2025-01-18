@@ -28,7 +28,7 @@ class LegendDrawer {
     this.addTextToLegend(legendBuilder, "Normal wind(space)", config.isNormalWind());
     this.addTextToLegend(legendBuilder, "Happy wind(X)", config.isHappyWind());
     this.addTextToLegend(legendBuilder, "Debug(D)", config.isDebug());
-    this.addTextToLegend(legendBuilder, "Flip image(F)", config.isFlipImage());
+    this.addTextToLegend(legendBuilder, "Flip image(L)", config.isFlipImage());
     this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
     this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
     this.addTextToLegend(legendBuilder, "Snowflakes tail(T)", config.isObjectsTail());
@@ -44,6 +44,7 @@ class LegendDrawer {
     if (config.isYoutube()) {
       legendBuilder.append(", Next video(N)");
     }
+    this.addTextToLegend(legendBuilder, "Fractals(F)", config.isFractals());
     legendBuilder.append("\n-------");
     this.addTextToLegend(legendBuilder, "Your points", controller.getUserInfo().getPoints());
     legendBuilder.append("\n-------\n");

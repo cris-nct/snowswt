@@ -11,6 +11,7 @@ import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.enemies.EnemyGenerator;
+import org.herbshouse.logic.fractals.FractalsGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 
 public class SnowingApplication {
@@ -43,19 +44,25 @@ public class SnowingApplication {
       SnowShell shell = new SnowShell(transform);
       enemyGenerator.setViewController(shell);
 
+      FractalsGenerator fractalsGenerator = new FractalsGenerator();
+
       DefaultLogicController controller = new DefaultLogicController();
       controller.setDesiredFPS(120);
       controller.setUserInfo(new UserInfo());
       controller.setTransform(transform);
       controller.setAudio(audioPlayer);
 
+      controller.registerListener(fractalsGenerator);
       controller.registerListener(snowGenerator);
       controller.registerListener(enemyGenerator);
 
       shell.setController(controller);
       shell.open();
+
       snowGenerator.start();
       enemyGenerator.start();
+      fractalsGenerator.start();
+
       while (!shell.isDisposed()) {
         if (!Display.getDefault().readAndDispatch()) {
           Display.getDefault().sleep();
