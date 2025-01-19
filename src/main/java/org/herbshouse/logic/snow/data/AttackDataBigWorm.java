@@ -1,6 +1,6 @@
 package org.herbshouse.logic.snow.data;
 
-public class AttackData1 extends AbstractAttackData {
+public class AttackDataBigWorm extends AbstractAttackData {
 
   private int counterDegrees;
 

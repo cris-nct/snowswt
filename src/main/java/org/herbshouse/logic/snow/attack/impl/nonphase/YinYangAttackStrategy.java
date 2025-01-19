@@ -8,10 +8,10 @@ import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractNoPhaseAttackStrategy;
-import org.herbshouse.logic.snow.data.AttackData4;
+import org.herbshouse.logic.snow.data.AttackDataYinYang;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackData4> {
+public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackDataYinYang> {
 
   private final Rectangle screenBounds;
 
@@ -45,7 +45,7 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
     int radius = 160;
-    AttackData4 data = getData(snowflake);
+    AttackDataYinYang data = getData(snowflake);
     Point2D middleScreen = new Point2D(screenBounds.width / 2.0, screenBounds.height / 2.0);
     final Point2D newLoc;
     if (data.getAngle() < 50) {
@@ -67,13 +67,13 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   }
 
   @Override
-  public AttackData4 getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACK4");
+  public AttackDataYinYang getData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData(AttackDataYinYang.class.getSimpleName());
     if (data == null) {
-      data = new AttackData4();
-      snowflake.setData("ATTACK4", data);
+      data = new AttackDataYinYang();
+      snowflake.setData(data.getClass().getSimpleName(), data);
     }
-    return (AttackData4) data;
+    return (AttackDataYinYang) data;
   }
 
   @Override

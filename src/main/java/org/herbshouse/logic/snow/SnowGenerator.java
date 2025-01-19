@@ -372,6 +372,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new YinYangAttackStrategy(screenBounds));
+    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds));
   }
 
   public Rectangle getScreenBounds() {

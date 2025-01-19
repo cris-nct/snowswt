@@ -6,10 +6,10 @@ import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractNoPhaseAttackStrategy;
-import org.herbshouse.logic.snow.data.AttackData5;
+import org.herbshouse.logic.snow.data.AttackDataFirework;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5> {
+public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackDataFirework> {
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
@@ -23,7 +23,7 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
     for (Snowflake snowflake : snowflakeList) {
-      AttackData5 attackData = getData(snowflake);
+      AttackDataFirework attackData = getData(snowflake);
       attackData.setOriginalLocation(snowflake.getLocation().clone());
       attackData.setCounter(0);
       attackData.setStepX(Math.random() + 0.2);
@@ -35,7 +35,7 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5
 
   @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
-    AttackData5 attackData = getData(snowflake);
+    AttackDataFirework attackData = getData(snowflake);
     Point2D newLoc = attackData.getOriginalLocation().clone();
     double sinusoidalValue = Math.sin(Math.toRadians(attackData.getAngle()));
     if (sinusoidalValue < 0 && flagsConfiguration.isAttack()) {
@@ -66,14 +66,14 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackData5
   }
 
   @Override
-  public AttackData5 getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACK5");
+  public AttackDataFirework getData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData(AttackDataFirework.class.getSimpleName());
     if (data == null) {
-      data = new AttackData5();
-      snowflake.setData("ATTACK5", data);
+      data = new AttackDataFirework();
+      snowflake.setData(data.getClass().getSimpleName(), data);
       this.beforeStart(List.of(snowflake));
     }
-    return (AttackData5) data;
+    return (AttackDataFirework) data;
   }
 
   @Override

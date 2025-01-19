@@ -7,10 +7,10 @@ import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractNoPhaseAttackStrategy;
-import org.herbshouse.logic.snow.data.AttackData1;
+import org.herbshouse.logic.snow.data.AttackDataBigWorm;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackData1> {
+public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackDataBigWorm> {
 
   private final FlagsConfiguration flagsConfiguration;
 
@@ -23,8 +23,7 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
     double directionToTarget;
     boolean move = true;
     if (prevSnowFlake == null) {
-      directionToTarget = Utils.angleOfLine(snowflake.getLocation(),
-          flagsConfiguration.getMouseLoc());
+      directionToTarget = Utils.angleOfLine(snowflake.getLocation(), flagsConfiguration.getMouseLoc());
     } else {
       directionToTarget = Utils.angleOfLine(snowflake.getLocation(), prevSnowFlake.getLocation());
       if (Utils.isColliding(snowflake, prevSnowFlake)) {
@@ -61,13 +60,13 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   }
 
   @Override
-  public AttackData1 getData(Snowflake snowflake) {
-    SnowflakeData attack1 = snowflake.getData("ATTACK1");
-    if (attack1 == null) {
-      attack1 = new AttackData1();
-      snowflake.setData("ATTACK1", attack1);
+  public AttackDataBigWorm getData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData(AttackDataBigWorm.class.getSimpleName());
+    if (data == null) {
+      data = new AttackDataBigWorm();
+      snowflake.setData(data.getClass().getSimpleName(), data);
     }
-    return (AttackData1) attack1;
+    return (AttackDataBigWorm) data;
   }
 
   @Override

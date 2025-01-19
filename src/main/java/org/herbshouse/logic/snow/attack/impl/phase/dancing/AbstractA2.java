@@ -5,11 +5,11 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
-import org.herbshouse.logic.snow.data.AttackData2;
+import org.herbshouse.logic.snow.data.AttackDataDancing;
 
-abstract class AbstractA2 extends AbstractPhaseProcessor<AttackData2> {
+abstract class AbstractA2 extends AbstractPhaseProcessor<AttackDataDancing> {
 
-  protected AbstractA2(AttackStrategy<AttackData2> strategy) {
+  protected AbstractA2(AttackStrategy<AttackDataDancing> strategy) {
     super(strategy);
   }
 

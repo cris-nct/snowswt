@@ -53,10 +53,10 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
   @Override
   public AttackDataBlackHole getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACK5");
+    SnowflakeData data = snowflake.getData("ATTACKDATABLACKHOLE");
     if (data == null) {
       data = new AttackDataBlackHole();
-      snowflake.setData("ATTACK5", data);
+      snowflake.setData("ATTACKDATABLACKHOLE", data);
       this.beforeStart(List.of(snowflake));
     }
     return (AttackDataBlackHole) data;
@@ -87,8 +87,8 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
     super.afterUpdate(snowflakeList);
-    alpha += alphaDirection;
-    if (alpha < 5 || alpha > 255) {
+    alpha += 10 * alphaDirection;
+    if (alpha < 50 || alpha >= 255) {
       alphaDirection = -alphaDirection;
     }
     for (Snowflake snowflake : snowflakeList) {
@@ -98,6 +98,7 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
         snowflake.setColor(new RGB(255, 255, 255));
         snowflake.setSize(5);
         snowflake.setShowTrail(false);
+        snowflake.cleanup();
       }
     }
   }

@@ -5,27 +5,27 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
-import org.herbshouse.logic.snow.data.AttackData3;
+import org.herbshouse.logic.snow.data.AttackDataParasites;
 
 /**
  * Snoflakes joined together and follows mouse position
  */
-public class A3Phase3 extends AbstractPhaseProcessor<AttackData3> {
+public class A3Phase3 extends AbstractPhaseProcessor<AttackDataParasites> {
 
-  protected A3Phase3(AttackStrategy<AttackData3> strategy) {
+  protected A3Phase3(AttackStrategy<AttackDataParasites> strategy) {
     super(strategy);
   }
 
   @Override
   public void startPhase(Snowflake snowflake) {
-    AttackData3 attackData = getStrategy().getData(snowflake);
+    AttackDataParasites attackData = getStrategy().getData(snowflake);
     attackData.setSpeedPhase1(Math.random() / 2 + 0.3);
     attackData.setLocationToFollow(getStrategy().getFlagsConfiguration().getMouseLoc());
   }
 
   @Override
   public Point2D computeLocation(Snowflake snowflake) {
-    AttackData3 attackData3 = getStrategy().getData(snowflake);
+    AttackDataParasites attackData3 = getStrategy().getData(snowflake);
     double distToTarget = Utils.distance(snowflake.getLocation(),
         attackData3.getLocationToFollow());
     double directionToTarget = Utils.angleOfLine(snowflake.getLocation(),

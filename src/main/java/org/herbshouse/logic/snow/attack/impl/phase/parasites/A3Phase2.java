@@ -5,20 +5,20 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
-import org.herbshouse.logic.snow.data.AttackData3;
+import org.herbshouse.logic.snow.data.AttackDataParasites;
 
 /**
  * Attack the mouse and snowflakes are moving like worms
  */
-public class A3Phase2 extends AbstractPhaseProcessor<AttackData3> {
+public class A3Phase2 extends AbstractPhaseProcessor<AttackDataParasites> {
 
-  protected A3Phase2(AttackStrategy<AttackData3> strategy) {
+  protected A3Phase2(AttackStrategy<AttackDataParasites> strategy) {
     super(strategy);
   }
 
   @Override
   public void startPhase(Snowflake snowflake) {
-    AttackData3 attackData = getStrategy().getData(snowflake);
+    AttackDataParasites attackData = getStrategy().getData(snowflake);
     attackData.setLocationToFollow(getStrategy().getFlagsConfiguration().getMouseLoc());
     attackData.setSpeedPhase1(Math.random() + 0.3);
     attackData.setCounter(0);

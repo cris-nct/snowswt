@@ -1,6 +1,6 @@
 package org.herbshouse.logic.snow.data;
 
-public class AttackData4 extends AbstractAttackData {
+public class AttackDataYinYang extends AbstractAttackData {
 
   private double angle;
 

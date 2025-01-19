@@ -5,10 +5,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
-import org.herbshouse.logic.snow.data.AttackData3;
+import org.herbshouse.logic.snow.data.AttackDataParasites;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackData3> {
+public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackDataParasites> {
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
@@ -56,14 +56,14 @@ public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackD
   }
 
   @Override
-  public AttackData3 getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACK3");
+  public AttackDataParasites getData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData(AttackDataParasites.class.getSimpleName());
     if (data == null) {
-      data = new AttackData3();
-      snowflake.setData("ATTACK3", data);
+      data = new AttackDataParasites();
+      snowflake.setData(data.getClass().getSimpleName(), data);
       this.beforeStart(List.of(snowflake));
     }
-    return (AttackData3) data;
+    return (AttackDataParasites) data;
   }
 
   @Override

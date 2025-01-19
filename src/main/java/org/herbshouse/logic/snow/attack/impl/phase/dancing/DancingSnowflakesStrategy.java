@@ -7,10 +7,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
-import org.herbshouse.logic.snow.data.AttackData2;
+import org.herbshouse.logic.snow.data.AttackDataDancing;
 import org.herbshouse.logic.snow.data.SnowflakeData;
 
-public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<AttackData2> implements
+public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<AttackDataDancing> implements
     IAttack2Global {
 
   private static final double INITIAL_COUNTER = 1.0;
@@ -129,14 +129,14 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   }
 
   @Override
-  public AttackData2 getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACK2");
+  public AttackDataDancing getData(Snowflake snowflake) {
+    SnowflakeData data = snowflake.getData(AttackDataDancing.class.getSimpleName());
     if (data == null) {
-      data = new AttackData2();
-      snowflake.setData("ATTACK2", data);
+      data = new AttackDataDancing();
+      snowflake.setData(data.getClass().getSimpleName(), data);
       this.beforeStart(List.of(snowflake));
     }
-    return (AttackData2) data;
+    return (AttackDataDancing) data;
   }
 
   @Override

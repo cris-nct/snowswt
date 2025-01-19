@@ -2,7 +2,7 @@ package org.herbshouse.logic.snow.data;
 
 import org.herbshouse.logic.Point2D;
 
-public class AttackData5 extends AbstractAttackData {
+public class AttackDataFirework extends AbstractAttackData {
 
   private double angle;
 

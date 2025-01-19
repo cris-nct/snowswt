@@ -21,29 +21,23 @@ public class BlackHolePhase6 extends AbstractPhaseProcessor<AttackDataBlackHole>
   @Override
   public void startPhase(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
-    final double locX;
-    final double locY;
-    if (Math.random() < 0.5) {
-      locX = Utils.linearInterpolation(Math.random(), 0, -2000, 1, -200);
-    } else {
-      locX = Utils.linearInterpolation(Math.random(), 0, 2000, 1, 4000);
-    }
-    if (Math.random() < 0.5) {
-      locY = Utils.linearInterpolation(Math.random(), 0, -1200, 1, -200);
-    } else {
-      locY = Utils.linearInterpolation(Math.random(), 0, 1200, 1, 2400);
-    }
-    attackData.setLocationToFollow(new Point2D(locX, locY));
+    Point2D locationToFollow = new Point2D(getStrategy().getScreenBounds().width * Math.random(),
+        getStrategy().getScreenBounds().height * Math.random()
+    );
+    double angle = Utils.angleOfLine(snowflake.getLocation(), locationToFollow);
+    locationToFollow = Utils.moveToDirection(locationToFollow, 2500, angle);
+    attackData.setLocationToFollow(locationToFollow);
     if (startTime == 0) {
       startTime = System.currentTimeMillis();
     }
     snowflake.setAlpha(255);
+    snowflake.setSpeed(0.5 + Math.random());
   }
 
   @Override
   public Point2D computeLocation(Snowflake snowflake) {
     double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), getStrategy().getData(snowflake).getLocationToFollow());
-    return Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);
+    return Utils.moveToDirection(snowflake.getLocation(), snowflake.getSpeed(), directionToTarget);
   }
 
   @Override
@@ -53,7 +47,11 @@ public class BlackHolePhase6 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 15000;
+    if (snowflake.getIndividualStrategy() == null) {
+      return super.isFinished(snowflake);
+    } else {
+      return (System.currentTimeMillis() - startTime) > 20000;
+    }
   }
 
 }

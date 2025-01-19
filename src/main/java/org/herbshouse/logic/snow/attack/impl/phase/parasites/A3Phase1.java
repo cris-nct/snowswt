@@ -5,20 +5,20 @@ import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
-import org.herbshouse.logic.snow.data.AttackData3;
+import org.herbshouse.logic.snow.data.AttackDataParasites;
 
 /**
  * Move snowflakes on a circle around mouse position. Snowflakes looks like fireworks
  */
-public class A3Phase1 extends AbstractPhaseProcessor<AttackData3> {
+public class A3Phase1 extends AbstractPhaseProcessor<AttackDataParasites> {
 
-  protected A3Phase1(AttackStrategy<AttackData3> strategy) {
+  protected A3Phase1(AttackStrategy<AttackDataParasites> strategy) {
     super(strategy);
   }
 
   @Override
   public void startPhase(Snowflake snowflake) {
-    AttackData3 attackData = getStrategy().getData(snowflake);
+    AttackDataParasites attackData = getStrategy().getData(snowflake);
     Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), 500,
         Math.toRadians(Math.random() * 360));
     attackData.setLocationToFollow(dest);
