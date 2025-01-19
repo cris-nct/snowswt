@@ -13,4 +13,6 @@ public interface PhaseProcessor<T extends AbstractAttackData> {
   PhaseProcessor<T> getNextPhaseProcessor();
 
   void startPhase(Snowflake snowflake);
+
+  boolean isFinished(Snowflake snowflake);
 }

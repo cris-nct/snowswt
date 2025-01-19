@@ -378,4 +378,10 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   protected int getSleepDuration() {
     return 2;
   }
+
+  @Override
+  public void switchBlackHoles() {
+
+  }
+
 }

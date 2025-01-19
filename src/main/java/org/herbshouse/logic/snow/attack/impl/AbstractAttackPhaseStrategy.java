@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.herbshouse.logic.Point2D;
-import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AbstractPhaseAttackData;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
@@ -65,8 +64,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
       if (snowflake.isFreezed() || data.getLocationToFollow() == null) {
         continue;
       }
-      allArrivedToDestination =
-          Utils.distance(snowflake.getLocation(), data.getLocationToFollow()) < 5;
+      allArrivedToDestination = currentPhaseProcessor.isFinished(snowflake);
       if (!allArrivedToDestination) {
         break;
       }
@@ -77,4 +75,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     }
   }
 
+  public PhaseProcessor<T> getCurrentPhaseProcessor() {
+    return currentPhaseProcessor;
+  }
 }

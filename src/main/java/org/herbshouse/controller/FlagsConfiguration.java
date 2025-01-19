@@ -17,6 +17,7 @@ public class FlagsConfiguration {
   private boolean youtube;
   private boolean objectsTail;
   private boolean fractals;
+  private boolean blackHoles;
 
   private int attackType = 1;
   private int snowingLevel = 5;
@@ -153,6 +154,14 @@ public class FlagsConfiguration {
 
   public TreeType getFractalsType() {
     return fractalsType;
+  }
+
+  void switchBlackHoles() {
+    this.blackHoles = !blackHoles;
+  }
+
+  public boolean isBlackHoles() {
+    return blackHoles;
   }
 
 }

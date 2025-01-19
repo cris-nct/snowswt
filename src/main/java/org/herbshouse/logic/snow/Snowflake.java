@@ -13,6 +13,7 @@ public class Snowflake extends AbstractMovableObject {
 
   private final SnowTail snowTail;
   private boolean freezed = false;
+  private boolean showTrail;
   private AttackStrategy<?> individualStrategy;
 
   public Snowflake() {
@@ -54,4 +55,11 @@ public class Snowflake extends AbstractMovableObject {
     data.clear();
   }
 
+  public boolean isShowTrail() {
+    return showTrail;
+  }
+
+  public void setShowTrail(boolean showTrail) {
+    this.showTrail = showTrail;
+  }
 }

@@ -64,4 +64,6 @@ public interface LogicController {
   void switchFractals();
 
   void setFractalsType(TreeType treeType);
+
+  void switchBlackHoles();
 }

@@ -208,6 +208,12 @@ public class DefaultLogicController implements LogicController {
     listeners.forEach(GeneratorListener::changedFractalType);
   }
 
+  @Override
+  public void switchBlackHoles() {
+    flagsConfiguration.switchBlackHoles();
+    listeners.forEach(GeneratorListener::switchBlackHoles);
+  }
+
   public AudioPlayer getAudioPlayer() {
     return audioPlayer;
   }

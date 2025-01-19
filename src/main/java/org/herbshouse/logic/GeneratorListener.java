@@ -50,4 +50,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
   boolean isForceRedraw();
 
   void setForceRedraw(boolean redraw);
+
+  void switchBlackHoles();
 }

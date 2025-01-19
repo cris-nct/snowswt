@@ -32,15 +32,16 @@ class SnowflakesDrawer {
     for (Snowflake snowflake : snowflakes) {
       if (config.isMercedesSnowflakes()) {
         GuiUtils.drawSnowflakeAsMercedes(gc, snowflake);
-      } else {
+      } else if (!snowflake.isShowTrail()) {
         GuiUtils.draw(gc, snowflake);
       }
-      if (!snowflake.isFreezed() && (config.isDebug() || config.isObjectsTail())) {
+      if (!snowflake.isFreezed() && (config.isDebug() || config.isObjectsTail() || snowflake.isShowTrail())) {
         int counterAlpha = 0;
         int origAlpha = snowflake.getAlpha();
+        double factorConsiderOrigAlpha = origAlpha / 255.0;
         int points = snowflake.getSnowTail().getHistoryLocations().size();
         for (Point2D oldLoc : snowflake.getSnowTail().getHistoryLocations()) {
-          snowflake.setAlpha((int) Utils.linearInterpolation(counterAlpha, 0, 0, points, 80));
+          snowflake.setAlpha((int) (factorConsiderOrigAlpha * Utils.linearInterpolation(counterAlpha, 0, 0, points, 80)));
           GuiUtils.draw(gc, snowflake, oldLoc);
           counterAlpha++;
         }

@@ -61,6 +61,11 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
   }
 
   @Override
+  public void switchBlackHoles() {
+
+  }
+
+  @Override
   protected int getSleepDuration() {
     return 500;
   }

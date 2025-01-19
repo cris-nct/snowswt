@@ -304,6 +304,10 @@ public class SnowShell extends Shell implements
       case '4':
         controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
         break;
+      case 'H':
+      case 'h':
+        controller.switchBlackHoles();
+        break;
       case 'M':
       case 'm':
         controller.switchMercedesSnowflakes();

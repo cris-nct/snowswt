@@ -39,6 +39,7 @@ class LegendDrawer {
     }
     this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
     this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
+    this.addTextToLegend(legendBuilder, "Black holes(H)", config.isBlackHoles());
     this.addTextToLegend(legendBuilder, "Enemies(E)", config.isEnemies());
     this.addTextToLegend(legendBuilder, "Youtube(Y)", config.isYoutube());
     if (config.isYoutube()) {
