@@ -12,6 +12,7 @@ import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.fractals.TreeType;
 
 public class DefaultLogicController implements LogicController {
 
@@ -61,6 +62,9 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchNormalWind() {
     flagsConfiguration.switchNormalWind();
+    if (flagsConfiguration.isNormalWind() && flagsConfiguration.isHappyWind()) {
+      switchHappyWind();
+    }
     this.checkTriggerWind();
   }
 
@@ -81,6 +85,9 @@ public class DefaultLogicController implements LogicController {
       listeners.forEach(GeneratorListener::turnOnHappyWind);
     }
     flagsConfiguration.switchHappyWind();
+    if (flagsConfiguration.isHappyWind() && flagsConfiguration.isNormalWind()) {
+      switchNormalWind();
+    }
     this.checkTriggerWind();
   }
 
@@ -193,6 +200,12 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchFractals() {
     flagsConfiguration.switchFractals();
+  }
+
+  @Override
+  public void setFractalsType(TreeType treeType) {
+    flagsConfiguration.setFractalsType(treeType);
+    listeners.forEach(GeneratorListener::changedFractalType);
   }
 
   public AudioPlayer getAudioPlayer() {

@@ -7,13 +7,10 @@ import org.herbshouse.logic.Utils;
 
 public class TreeBranch implements ITree {
 
-  private Point2D start;
-
-  private Point2D end;
-
-  private double thickness = 1;
-
   private final List<TreeBranch> subBranches = new ArrayList<>();
+  private Point2D start;
+  private Point2D end;
+  private double thickness = 1;
 
   public TreeBranch() {
 
@@ -22,10 +19,6 @@ public class TreeBranch implements ITree {
   public TreeBranch(Point2D start, Point2D end) {
     this.start = start;
     this.end = end;
-  }
-
-  public void setThickness(double thickness) {
-    this.thickness = thickness;
   }
 
   @Override
@@ -38,12 +31,8 @@ public class TreeBranch implements ITree {
     return thickness;
   }
 
-  public void setEnd(Point2D end) {
-    this.end = end;
-  }
-
-  public void setStart(Point2D start) {
-    this.start = start;
+  public void setThickness(double thickness) {
+    this.thickness = thickness;
   }
 
   @Override
@@ -51,9 +40,17 @@ public class TreeBranch implements ITree {
     return end;
   }
 
+  public void setEnd(Point2D end) {
+    this.end = end;
+  }
+
   @Override
   public Point2D getStart() {
     return start;
+  }
+
+  public void setStart(Point2D start) {
+    this.start = start;
   }
 
   @Override

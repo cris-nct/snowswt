@@ -39,8 +39,15 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
   default void changedSnowingLevel() {
   }
 
+  default void changedFractalType() {
+
+  }
+
   void changeAttackType();
 
   void setLogicController(DefaultLogicController logicController);
 
+  boolean isForceRedraw();
+
+  void setForceRedraw(boolean redraw);
 }

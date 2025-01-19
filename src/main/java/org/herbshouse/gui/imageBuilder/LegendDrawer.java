@@ -45,6 +45,12 @@ class LegendDrawer {
       legendBuilder.append(", Next video(N)");
     }
     this.addTextToLegend(legendBuilder, "Fractals(F)", config.isFractals());
+    if (config.isFractals()) {
+      legendBuilder.append("\nFractals default tree(F1)\n");
+      legendBuilder.append("Fractals fir tree(F2)\n");
+      legendBuilder.append("Fractals default random(F3)\n");
+      legendBuilder.append("Fractals default fir(F4)");
+    }
     legendBuilder.append("\n-------");
     this.addTextToLegend(legendBuilder, "Your points", controller.getUserInfo().getPoints());
     legendBuilder.append("\n-------\n");

@@ -19,6 +19,6 @@ public interface ITree {
   Point2D getEnd();
 
   default double getAngle() {
-    return Math.toDegrees(Utils.angleOfLine(getStart(), getEnd()));
+    return Utils.angleOfLine(getStart(), getEnd());
   }
 }

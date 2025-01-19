@@ -1,6 +1,7 @@
 package org.herbshouse.controller;
 
 import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.fractals.TreeType;
 
 public class FlagsConfiguration {
 
@@ -20,6 +21,7 @@ public class FlagsConfiguration {
   private int attackType = 1;
   private int snowingLevel = 5;
   private Point2D mouseLoc = new Point2D();
+  private TreeType fractalsType = TreeType.PERFECT_DEFAULT;
 
   void increaseSnowingLevel() {
     this.snowingLevel++;
@@ -143,6 +145,14 @@ public class FlagsConfiguration {
 
   public boolean isFractals() {
     return fractals;
+  }
+
+  void setFractalsType(TreeType treeType) {
+    this.fractalsType = treeType;
+  }
+
+  public TreeType getFractalsType() {
+    return fractalsType;
   }
 
 }

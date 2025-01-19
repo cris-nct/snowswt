@@ -5,6 +5,7 @@ import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.fractals.TreeType;
 
 public interface LogicController {
 
@@ -61,4 +62,6 @@ public interface LogicController {
   void setAudio(AudioPlayer audioPlayer);
 
   void switchFractals();
+
+  void setFractalsType(TreeType treeType);
 }

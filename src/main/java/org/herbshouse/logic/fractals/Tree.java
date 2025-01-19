@@ -8,11 +8,9 @@ import org.herbshouse.logic.Utils;
 
 public class Tree extends AbstractMovableObject implements ITree {
 
-  private double thickness = 1;
-
-  private double angle;
-
   private final List<TreeBranch> branches = new ArrayList<>();
+  private double thickness = 1;
+  private double angle;
 
   public void setAngle(double angle) {
     this.angle = angle;
@@ -40,11 +38,7 @@ public class Tree extends AbstractMovableObject implements ITree {
 
   @Override
   public Point2D getEnd() {
-    return Utils.moveToDirection(getStart(), getSize(), Math.toRadians(getAngle()));
-  }
-
-  public void setThickness(double thickness) {
-    this.thickness = thickness;
+    return Utils.moveToDirection(getStart(), getSize(), getAngle());
   }
 
   @Override
@@ -55,5 +49,9 @@ public class Tree extends AbstractMovableObject implements ITree {
   @Override
   public double getThickness() {
     return thickness;
+  }
+
+  public void setThickness(double thickness) {
+    this.thickness = thickness;
   }
 }

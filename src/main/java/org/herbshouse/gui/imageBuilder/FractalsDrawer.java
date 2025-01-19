@@ -26,7 +26,10 @@ public class FractalsDrawer {
       throw new IllegalArgumentException("Unproper usage of SwtImageBuilder");
     }
     List<Tree> trees = generatorListener.getMoveableObjects();
-    if (image == null && !trees.isEmpty()) {
+    if ((image == null && !trees.isEmpty()) || generatorListener.isForceRedraw()) {
+      if (generatorListener.isForceRedraw()) {
+        generatorListener.setForceRedraw(false);
+      }
       image = new Image(gc.getDevice(), gc.getClipping());
       GC newGC = new GC(image);
       newGC.setBackground(gc.getBackground());

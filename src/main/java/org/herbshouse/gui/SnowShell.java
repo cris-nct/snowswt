@@ -37,6 +37,7 @@ import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.fractals.FractalsGenerator;
 import org.herbshouse.logic.fractals.Tree;
+import org.herbshouse.logic.fractals.TreeType;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -251,6 +252,16 @@ public class SnowShell extends Shell implements
 
   @Override
   public void keyPressed(KeyEvent e) {
+    switch (e.keyCode) {
+      //Default
+      case SWT.F1 -> controller.setFractalsType(TreeType.PERFECT_DEFAULT);
+      //Fir
+      case SWT.F2 -> controller.setFractalsType(TreeType.PERFECT_FIR);
+      //Random default
+      case SWT.F3 -> controller.setFractalsType(TreeType.RANDOM_DEFAULT);
+      //Random fir
+      case SWT.F4 -> controller.setFractalsType(TreeType.RANDOM_FIR);
+    }
     switch (e.character) {
       case ' ':
         controller.switchNormalWind();
