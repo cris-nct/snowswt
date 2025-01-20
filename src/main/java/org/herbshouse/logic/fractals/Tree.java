@@ -12,13 +12,13 @@ public class Tree extends AbstractMovableObject implements ITree {
   private double thickness = 1;
   private double angle;
 
-  public void setAngle(double angle) {
-    this.angle = angle;
-  }
-
   @Override
   public double getAngle() {
     return angle;
+  }
+
+  public void setAngle(double angle) {
+    this.angle = angle;
   }
 
   @Override

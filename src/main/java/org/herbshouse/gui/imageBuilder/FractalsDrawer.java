@@ -13,9 +13,8 @@ import org.herbshouse.logic.fractals.TreeBranch;
 
 public class FractalsDrawer {
 
-  private Image image;
-
   private final LogicController controller;
+  private Image image;
 
   public FractalsDrawer(LogicController controller) {
     this.controller = controller;

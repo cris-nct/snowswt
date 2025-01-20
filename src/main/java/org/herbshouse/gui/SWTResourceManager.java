@@ -22,12 +22,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Utility class for managing OS resources associated with SWT controls such as colors, fonts,
- * images, etc.
+ * Utility class for managing OS resources associated with SWT controls such as colors, fonts, images, etc.
  * <p>
- * !!! IMPORTANT !!! Application code must explicitly invoke the <code>dispose()</code> method to
- * release the operating system resources managed by cached objects when those objects and OS
- * resources are no longer needed (e.g. on application shutdown)
+ * !!! IMPORTANT !!! Application code must explicitly invoke the <code>dispose()</code> method to release the operating system resources managed by
+ * cached objects when those objects and OS resources are no longer needed (e.g. on application shutdown)
  * <p>
  * This class may be freely distributed as part of any application or plugin.
  * <p>
@@ -276,8 +274,7 @@ public class SWTResourceManager {
   }
 
   /**
-   * Returns an {@link Image} stored in the file at the specified path relative to the specified
-   * class.
+   * Returns an {@link Image} stored in the file at the specified path relative to the specified class.
    *
    * @param clazz the {@link Class} relative to which to find the image
    * @param path  the path to the image file, if starts with <code>'/'</code>
@@ -449,8 +446,7 @@ public class SWTResourceManager {
   }
 
   /**
-   * Returns a {@link Font} based on its name, height and style. Windows-specific strikeout and
-   * underline flags are also supported.
+   * Returns a {@link Font} based on its name, height and style. Windows-specific strikeout and underline flags are also supported.
    *
    * @param name      the name of the font
    * @param size      the size of the font
@@ -616,8 +612,8 @@ public class SWTResourceManager {
   // //////////////////////////////////////////////////////////////////////////
 
   /**
-   * Dispose of cached objects and their underlying OS resources. This should only be called when
-   * the cached objects are no longer needed (e.g. on application shutdown).
+   * Dispose of cached objects and their underlying OS resources. This should only be called when the cached objects are no longer needed (e.g. on
+   * application shutdown).
    */
   public static void disposeAll() {
     disposeColors(true);

@@ -8,20 +8,20 @@ public class AttackDataBlackHole extends AbstractPhaseAttackData {
 
   private double angle;
 
-  public void setAngle(double angle) {
-    this.angle = angle;
-  }
-
   public double getAngle() {
     return angle = angle + 0.03;
   }
 
-  public void setRadius(double radius) {
-    this.radius = radius;
+  public void setAngle(double angle) {
+    this.angle = angle;
   }
 
   public double getRadius() {
     return radius;
+  }
+
+  public void setRadius(double radius) {
+    this.radius = radius;
   }
 
 }

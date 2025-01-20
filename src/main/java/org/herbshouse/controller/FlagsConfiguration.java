@@ -148,12 +148,12 @@ public class FlagsConfiguration {
     return fractals;
   }
 
-  void setFractalsType(TreeType treeType) {
-    this.fractalsType = treeType;
-  }
-
   public TreeType getFractalsType() {
     return fractalsType;
+  }
+
+  void setFractalsType(TreeType treeType) {
+    this.fractalsType = treeType;
   }
 
   void switchBlackHoles() {

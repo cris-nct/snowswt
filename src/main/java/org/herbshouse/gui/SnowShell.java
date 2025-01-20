@@ -42,12 +42,10 @@ import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
 /**
- * The provided code defines a graphical user interface (GUI) for a snow simulation application
- * using the SWT (Standard Widget Toolkit) framework in Java. The SnowShell class extends Shell and
- * implements PaintListener, allowing it to create a full-screen window that displays animated
- * snowflakes. Users can interact with the application using keyboard and mouse events to control
- * various features such as wind effects, image rotation, debugging options, and snowflake freezing.
- * The application continuously updates the display to simulate falling snowflakes.
+ * The provided code defines a graphical user interface (GUI) for a snow simulation application using the SWT (Standard Widget Toolkit) framework in
+ * Java. The SnowShell class extends Shell and implements PaintListener, allowing it to create a full-screen window that displays animated snowflakes.
+ * Users can interact with the application using keyboard and mouse events to control various features such as wind effects, image rotation, debugging
+ * options, and snowflake freezing. The application continuously updates the display to simulate falling snowflakes.
  */
 public class SnowShell extends Shell implements
     PaintListener, MouseListener, MouseMoveListener, MouseWheelListener, KeyListener,

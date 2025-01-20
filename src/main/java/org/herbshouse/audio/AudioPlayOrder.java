@@ -3,8 +3,8 @@ package org.herbshouse.audio;
 public class AudioPlayOrder {
 
   private final String filename;
-  private AudioPlayType type;
   private final int milliseconds;
+  private AudioPlayType type;
   private float volume = 1.0f;
   private AudioCallback callback;
 
@@ -19,28 +19,28 @@ public class AudioPlayOrder {
     this.type = AudioPlayType.EFFECT;
   }
 
-  public void setCallback(AudioCallback callback) {
-    this.callback = callback;
-  }
-
   public AudioCallback getCallback() {
     return callback;
   }
 
-  public void setVolume(float volume) {
-    this.volume = volume;
+  public void setCallback(AudioCallback callback) {
+    this.callback = callback;
   }
 
   public float getVolume() {
     return volume;
   }
 
-  public void setType(AudioPlayType type) {
-    this.type = type;
+  public void setVolume(float volume) {
+    this.volume = volume;
   }
 
   public AudioPlayType getType() {
     return type;
+  }
+
+  public void setType(AudioPlayType type) {
+    this.type = type;
   }
 
   public String getFilename() {
