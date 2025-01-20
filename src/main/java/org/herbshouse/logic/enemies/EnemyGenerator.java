@@ -205,7 +205,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     this.generateRedFace();
 
-    this.angryFace = new AnimatedGif("angry1.gif", 0.3, REMOVE_BACKGROUND_COLOR);
+    this.angryFace = new AnimatedGif("angry.gif", 0.3, REMOVE_BACKGROUND_COLOR);
     this.angryFace.setLocation(
         new Point2D(screenBounds.width - ANGRY_FACE_SIZE / 2.0d, ANGRY_FACE_SIZE / 2.0d));
     this.angryFace.setSize(ANGRY_FACE_SIZE);

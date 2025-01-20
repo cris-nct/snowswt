@@ -60,12 +60,12 @@ class InitialAnimation {
         generateFireworks(2);
         generateFireworks(2);
         generateFireworks(2);
-        audioPlayer.play(new AudioPlayOrder("fireworks2.wav", 4000));
+        audioPlayer.play(new AudioPlayOrder("fireworks-2.wav", 4000));
       }
     }
     snowGenerator.getLogicController().switchObjectsTail();
     audioPlayer.stop("fireworks.wav");
-    audioPlayer.stop("fireworks2.wav");
+    audioPlayer.stop("fireworks-2.wav");
   }
 
   private void generateFireworks(int phase) {

@@ -113,12 +113,12 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
     if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6 && !playedAudioExplosion) {
       if (isIndividualStrategy) {
-        AudioPlayOrder order = new AudioPlayOrder("bigexplosion.wav");
+        AudioPlayOrder order = new AudioPlayOrder("big-explosion.wav");
         order.setType(AudioPlayType.EFFECT);
         order.setVolume(1f);
         audioPlayer.play(order);
       } else {
-        AudioPlayOrder order = new AudioPlayOrder("extendedexplosion.wav");
+        AudioPlayOrder order = new AudioPlayOrder("extended-explosion.wav");
         order.setType(AudioPlayType.EFFECT);
         order.setVolume(1f);
         audioPlayer.play(order);

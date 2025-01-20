@@ -50,7 +50,7 @@ public class ShutdownAnimation {
     this.flame.setSize(100);
     this.glassCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "glasscrack.png",
         true);
-    this.blueCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "crack-1080.png",
+    this.blueCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "crack.png",
         true);
   }
 

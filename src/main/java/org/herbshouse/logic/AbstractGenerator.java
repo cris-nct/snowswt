@@ -33,7 +33,7 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
   @Override
   public void substractAreaFromShell(int[] polygon) {
     viewController.substractAreaFromShell(polygon);
-    AudioPlayOrder order = new AudioPlayOrder("hole-in-shell.wav", 1500);
+    AudioPlayOrder order = new AudioPlayOrder("hole-in-the-shell.wav", 1500);
     order.setVolume(0.9f);
     getLogicController().getAudioPlayer().play(order);
   }
