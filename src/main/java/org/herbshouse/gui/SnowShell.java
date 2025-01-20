@@ -329,6 +329,10 @@ public class SnowShell extends Shell implements
       case 'E':
         controller.switchEnemies();
         break;
+      case 'I':
+      case 'i':
+        controller.switchIndividualMovements();
+        break;
       case 'n':
       case 'N':
         if (browser != null) {

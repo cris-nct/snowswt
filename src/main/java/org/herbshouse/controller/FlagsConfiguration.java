@@ -18,6 +18,7 @@ public class FlagsConfiguration {
   private boolean objectsTail;
   private boolean fractals;
   private boolean blackHoles;
+  private boolean individualMovements;
 
   private int attackType = 1;
   private int snowingLevel = 5;
@@ -162,6 +163,14 @@ public class FlagsConfiguration {
 
   public boolean isBlackHoles() {
     return blackHoles;
+  }
+
+  void switchIndividualMovements() {
+    this.individualMovements = !individualMovements;
+  }
+
+  public boolean isIndividualMovements() {
+    return individualMovements;
   }
 
 }

@@ -384,4 +384,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   }
 
+  @Override
+  public void switchIndividualMovements() {
+
+  }
+
 }

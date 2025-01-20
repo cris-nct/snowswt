@@ -48,7 +48,6 @@ class InitialAnimation {
     for (int i = 0; i < 20; i++) {
       generateFireworks(1);
     }
-    snowGenerator.getLogicController().switchObjectsTail();
     AudioPlayer audioPlayer = snowGenerator.getLogicController().getAudioPlayer();
     audioPlayer.play(new AudioPlayOrder("fireworks.wav", 5000));
     int counter = 0;
@@ -63,7 +62,6 @@ class InitialAnimation {
         audioPlayer.play(new AudioPlayOrder("fireworks-2.wav", 4000));
       }
     }
-    snowGenerator.getLogicController().switchObjectsTail();
     audioPlayer.stop("fireworks.wav");
     audioPlayer.stop("fireworks-2.wav");
   }

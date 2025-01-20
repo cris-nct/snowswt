@@ -66,6 +66,11 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
   }
 
   @Override
+  public void switchIndividualMovements() {
+
+  }
+
+  @Override
   protected int getSleepDuration() {
     return 500;
   }

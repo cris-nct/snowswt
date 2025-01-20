@@ -32,7 +32,7 @@ class SnowflakesDrawer {
     for (Snowflake snowflake : snowflakes) {
       if (config.isMercedesSnowflakes()) {
         GuiUtils.drawSnowflakeAsMercedes(gc, snowflake);
-      } else if (!snowflake.isShowTrail()) {
+      } else if (snowflake.isShowHead()) {
         GuiUtils.draw(gc, snowflake);
       }
       if (!snowflake.isFreezed() && (config.isDebug() || config.isObjectsTail() || snowflake.isShowTrail())) {

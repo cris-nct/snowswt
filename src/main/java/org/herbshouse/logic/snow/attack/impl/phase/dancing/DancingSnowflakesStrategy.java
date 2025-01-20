@@ -62,9 +62,6 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   @Override
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
-    for (Snowflake snowflake : snowflakeList) {
-      snowflake.getSnowTail().setTailLength(100);
-    }
     this.updateIncrementsBounds(flagsConfiguration.getSnowingLevel());
   }
 

@@ -47,6 +47,7 @@ public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackD
     super.beforeStart(snowflakeList);
     for (Snowflake snowflake : snowflakeList) {
       snowflake.getSnowTail().setTailLength(150);
+      snowflake.setShowTrail(true);
     }
   }
 

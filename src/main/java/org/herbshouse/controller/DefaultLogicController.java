@@ -121,26 +121,12 @@ public class DefaultLogicController implements LogicController {
   @Override
   public void switchAttack() {
     flagsConfiguration.switchAttack();
-    beforeAttack();
     listeners.forEach(GeneratorListener::switchAttack);
-  }
-
-  private void beforeAttack() {
-    if (flagsConfiguration.isAttack()
-        && flagsConfiguration.getAttackType() == 4
-        && !flagsConfiguration.isObjectsTail()) {
-      flagsConfiguration.switchObjectsTail();
-    } else if (!flagsConfiguration.isAttack() && flagsConfiguration.isObjectsTail()) {
-      flagsConfiguration.switchObjectsTail();
-    } else if (flagsConfiguration.getAttackType() == 3 && !flagsConfiguration.isObjectsTail()) {
-      getFlagsConfiguration().switchObjectsTail();
-    }
   }
 
   @Override
   public void setAttackType(int type) {
     flagsConfiguration.setAttackType(type);
-    beforeAttack();
     if (flagsConfiguration.isAttack()) {
       listeners.forEach(GeneratorListener::changeAttackType);
     }
@@ -212,6 +198,12 @@ public class DefaultLogicController implements LogicController {
   public void switchBlackHoles() {
     flagsConfiguration.switchBlackHoles();
     listeners.forEach(GeneratorListener::switchBlackHoles);
+  }
+
+  @Override
+  public void switchIndividualMovements() {
+    flagsConfiguration.switchIndividualMovements();
+    listeners.forEach(GeneratorListener::switchIndividualMovements);
   }
 
   public AudioPlayer getAudioPlayer() {

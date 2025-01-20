@@ -30,6 +30,7 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackDataF
       attackData.setStepAngle(Math.random() * 0.2 + 0.2);
       attackData.setFactorY(400 + Math.random() * 600);
       attackData.setDirectionX(Math.random() < 0.5 ? 1 : -1);
+      snowflake.setShowTrail(true);
     }
   }
 

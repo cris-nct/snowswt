@@ -27,6 +27,8 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
     for (Snowflake snowflake : snowflakeList) {
       snowflake.setSize(30);
       snowflake.getSnowTail().setTailLength(100);
+      snowflake.setShowTrail(true);
+      snowflake.setShowHead(false);
       if (index == 0) {
         snowflake.setColor(new RGB(70, 70, 240));
         snowflake.setLocation(

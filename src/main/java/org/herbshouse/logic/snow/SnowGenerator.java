@@ -473,6 +473,37 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
   }
 
+  @Override
+  public void switchIndividualMovements() {
+    try {
+      if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+        for (Snowflake snowflake : snowflakes) {
+          if (!flagsConfiguration.isIndividualMovements()) {
+            snowflake.setIndividualStrategy(null);
+            snowflake.cleanup();
+            continue;
+          }
+          AttackStrategy<?> strategy = null;
+          switch (((int) (Math.random() * 4))) {
+            case 0 -> strategy = new BigWormAttackStrategy(flagsConfiguration);
+            case 1 -> strategy = new BlackHoleStrategy(flagsConfiguration, screenBounds, blackHoleController, true);
+            case 2 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds);
+            case 3 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds);
+          }
+          if (strategy != null) {
+            snowflake.setIndividualStrategy(strategy);
+            strategy.beforeStart(List.of(snowflake));
+          }
+        }
+        lockSnowflakes.unlock();
+      }
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+
+    pauseSnowing = flagsConfiguration.isIndividualMovements();
+  }
+
   private void cleanupSnowflakesData() {
     for (Snowflake snowflake : snowflakes) {
       snowflake.cleanup();
@@ -514,6 +545,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         for (Snowflake snowflake : snowflakes) {
           if (snowflake.getIndividualStrategy() == null) {
             if (!snowflake.isFreezed()
+                && !flagsConfiguration.isIndividualMovements()
                 && snowflake.getLocation().x > screenBounds.width / 2.0d - 150
                 && snowflake.getLocation().x < screenBounds.width / 2.0d + 150
                 && this.isColliding(snowflake, imageData)) {

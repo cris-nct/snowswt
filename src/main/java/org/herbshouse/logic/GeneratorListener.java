@@ -52,4 +52,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
   void setForceRedraw(boolean redraw);
 
   void switchBlackHoles();
+
+  void switchIndividualMovements();
 }

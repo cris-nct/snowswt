@@ -37,6 +37,7 @@ class LegendDrawer {
       this.addTextToLegend(legendBuilder, "Attack type", config.getAttackType());
       this.addTextToLegend(legendBuilder, "Attack phase", currentAttackPhase);
     }
+    this.addTextToLegend(legendBuilder, "Individual movement(I)", config.isIndividualMovements());
     this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
     this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
     this.addTextToLegend(legendBuilder, "Black holes(H)", config.isBlackHoles());

@@ -66,4 +66,6 @@ public interface LogicController {
   void setFractalsType(TreeType treeType);
 
   void switchBlackHoles();
+
+  void switchIndividualMovements();
 }

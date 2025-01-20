@@ -24,6 +24,7 @@ public class BlackHolePhase2 extends AbstractPhaseProcessor<AttackDataBlackHole>
     snowflake.setSize(10);
     snowflake.getSnowTail().setTailLength(50);
     snowflake.setShowTrail(true);
+    snowflake.setShowHead(false);
     startTime = System.currentTimeMillis();
   }
 

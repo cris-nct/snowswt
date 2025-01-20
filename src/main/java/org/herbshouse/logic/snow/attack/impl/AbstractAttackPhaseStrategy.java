@@ -55,11 +55,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
 
   @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
-    if (currentPhaseProcessor == null) {
-      return snowflake.getLocation();
-    } else {
-      return currentPhaseProcessor.computeLocation(snowflake);
-    }
+    return currentPhaseProcessor.computeLocation(snowflake);
   }
 
   @Override
