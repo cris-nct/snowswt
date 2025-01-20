@@ -27,5 +27,9 @@ public interface AttackStrategy<T extends AbstractAttackData> {
 
   Rectangle getScreenBounds();
 
+  void afterEnd();
+
   void shutdown();
+
+  boolean isFinished();
 }

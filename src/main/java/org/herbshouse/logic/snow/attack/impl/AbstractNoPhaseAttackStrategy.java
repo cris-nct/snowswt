@@ -23,4 +23,13 @@ public abstract class AbstractNoPhaseAttackStrategy<T extends AbstractAttackData
     return started;
   }
 
+  @Override
+  public void afterEnd() {
+
+  }
+
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

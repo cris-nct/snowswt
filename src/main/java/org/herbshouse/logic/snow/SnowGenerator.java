@@ -16,8 +16,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.audio.AudioPlayOrder;
-import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.AbstractGenerator;
@@ -41,10 +39,12 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   private final Timer timer;
   private final Map<Integer, AttackStrategy<?>> attackStrategies = new HashMap<>();
   private final InitialAnimation initialAnimation;
+
   private Rectangle screenBounds;
   private FlagsConfiguration flagsConfiguration;
   private ImageData imageData;
   private TimerTask taskSnowing;
+  private BlackHoleModeController blackHoleController;
   private boolean shutdown = false;
   private boolean skipInitialAnimation;
   private boolean pauseSnowing;
@@ -165,6 +165,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
           snowflake.getIndividualStrategy().computeNextLocation(snowflake, prevSnowFlake));
     } else if (attackMode) {
       snowflake.setLocation(attackStrategy.computeNextLocation(snowflake, prevSnowFlake));
+      if (attackStrategy.isFinished()) {
+        getLogicController().switchAttack();
+      }
     } else if (flagsConfiguration.isHappyWind()) {
       this.moveSnowflakeHappyWind(snowflake);
     } else if (flagsConfiguration.isNormalWind()) {
@@ -368,11 +371,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   public void init(FlagsConfiguration flagsConfiguration, Rectangle drawingSurface) {
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = drawingSurface;
+    this.blackHoleController = new BlackHoleModeController(this);
+
     this.registerAttackLogic(new BigWormAttackStrategy(flagsConfiguration));
     this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new YinYangAttackStrategy(screenBounds));
-    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer()));
+    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds, blackHoleController, false));
   }
 
   public Rectangle getScreenBounds() {
@@ -437,6 +442,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         } else {
           pauseSnowing = false;
           this.cleanupSnowflakesData();
+          this.getAttackStrategy().afterEnd();
         }
         lockSnowflakes.unlock();
       }
@@ -461,28 +467,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @Override
   public void switchBlackHoles() {
     if (flagsConfiguration.isBlackHoles()) {
-      AudioPlayOrder order = new AudioPlayOrder("blackhole.wav");
-      order.setType(AudioPlayType.BACKGROUND);
-      order.setVolume(0.9f);
-      getLogicController().getAudioPlayer().play(order);
+      this.blackHoleController.start();
     } else {
-      getLogicController().getAudioPlayer().stop("blackhole.wav");
-      try {
-        if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-          for (Snowflake snowflake : snowflakes) {
-            if (snowflake.getIndividualStrategy() != null) {
-              snowflake.getIndividualStrategy().shutdown();
-              snowflake.setIndividualStrategy(null);
-              snowflake.setShowTrail(false);
-              snowflake.setAlpha(255);
-              snowflake.setSize(5);
-            }
-          }
-        }
-        lockSnowflakes.unlock();
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+      this.blackHoleController.stop();
     }
   }
 
@@ -532,8 +519,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
                 && this.isColliding(snowflake, imageData)) {
               snowflake.freeze();
             }
-            if (flagsConfiguration.isBlackHoles()
-                && Utils.distance(flagsConfiguration.getMouseLoc(), snowflake.getLocation()) < BlackHoleStrategy.BLACKHOLE_RADIUS) {
+            if (flagsConfiguration.isBlackHoles() && blackHoleController.shouldSwallowPoint(snowflake.getLocation())) {
               toRemove.add(snowflake);
             }
           }
@@ -571,19 +557,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
           if (lockSnowflakes.tryLock()) {
             Snowflake snowflake = generateNewSnowflake();
             if (flagsConfiguration.isBlackHoles()) {
-              long snowflakesBlackHole = snowflakes.stream().filter(s -> s.getIndividualStrategy() instanceof BlackHoleStrategy).count();
-              if (snowflakesBlackHole < BlackHoleStrategy.BLACKHOLES_MAX_SNOWFLAKES) {
-                boolean stillOneSnowflakeToFinish = snowflakes.stream()
-                    .anyMatch(s -> s.getIndividualStrategy() instanceof BlackHoleStrategy
-                        && ((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
-                        && !((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().isFinished(s)
-                    );
-                if (!stillOneSnowflakeToFinish) {
-                  AttackStrategy<?> strategy = new BlackHoleStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
-                  strategy.beforeStart(List.of(snowflake));
-                  snowflake.setIndividualStrategy(strategy);
-                }
-              }
+              blackHoleController.afterGenerateSnowflake(snowflake);
             }
             lockSnowflakes.unlock();
           }
@@ -606,4 +580,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.snowflakes.add(snowflake);
   }
 
+  public FlagsConfiguration getFlagsConfiguration() {
+    return flagsConfiguration;
+  }
 }

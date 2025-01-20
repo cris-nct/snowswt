@@ -3,10 +3,8 @@ package org.herbshouse.logic.snow.attack.impl.phase.blackhole;
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.herbshouse.audio.AudioPlayOrder;
-import org.herbshouse.audio.AudioPlayType;
-import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.logic.snow.BlackHoleModeController;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
@@ -20,15 +18,22 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
-  private final AudioPlayer audioPlayer;
+  private final BlackHoleModeController blackHoleModeController;
+  private final boolean individualStrategy;
   private double alpha = 255;
   private int alphaDirection = -1;
   private boolean playedAudioExplosion;
 
-  public BlackHoleStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds, AudioPlayer audioPlayer) {
+  public BlackHoleStrategy(
+      FlagsConfiguration flagsConfiguration,
+      Rectangle screenBounds,
+      BlackHoleModeController blackHoleModeController,
+      boolean individualStrategy
+  ) {
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
-    this.audioPlayer = audioPlayer;
+    this.individualStrategy = individualStrategy;
+    this.blackHoleModeController = blackHoleModeController;
 
     BlackHolePhase1 phase1 = new BlackHolePhase1(this);
     BlackHolePhase2 phase2 = new BlackHolePhase2(this);
@@ -42,7 +47,9 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     phase3.setNextPhase(phase4);
     phase4.setNextPhase(phase5);
     phase5.setNextPhase(phase6);
-    phase6.setNextPhase(phase6);
+    if (individualStrategy) {
+      phase6.setNextPhase(phase6);
+    }
 
     this.addPhases(phase1, phase2, phase3, phase4, phase5, phase6);
   }
@@ -74,6 +81,9 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     alpha = 255;
     alphaDirection = -1;
     playedAudioExplosion = false;
+    if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 5) {
+      blackHoleModeController.start();
+    }
   }
 
   @Override
@@ -87,47 +97,47 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   }
 
   @Override
-  public void shutdown() {
-
-  }
-
-  @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
     super.afterUpdate(snowflakeList);
     alpha += 10 * alphaDirection;
     if (alpha < 50 || alpha >= 255) {
       alphaDirection = -alphaDirection;
     }
-    boolean isIndividualStrategy = false;
-    for (Snowflake snowflake : snowflakeList) {
-      isIndividualStrategy = isIndividualStrategy || snowflake.getIndividualStrategy() instanceof BlackHoleStrategy;
-      if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
-          && getCurrentPhaseProcessor().isFinished(snowflake)) {
-        snowflake.setIndividualStrategy(null);
-        snowflake.setColor(new RGB(255, 255, 255));
-        snowflake.setSize(5);
-        snowflake.setShowTrail(false);
-        snowflake.cleanup();
-      }
-    }
 
-    if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6 && !playedAudioExplosion) {
-      if (isIndividualStrategy) {
-        AudioPlayOrder order = new AudioPlayOrder("big-explosion.wav");
-        order.setType(AudioPlayType.EFFECT);
-        order.setVolume(1f);
-        audioPlayer.play(order);
-      } else {
-        AudioPlayOrder order = new AudioPlayOrder("extended-explosion.wav");
-        order.setType(AudioPlayType.EFFECT);
-        order.setVolume(1f);
-        audioPlayer.play(order);
+    if (getCurrentPhaseProcessor() != null) {
+      for (Snowflake snowflake : snowflakeList) {
+        if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
+            && getCurrentPhaseProcessor().isFinished(snowflake)) {
+          snowflake.setIndividualStrategy(null);
+          snowflake.setColor(new RGB(255, 255, 255));
+          snowflake.setSize(5);
+          snowflake.setShowTrail(false);
+        }
       }
-      playedAudioExplosion = true;
+
+      if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6 && !playedAudioExplosion) {
+        if (individualStrategy) {
+          blackHoleModeController.playBigExplosion();
+        } else {
+          blackHoleModeController.playExtendedExplosion();
+        }
+        playedAudioExplosion = true;
+      }
     }
+  }
+
+  @Override
+  public void afterEnd() {
+    super.afterEnd();
+    blackHoleModeController.stop();
   }
 
   public int getAlpha() {
     return (int) alpha;
+  }
+
+  @Override
+  public void shutdown() {
+
   }
 }

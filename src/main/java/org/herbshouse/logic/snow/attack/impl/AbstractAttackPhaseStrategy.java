@@ -20,6 +20,8 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
 
   private boolean started = false;
 
+  private boolean finished = false;
+
   @SafeVarargs
   public final void addPhases(PhaseProcessor<T>... phases) {
     this.phases.addAll(Arrays.stream(phases).toList());
@@ -53,7 +55,11 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
 
   @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
-    return currentPhaseProcessor.computeLocation(snowflake);
+    if (currentPhaseProcessor == null) {
+      return snowflake.getLocation();
+    } else {
+      return currentPhaseProcessor.computeLocation(snowflake);
+    }
   }
 
   @Override
@@ -71,11 +77,25 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     }
     if (allArrivedToDestination) {
       currentPhaseProcessor = currentPhaseProcessor.getNextPhaseProcessor();
-      initPhase(snowflakeList);
+      if (currentPhaseProcessor == null) {
+        afterEnd();
+      } else {
+        initPhase(snowflakeList);
+      }
     }
   }
 
   public PhaseProcessor<T> getCurrentPhaseProcessor() {
     return currentPhaseProcessor;
+  }
+
+  @Override
+  public void afterEnd() {
+    finished = true;
+  }
+
+  @Override
+  public boolean isFinished() {
+    return finished;
   }
 }
