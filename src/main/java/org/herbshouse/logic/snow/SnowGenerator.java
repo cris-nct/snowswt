@@ -372,7 +372,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new YinYangAttackStrategy(screenBounds));
-    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds));
+    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer()));
   }
 
   public Rectangle getScreenBounds() {
@@ -573,9 +573,16 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             if (flagsConfiguration.isBlackHoles()) {
               long snowflakesBlackHole = snowflakes.stream().filter(s -> s.getIndividualStrategy() instanceof BlackHoleStrategy).count();
               if (snowflakesBlackHole < BlackHoleStrategy.BLACKHOLES_MAX_SNOWFLAKES) {
-                AttackStrategy<?> strategy = new BlackHoleStrategy(flagsConfiguration, screenBounds);
-                strategy.beforeStart(List.of(snowflake));
-                snowflake.setIndividualStrategy(strategy);
+                boolean stillOneSnowflakeToFinish = snowflakes.stream()
+                    .anyMatch(s -> s.getIndividualStrategy() instanceof BlackHoleStrategy
+                        && ((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
+                        && !((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().isFinished(s)
+                    );
+                if (!stillOneSnowflakeToFinish) {
+                  AttackStrategy<?> strategy = new BlackHoleStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
+                  strategy.beforeStart(List.of(snowflake));
+                  snowflake.setIndividualStrategy(strategy);
+                }
               }
             }
             lockSnowflakes.unlock();
