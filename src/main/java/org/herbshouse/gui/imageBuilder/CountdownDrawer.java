@@ -5,6 +5,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.gui.GuiUtils;
+import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 
@@ -25,6 +26,7 @@ class CountdownDrawer {
       } else {
         gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
       }
+      gc.setFont(SWTResourceManager.getFont("Arial", 25, SWT.BOLD));
       String countdown = String.valueOf(generatorListener.getCountdown());
       Point countdownSize = gc.stringExtent(countdown);
       Point textSize = gc.stringExtent(textFromScreen);

@@ -125,8 +125,8 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
       kiss = kiss || redFace.getKissingGif() != null;
     }
 
-    if (kiss && !getLogicController().getAudioPlayer().isPlaying("kissing.wav")) {
-      AudioPlayOrder order = new AudioPlayOrder("kissing.wav");
+    if (kiss && !getLogicController().getAudioPlayer().isPlaying("sounds/kissing.wav")) {
+      AudioPlayOrder order = new AudioPlayOrder("sounds/kissing.wav");
       order.setVolume(0.9f);
       getLogicController().getAudioPlayer().play(order);
     }
@@ -169,12 +169,12 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   @Override
   public void mouseDown(int button, Point2D mouseLocation) {
     if (button == 1 && flagsConfiguration.isEnemies()) {
-      AnimatedGif gif = new AnimatedGif("fire-flame.gif", 2, null);
+      AnimatedGif gif = new AnimatedGif("pictures/fire-flame.gif", 2, null);
       gif.setLocation(mouseLocation);
       gif.setSize(50);
       gif.setSpeed(2);
       fireGifs.add(gif);
-      getLogicController().getAudioPlayer().play(new AudioPlayOrder("fire.wav", 700));
+      getLogicController().getAudioPlayer().play(new AudioPlayOrder("sounds/fire.wav", 700));
     }
   }
 
@@ -205,7 +205,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
     this.generateRedFace();
 
-    this.angryFace = new AnimatedGif("angry.gif", 0.3, REMOVE_BACKGROUND_COLOR);
+    this.angryFace = new AnimatedGif("pictures/angry.gif", 0.3, REMOVE_BACKGROUND_COLOR);
     this.angryFace.setLocation(
         new Point2D(screenBounds.width - ANGRY_FACE_SIZE / 2.0d, ANGRY_FACE_SIZE / 2.0d));
     this.angryFace.setSize(ANGRY_FACE_SIZE);
@@ -325,7 +325,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   private void checkFireCollision(RedFace redFace) {
     for (AnimatedGif fire : fireGifs) {
       if (Utils.isColliding(redFace, fire)) {
-        getLogicController().getAudioPlayer().play(new AudioPlayOrder("hurt.wav"));
+        getLogicController().getAudioPlayer().play(new AudioPlayOrder("sounds/hurt.wav"));
         if (redFace.getState() == RedFaceState.FREE) {
           redFace.decreaseLife(20);
           if (redFace.getLife() == 0) {

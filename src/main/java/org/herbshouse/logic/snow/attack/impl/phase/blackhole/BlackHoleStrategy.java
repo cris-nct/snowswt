@@ -23,6 +23,7 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   private double alpha = 255;
   private int alphaDirection = -1;
   private boolean playedAudioExplosion;
+  private boolean playedSecondAudio;
 
   public BlackHoleStrategy(
       FlagsConfiguration flagsConfiguration,
@@ -115,12 +116,13 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
         }
       }
 
+      if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 5 && !playedSecondAudio) {
+        blackHoleModeController.playAudio2Background();
+        playedSecondAudio = true;
+      }
+
       if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6 && !playedAudioExplosion) {
-        if (individualStrategy) {
-          blackHoleModeController.playBigExplosion();
-        } else {
-          blackHoleModeController.playExtendedExplosion();
-        }
+        blackHoleModeController.playExplosion();
         playedAudioExplosion = true;
       }
     }

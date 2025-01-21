@@ -45,12 +45,12 @@ public class ShutdownAnimation {
       this.messages.add(prev);
     }
     this.shell = shell;
-    this.flame = new AnimatedGif("fire-flame.gif", 2, null);
+    this.flame = new AnimatedGif("pictures/fire-flame.gif", 2, null);
     this.flame.setLocation(new Point2D(GuiUtils.SCREEN_BOUNDS.width / 2.0, 50));
     this.flame.setSize(100);
-    this.glassCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "glasscrack.png",
+    this.glassCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "pictures/glasscrack.png",
         true);
-    this.blueCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "crack.png",
+    this.blueCrackImage = SWTResourceManager.getImage(SnowingApplication.class, "pictures/crack.png",
         true);
   }
 

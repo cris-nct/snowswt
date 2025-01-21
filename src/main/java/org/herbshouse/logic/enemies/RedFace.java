@@ -50,7 +50,7 @@ public class RedFace extends AbstractMovableObject {
 
   public void startKissing() {
     setPause(true);
-    kissingGif = new AnimatedGif("kissing.gif", 7, null);
+    kissingGif = new AnimatedGif("pictures/kissing.gif", 7, null);
     kissingGif.setSize((int) (getSize() * 0.3));
     updateKissingGif();
   }

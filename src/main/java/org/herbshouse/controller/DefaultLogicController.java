@@ -70,12 +70,12 @@ public class DefaultLogicController implements LogicController {
 
   private void checkTriggerWind() {
     if (flagsConfiguration.isNormalWind() && !flagsConfiguration.isHappyWind()) {
-      AudioPlayOrder order = new AudioPlayOrder("wind.wav");
+      AudioPlayOrder order = new AudioPlayOrder("sounds/wind.wav");
       order.setType(AudioPlayType.BACKGROUND);
       order.setVolume(0.7f);
       this.audioPlayer.play(order);
     } else {
-      this.audioPlayer.stop("wind.wav");
+      this.audioPlayer.stop("sounds/wind.wav");
     }
   }
 
@@ -162,17 +162,17 @@ public class DefaultLogicController implements LogicController {
   public void switchEnemies() {
     flagsConfiguration.switchEnemies();
     if (flagsConfiguration.isEnemies()) {
-      AudioPlayOrder order = new AudioPlayOrder("drum.wav");
+      AudioPlayOrder order = new AudioPlayOrder("sounds/drum.wav");
       order.setType(AudioPlayType.BACKGROUND);
       this.audioPlayer.play(order);
     } else {
-      this.audioPlayer.stop("drum.wav");
+      this.audioPlayer.stop("sounds/drum.wav");
     }
   }
 
   @Override
   public void shutdown() {
-    AudioPlayOrder order = new AudioPlayOrder("glass-breaking.wav");
+    AudioPlayOrder order = new AudioPlayOrder("sounds/glass-breaking.wav");
     order.setCallback(() -> audioPlayer.shutdown());
     this.audioPlayer.play(order);
     listeners.forEach(GeneratorListener::shutdown);

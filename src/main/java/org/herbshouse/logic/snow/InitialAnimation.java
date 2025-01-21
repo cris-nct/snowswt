@@ -49,7 +49,7 @@ class InitialAnimation {
       generateFireworks(1);
     }
     AudioPlayer audioPlayer = snowGenerator.getLogicController().getAudioPlayer();
-    audioPlayer.play(new AudioPlayOrder("fireworks.wav", 5000));
+    audioPlayer.play(new AudioPlayOrder("sounds/fireworks.wav", 5000));
     int counter = 0;
     while (!snowGenerator.getSnowflakes().isEmpty()) {
       snowGenerator.update();
@@ -59,11 +59,11 @@ class InitialAnimation {
         generateFireworks(2);
         generateFireworks(2);
         generateFireworks(2);
-        audioPlayer.play(new AudioPlayOrder("fireworks-2.wav", 4000));
+        audioPlayer.play(new AudioPlayOrder("sounds/fireworks-2.wav", 4000));
       }
     }
-    audioPlayer.stop("fireworks.wav");
-    audioPlayer.stop("fireworks-2.wav");
+    audioPlayer.stop("sounds/fireworks.wav");
+    audioPlayer.stop("sounds/fireworks-2.wav");
   }
 
   private void generateFireworks(int phase) {

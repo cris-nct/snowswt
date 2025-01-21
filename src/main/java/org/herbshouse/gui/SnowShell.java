@@ -103,10 +103,10 @@ public class SnowShell extends Shell implements
   }
 
   private void initVideos() {
-    this.videos.add(loadResourceAsString("embeded-let-it-snow-2.html"));
-    this.videos.add(loadResourceAsString("embeded-let-it-snow.html"));
-    this.videos.add(loadResourceAsString("embeded-christmas-music.html"));
-    this.videos.add(loadResourceAsString("embeded-music-sensual.html"));
+    this.videos.add(loadResourceAsString("html/embeded-let-it-snow-2.html"));
+    this.videos.add(loadResourceAsString("html/embeded-let-it-snow.html"));
+    this.videos.add(loadResourceAsString("html/embeded-christmas-music.html"));
+    this.videos.add(loadResourceAsString("html/embeded-music-sensual.html"));
   }
 
   private void updateBrowser(boolean youtubeOn) {
@@ -350,7 +350,7 @@ public class SnowShell extends Shell implements
           updateBrowser(true);
         }
         browser.setVisible(false);
-        browser.setText(loadResourceAsString("embeded-goodbye.html"), true);
+        browser.setText(loadResourceAsString("html/embeded-goodbye.html"), true);
         canvas.removeKeyListener(this);
         canvas.removeMouseListener(this);
         canvas.removeMouseWheelListener(this);

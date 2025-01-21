@@ -32,7 +32,7 @@ public class SnowingApplication {
     DefaultAudioPlayer audioPlayer = new DefaultAudioPlayer();
     try {
       mbImageSmall = new Image(Display.getDefault(),
-          SWTResourceManager.getImage(SnowingApplication.class, "mb.png", true)
+          SWTResourceManager.getImage(SnowingApplication.class, "pictures/mb.png", true)
               .getImageData()
               .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
       );

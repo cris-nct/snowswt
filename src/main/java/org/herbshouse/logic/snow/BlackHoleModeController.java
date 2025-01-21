@@ -17,14 +17,21 @@ public class BlackHoleModeController {
   }
 
   public void start() {
-    AudioPlayOrder order = new AudioPlayOrder("blackhole.wav");
+    AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole.wav");
+    order.setType(AudioPlayType.BACKGROUND);
+    order.setVolume(0.9f);
+    snowGenerator.getLogicController().getAudioPlayer().play(order);
+  }
+
+  public void playAudio2Background() {
+    AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole-2.wav");
     order.setType(AudioPlayType.BACKGROUND);
     order.setVolume(0.9f);
     snowGenerator.getLogicController().getAudioPlayer().play(order);
   }
 
   public void stop() {
-    snowGenerator.getLogicController().getAudioPlayer().stop("blackhole.wav");
+    stopBackgroundSounds();
     for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
       if (snowflake.getIndividualStrategy() != null) {
         snowflake.getIndividualStrategy().shutdown();
@@ -36,18 +43,19 @@ public class BlackHoleModeController {
     }
   }
 
-  public void playBigExplosion() {
-    AudioPlayOrder order = new AudioPlayOrder("big-explosion.wav");
-    order.setType(AudioPlayType.EFFECT);
-    order.setVolume(1f);
-    snowGenerator.getLogicController().getAudioPlayer().play(order);
+  private void stopBackgroundSounds() {
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole.wav");
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-2.wav");
   }
 
-  public void playExtendedExplosion() {
-    AudioPlayOrder order = new AudioPlayOrder("extended-explosion.wav");
-    order.setType(AudioPlayType.EFFECT);
-    order.setVolume(1f);
-    snowGenerator.getLogicController().getAudioPlayer().play(order);
+  public void playExplosion() {
+    stopBackgroundSounds();
+    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/explosion.wav")) {
+      AudioPlayOrder order = new AudioPlayOrder("sounds/explosion.wav");
+      order.setType(AudioPlayType.EFFECT);
+      order.setVolume(1f);
+      snowGenerator.getLogicController().getAudioPlayer().play(order);
+    }
   }
 
   public boolean shouldSwallowPoint(Point2D location) {
@@ -74,5 +82,6 @@ public class BlackHoleModeController {
       }
     }
   }
+
 
 }
