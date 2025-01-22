@@ -1,11 +1,11 @@
 package org.herbshouse.audio;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DefaultAudioPlayer implements AudioPlayer {
 
-  private final List<AudioPlayerThread> playingThreads = new ArrayList<>();
+  private final List<AudioPlayerThread> playingThreads = new CopyOnWriteArrayList<>();
 
   @Override
   public void play(AudioPlayOrder order) {
@@ -19,11 +19,7 @@ public class DefaultAudioPlayer implements AudioPlayer {
   public void stop(String filename) {
     for (AudioPlayerThread playingThread : playingThreads) {
       if (filename.equals(playingThread.getOrder().getFilename())) {
-        if (playingThread.isAlive()) {
-          playingThread.interrupt();
-        } else {
-          playingThread.stopAudio();
-        }
+        playingThread.interrupt();
       }
     }
   }
@@ -37,20 +33,13 @@ public class DefaultAudioPlayer implements AudioPlayer {
   @Override
   public void shutdown() {
     for (AudioPlayerThread playingThread : playingThreads) {
-      if (playingThread.isAlive()) {
-        playingThread.interrupt();
-      } else {
-        playingThread.stopAudio();
-      }
+      playingThread.interrupt();
     }
     playingThreads.clear();
   }
 
   private void cleanup() {
-    List<AudioPlayerThread> newList = playingThreads.stream().filter(AudioPlayerThread::isPlaying)
-        .toList();
-    playingThreads.clear();
-    playingThreads.addAll(newList);
+    // Remove non-playing threads directly
+    playingThreads.removeIf(thread -> !thread.isPlaying());
   }
-
 }

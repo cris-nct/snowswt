@@ -81,20 +81,15 @@ class AudioPlayerThread extends Thread {
   }
 
   private boolean isLoopContinuous() {
-    return (order.getType() == AudioPlayType.BACKGROUND
-        || order.getType() == AudioPlayType.EFFECT_LOOP);
+    return (order.getType() == AudioPlayType.BACKGROUND || order.getType() == AudioPlayType.EFFECT_LOOP);
   }
 
   @Override
   public void interrupt() {
-    super.interrupt();
-    stopAudio();
-  }
-
-  public void stopAudio() {
     if (clip != null && clip.isRunning()) {
       clip.stop();
     }
+    super.interrupt();
   }
 
   public boolean isPlaying() {

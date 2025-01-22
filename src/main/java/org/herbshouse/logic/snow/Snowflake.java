@@ -67,11 +67,11 @@ public class Snowflake extends AbstractMovableObject {
     this.showTrail = showTrail;
   }
 
-  public void setShowHead(boolean showHead) {
-    this.showHead = showHead;
-  }
-
   public boolean isShowHead() {
     return showHead;
+  }
+
+  public void setShowHead(boolean showHead) {
+    this.showHead = showHead;
   }
 }
