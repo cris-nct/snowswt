@@ -389,4 +389,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   }
 
+  @Override
+  public boolean canControllerStart() {
+    return true;
+  }
+
 }

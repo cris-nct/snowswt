@@ -356,11 +356,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @Override
   public void reset() {
     try {
-      if (initialAnimation.getCountdown() == -1) {
-        if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-          removeSnowflakes(snowflakes);
-          lockSnowflakes.unlock();
-        }
+      if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+        removeSnowflakes(snowflakes);
+        lockSnowflakes.unlock();
       }
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
@@ -504,6 +502,11 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     pauseSnowing = flagsConfiguration.isIndividualMovements();
   }
 
+  @Override
+  public boolean canControllerStart() {
+    return skipInitialAnimation || initialAnimation.isFinished();
+  }
+
   private void cleanupSnowflakesData() {
     for (Snowflake snowflake : snowflakes) {
       snowflake.cleanup();
@@ -513,7 +516,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @Override
   public void changedSnowingLevel() {
     try {
-      if (initialAnimation.getCountdown() == -1 && flagsConfiguration.getSnowingLevel() == 0) {
+      if (flagsConfiguration.getSnowingLevel() == 0) {
         pauseSnowing = true;
         if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
           removeSnowflakes(snowflakes);

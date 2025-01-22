@@ -54,4 +54,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
   void switchBlackHoles();
 
   void switchIndividualMovements();
+
+  boolean canControllerStart();
 }

@@ -71,6 +71,11 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
   }
 
   @Override
+  public boolean canControllerStart() {
+    return true;
+  }
+
+  @Override
   protected int getSleepDuration() {
     return 500;
   }

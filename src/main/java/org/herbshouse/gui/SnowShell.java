@@ -196,8 +196,9 @@ public class SnowShell extends Shell implements
       }
 
       imageBuilder.drawText();
-      imageBuilder.drawLegend(this.renderingEngine.getRealFPS(),
-          controller.getCurrentAttackPhase());
+      if (controller.canStart()) {
+        imageBuilder.drawLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
+      }
       imageBuilder.drawLogo();
       imageBuilder.drawMinimap();
       Image image = imageBuilder.getResultedImage();
@@ -230,7 +231,9 @@ public class SnowShell extends Shell implements
 
   @Override
   public void mouseDown(MouseEvent e) {
-    controller.mouseDown(e.button, e.x, e.y);
+    if (controller.canStart()) {
+      controller.mouseDown(e.button, e.x, e.y);
+    }
   }
 
   @Override
@@ -240,16 +243,23 @@ public class SnowShell extends Shell implements
 
   @Override
   public void mouseMove(MouseEvent e) {
-    controller.mouseMove(e.x, e.y);
+    if (controller.canStart()) {
+      controller.mouseMove(e.x, e.y);
+    }
   }
 
   @Override
   public void mouseScrolled(MouseEvent e) {
-    controller.mouseScrolled(e.count);
+    if (controller.canStart()) {
+      controller.mouseScrolled(e.count);
+    }
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
+    if (!controller.canStart()) {
+      return;
+    }
     switch (e.keyCode) {
       //Default
       case SWT.F1 -> controller.setFractalsType(TreeType.PERFECT_DEFAULT);

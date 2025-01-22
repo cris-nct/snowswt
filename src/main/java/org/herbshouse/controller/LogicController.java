@@ -68,4 +68,6 @@ public interface LogicController {
   void switchBlackHoles();
 
   void switchIndividualMovements();
+
+  boolean canStart();
 }

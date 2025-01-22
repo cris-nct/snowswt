@@ -206,6 +206,11 @@ public class DefaultLogicController implements LogicController {
     listeners.forEach(GeneratorListener::switchIndividualMovements);
   }
 
+  @Override
+  public boolean canStart() {
+    return listeners.stream().allMatch(GeneratorListener::canControllerStart);
+  }
+
   public AudioPlayer getAudioPlayer() {
     return audioPlayer;
   }

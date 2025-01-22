@@ -15,55 +15,61 @@ class InitialAnimation {
 
   private int countdown = -1;
 
+  private boolean finished;
+
   InitialAnimation(SnowGenerator snowGenerator) {
     this.snowGenerator = snowGenerator;
   }
 
   void run() {
-    //noinspection IntegerDivisionInFloatingPointContext
-    Point2D location = new Point2D(snowGenerator.getScreenBounds().width / 2,
-        snowGenerator.getScreenBounds().height / 2);
-    int numberOfFlakes = 50;
-    for (int k = 0; k < numberOfFlakes; k++) {
-      Snowflake snowflake = new Snowflake();
-      snowflake.setLocation(location);
-      snowflake.setSize(15);
-      snowflake.setColor(new RGB(240, 0, 0));
-      snowflake.setAlpha((int) Utils.linearInterpolation(k, 0, 50, numberOfFlakes - 1, 255));
-      snowGenerator.addSnowflake(snowflake);
-    }
-    for (countdown = 10; countdown > 0; countdown--) {
-      for (double angle = 0; angle < 360; angle++) {
-        for (int k = 0; k < numberOfFlakes; k++) {
-          snowGenerator.getSnowflakes().get(k)
-              .setLocation(Utils.moveToDirection(location, 200, Math.toRadians(angle + k * 2)));
+    try {
+      //noinspection IntegerDivisionInFloatingPointContext
+      Point2D location = new Point2D(snowGenerator.getScreenBounds().width / 2,
+          snowGenerator.getScreenBounds().height / 2);
+      int numberOfFlakes = 50;
+      for (int k = 0; k < numberOfFlakes; k++) {
+        Snowflake snowflake = new Snowflake();
+        snowflake.setLocation(location);
+        snowflake.setSize(15);
+        snowflake.setColor(new RGB(240, 0, 0));
+        snowflake.setAlpha((int) Utils.linearInterpolation(k, 0, 50, numberOfFlakes - 1, 255));
+        snowGenerator.addSnowflake(snowflake);
+      }
+      for (countdown = 10; countdown > 0; countdown--) {
+        for (double angle = 0; angle < 360; angle++) {
+          for (int k = 0; k < numberOfFlakes; k++) {
+            snowGenerator.getSnowflakes().get(k)
+                .setLocation(Utils.moveToDirection(location, 200, Math.toRadians(angle + k * 2)));
+          }
+          Utils.sleep(3);
         }
-        Utils.sleep(3);
       }
-    }
-    countdown = -1;
-    snowGenerator.removeSnowflakes(snowGenerator.getSnowflakes());
+      countdown = -1;
+      snowGenerator.removeSnowflakes(snowGenerator.getSnowflakes());
 
-    //Fireworks
-    for (int i = 0; i < 20; i++) {
-      generateFireworks(1);
-    }
-    AudioPlayer audioPlayer = snowGenerator.getLogicController().getAudioPlayer();
-    audioPlayer.play(new AudioPlayOrder("sounds/fireworks.wav", 5000));
-    int counter = 0;
-    while (!snowGenerator.getSnowflakes().isEmpty()) {
-      snowGenerator.update();
-      Utils.sleep(10);
-      counter++;
-      if (counter % 180 == 0 && counter >= 300 && counter < 2000) {
-        generateFireworks(2);
-        generateFireworks(2);
-        generateFireworks(2);
-        audioPlayer.play(new AudioPlayOrder("sounds/fireworks-2.wav", 4000));
+      //Fireworks
+      for (int i = 0; i < 20; i++) {
+        generateFireworks(1);
       }
+      AudioPlayer audioPlayer = snowGenerator.getLogicController().getAudioPlayer();
+      audioPlayer.play(new AudioPlayOrder("sounds/fireworks.wav", 5000));
+      int counter = 0;
+      while (!snowGenerator.getSnowflakes().isEmpty()) {
+        snowGenerator.update();
+        Utils.sleep(10);
+        counter++;
+        if (counter % 180 == 0 && counter >= 300 && counter < 2000) {
+          generateFireworks(2);
+          generateFireworks(2);
+          generateFireworks(2);
+          audioPlayer.play(new AudioPlayOrder("sounds/fireworks-2.wav", 4000));
+        }
+      }
+      audioPlayer.stop("sounds/fireworks.wav");
+      audioPlayer.stop("sounds/fireworks-2.wav");
+    } finally {
+      finished = true;
     }
-    audioPlayer.stop("sounds/fireworks.wav");
-    audioPlayer.stop("sounds/fireworks-2.wav");
   }
 
   private void generateFireworks(int phase) {
@@ -87,6 +93,10 @@ class InitialAnimation {
 
   int getCountdown() {
     return countdown;
+  }
+
+  public boolean isFinished() {
+    return finished;
   }
 
 }
