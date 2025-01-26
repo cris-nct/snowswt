@@ -1,5 +1,8 @@
 package org.herbshouse.gui;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +10,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -226,8 +232,45 @@ public class SWTResourceManager {
     return getImage(path, false);
   }
 
+  public static Image getSVG(
+      Class<?> clazz,
+      String path,
+      float scaleX,
+      float scaleY,
+      boolean disposeOnExit
+  ) {
+    String key = StringUtils.joinWith("|", clazz.getName(), path, scaleX, scaleY);
+    Image image = imageMap.get(key);
+    boolean error = false;
+    if ((image == null) || image.isDisposed()) {
+      try {
+        if (imageMap.size() > MAXIMUM_IMAGES_CACHE) {
+          disposeImages();
+        }
+        ImageLoader loader = new ImageLoader();
+        try (InputStream svgStream = new BufferedInputStream(clazz.getClassLoader().getResourceAsStream(path))) {
+          ByteArrayOutputStream pngStream = new ByteArrayOutputStream();
+          PNGTranscoder transcoder = new PNGTranscoder();
+          transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, scaleX); // Set desired width
+          transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, scaleY); // Set desired height
+          transcoder.transcode(new TranscoderInput(svgStream), new TranscoderOutput(pngStream));
+          image = new Image(Display.getDefault(), new ByteArrayInputStream(pngStream.toByteArray()));
+        }
+        imageMap.put(key, image);
+      } catch (Exception e) {
+        image = getMissingImage();
+        imageMap.put(key, image);
+        error = true;
+      }
+    }
+    if (!error && disposeOnExit) {
+      addResourceDisposeOnExit(key, image);
+    }
+    return image;
+  }
 
-  public static Image getGif(Class<?> clazz,
+  public static Image getGif(
+      Class<?> clazz,
       String path,
       int phase,
       int scaleX,

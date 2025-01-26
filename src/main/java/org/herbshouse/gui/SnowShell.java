@@ -67,6 +67,7 @@ public class SnowShell extends Shell implements
 
   public SnowShell(Transform transform) {
     super(Display.getDefault(), SWT.NO_TRIM);
+    this.setText("SnowSWT");
     this.transform = transform;
 
     this.shellRegion = new Region(Display.getDefault());

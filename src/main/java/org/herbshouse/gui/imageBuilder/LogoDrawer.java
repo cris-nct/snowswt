@@ -19,7 +19,7 @@ public class LogoDrawer {
         -1, 30, 1, 240
     );
     gc.setAlpha(alphaMB);
-    Image mbImage = SWTResourceManager.getImage(SnowingApplication.class, "pictures/mb.png", true);
+    Image mbImage = SWTResourceManager.getSVG(SnowingApplication.class, "pictures/mb.svg", 200, 200, true);
     gc.drawImage(mbImage, 0, 0);
     gc.setAlpha(255);
   }

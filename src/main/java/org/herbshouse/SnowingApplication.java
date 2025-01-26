@@ -16,7 +16,7 @@ import org.herbshouse.logic.snow.SnowGenerator;
 
 public class SnowingApplication {
 
-  public static final int MB_ICON_SIZE = 25;
+  public static final int MB_ICON_SIZE = 40;
 
   public static Image mbImageSmall;
 
@@ -31,11 +31,8 @@ public class SnowingApplication {
     Transform transform = null;
     DefaultAudioPlayer audioPlayer = new DefaultAudioPlayer();
     try {
-      mbImageSmall = new Image(Display.getDefault(),
-          SWTResourceManager.getImage(SnowingApplication.class, "pictures/mb.png", true)
-              .getImageData()
-              .scaledTo(MB_ICON_SIZE, MB_ICON_SIZE)
-      );
+      mbImageSmall =
+          SWTResourceManager.getSVG(SnowingApplication.class, "pictures/mb.svg", MB_ICON_SIZE, MB_ICON_SIZE, true);
 
       transform = new Transform(Display.getDefault());
       transform.scale(1, -1);
