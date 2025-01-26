@@ -76,8 +76,11 @@ class InitialAnimation {
     Snowflake snowflake = snowGenerator.generateNewSnowflake();
     snowflake.setSize(7);
     snowflake.setLocation(new Point2D(snowGenerator.getScreenBounds().width / 2.0, 1));
-    AttackStrategy<?> strategy = new FireworksStrategy(snowGenerator.getLogicController()
-        .getFlagsConfiguration(), snowGenerator.getScreenBounds());
+    AttackStrategy<?> strategy = new FireworksStrategy(
+        snowGenerator.getLogicController().getFlagsConfiguration(),
+        snowGenerator.getScreenBounds(),
+        snowGenerator.getLogicController().getAudioPlayer()
+    );
     strategy.beforeStart(List.of(snowflake));
     snowflake.setIndividualStrategy(strategy);
     if (phase == 1) {

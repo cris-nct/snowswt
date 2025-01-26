@@ -2,6 +2,8 @@ package org.herbshouse.logic.snow.attack.impl.nonphase;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayType;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
@@ -14,8 +16,21 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
 
   private final FlagsConfiguration flagsConfiguration;
 
-  public BigWormAttackStrategy(FlagsConfiguration flagsConfiguration) {
+  public BigWormAttackStrategy(FlagsConfiguration flagsConfiguration, AudioPlayer audioPlayer) {
+    super(audioPlayer);
     this.flagsConfiguration = flagsConfiguration;
+  }
+
+  @Override
+  public void beforeStart(List<Snowflake> snowflakeList) {
+    super.beforeStart(snowflakeList);
+    playAudio("big-worm.wav", AudioPlayType.BACKGROUND, 0.7f);
+  }
+
+  @Override
+  public void afterEnd() {
+    super.afterEnd();
+    stopAudio("big-worm.wav");
   }
 
   @Override

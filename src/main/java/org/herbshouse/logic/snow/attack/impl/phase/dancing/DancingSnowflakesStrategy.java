@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataDancing;
-import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<AttackDataDancing> implements
     IAttack2Global {
@@ -23,14 +23,15 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   private double initialMaxPhase = 3.0;
   private double phaseIncrement = initialMinPhase;
 
-  public DancingSnowflakesStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
+  public DancingSnowflakesStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds, AudioPlayer player) {
+    super(player);
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
 
-    A2Phase1 phase1 = new A2Phase1(this);
-    A2Phase2 phase2 = new A2Phase2(this);
-    A2Phase3 phase3 = new A2Phase3(this);
-    A2Phase4 phase4 = new A2Phase4(this, this);
+    DancingPhase1 phase1 = new DancingPhase1(this);
+    DancingPhase2 phase2 = new DancingPhase2(this);
+    DancingPhase3 phase3 = new DancingPhase3(this);
+    DancingPhase4 phase4 = new DancingPhase4(this, this);
 
     phase1.setNextPhase(phase2);
     phase2.setNextPhase(phase3);
@@ -63,6 +64,11 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
     this.updateIncrementsBounds(flagsConfiguration.getSnowingLevel());
+  }
+
+  @Override
+  public Class<AttackDataDancing> getDataClass() {
+    return AttackDataDancing.class;
   }
 
   private void updateIncrementsBounds(int snowingLevel) {
@@ -126,17 +132,6 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   }
 
   @Override
-  public AttackDataDancing getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData(AttackDataDancing.class.getSimpleName());
-    if (data == null) {
-      data = new AttackDataDancing();
-      snowflake.setData(data.getClass().getSimpleName(), data);
-      this.beforeStart(List.of(snowflake));
-    }
-    return (AttackDataDancing) data;
-  }
-
-  @Override
   public FlagsConfiguration getFlagsConfiguration() {
     return flagsConfiguration;
   }
@@ -146,4 +141,9 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
     return screenBounds;
   }
 
+  @Override
+  public void afterEnd() {
+    super.afterEnd();
+    stopAudio("dancing.wav");
+  }
 }

@@ -27,6 +27,12 @@ public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole>
   }
 
   @Override
+  public void endPhase() {
+    getStrategy().stopAudio("blackhole.wav");
+    getStrategy().stopAudio("blackhole-3.wav");
+  }
+
+  @Override
   public Point2D computeLocation(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
     snowflake.setAlpha(((BlackHoleStrategy) getStrategy()).getAlpha());

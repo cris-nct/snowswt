@@ -256,7 +256,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   }
 
   @Override
-  public void changeAttackType() {
+  public void changeAttackType(int oldType, int newType) {
 
   }
 

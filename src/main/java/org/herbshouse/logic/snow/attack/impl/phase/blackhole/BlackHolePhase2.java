@@ -29,6 +29,11 @@ public class BlackHolePhase2 extends AbstractPhaseProcessor<AttackDataBlackHole>
   }
 
   @Override
+  public void endPhase() {
+
+  }
+
+  @Override
   public Point2D computeLocation(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
     snowflake.setAlpha(((BlackHoleStrategy) getStrategy()).getAlpha());

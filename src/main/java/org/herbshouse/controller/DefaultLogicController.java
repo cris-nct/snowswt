@@ -126,9 +126,10 @@ public class DefaultLogicController implements LogicController {
 
   @Override
   public void setAttackType(int type) {
+    final int oldType = flagsConfiguration.getAttackType();
     flagsConfiguration.setAttackType(type);
     if (flagsConfiguration.isAttack()) {
-      listeners.forEach(GeneratorListener::changeAttackType);
+      listeners.forEach(l -> l.changeAttackType(oldType, type));
     }
   }
 

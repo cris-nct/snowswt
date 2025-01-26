@@ -43,7 +43,7 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
   }
 
-  void changeAttackType();
+  void changeAttackType(int oldAttackType, int newAttackType);
 
   void setLogicController(DefaultLogicController logicController);
 

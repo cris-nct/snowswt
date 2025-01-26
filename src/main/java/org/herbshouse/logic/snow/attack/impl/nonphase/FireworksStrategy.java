@@ -2,6 +2,7 @@ package org.herbshouse.logic.snow.attack.impl.nonphase;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.snow.Snowflake;
@@ -14,7 +15,8 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackDataF
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
 
-  public FireworksStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
+  public FireworksStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds, AudioPlayer audioPlayer) {
+    super(audioPlayer);
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
   }

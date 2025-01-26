@@ -22,6 +22,11 @@ public class BlackHolePhase3 extends AbstractPhaseProcessor<AttackDataBlackHole>
   }
 
   @Override
+  public void endPhase() {
+
+  }
+
+  @Override
   public Point2D computeLocation(Snowflake snowflake) {
     double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), getStrategy().getData(snowflake).getLocationToFollow());
     return Utils.moveToDirection(snowflake.getLocation(), 1, directionToTarget);

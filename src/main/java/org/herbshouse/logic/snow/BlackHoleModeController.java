@@ -1,8 +1,6 @@
 package org.herbshouse.logic.snow;
 
 import java.util.List;
-import org.herbshouse.audio.AudioPlayOrder;
-import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
@@ -14,34 +12,6 @@ public class BlackHoleModeController {
 
   public BlackHoleModeController(SnowGenerator snowGenerator) {
     this.snowGenerator = snowGenerator;
-  }
-
-  public void playAudio1Background() {
-    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/blackhole.wav")) {
-      AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole.wav");
-      order.setType(AudioPlayType.BACKGROUND);
-      order.setVolume(0.9f);
-      snowGenerator.getLogicController().getAudioPlayer().play(order);
-    }
-  }
-
-  public void playAudio2Background() {
-    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/blackhole-2.wav")) {
-      AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole-2.wav");
-      order.setType(AudioPlayType.BACKGROUND);
-      order.setVolume(0.9f);
-      snowGenerator.getLogicController().getAudioPlayer().play(order);
-    }
-  }
-
-  public void playExplosion() {
-    stopBackgroundSounds();
-    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/explosion.wav")) {
-      AudioPlayOrder order = new AudioPlayOrder("sounds/explosion.wav");
-      order.setType(AudioPlayType.EFFECT);
-      order.setVolume(1f);
-      snowGenerator.getLogicController().getAudioPlayer().play(order);
-    }
   }
 
   public boolean shouldSwallowPoint(Point2D location) {
@@ -60,7 +30,8 @@ public class BlackHoleModeController {
         AttackStrategy<?> strategy = new BlackHoleStrategy(
             snowGenerator.getFlagsConfiguration(),
             snowGenerator.getScreenBounds(),
-            this
+            this,
+            snowGenerator.getLogicController().getAudioPlayer()
         );
         strategy.beforeStart(List.of(snowflake));
         snowflake.setIndividualStrategy(strategy);
@@ -84,6 +55,7 @@ public class BlackHoleModeController {
   private void stopBackgroundSounds() {
     snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole.wav");
     snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-2.wav");
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-3.wav");
   }
 
 }

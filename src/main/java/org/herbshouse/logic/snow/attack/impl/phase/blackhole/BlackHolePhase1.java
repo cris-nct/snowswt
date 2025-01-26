@@ -19,6 +19,13 @@ public class BlackHolePhase1 extends AbstractPhaseProcessor<AttackDataBlackHole>
     double angle = Utils.angleOfLine(getStrategy().getFlagsConfiguration().getMouseLoc(), snowflake.getLocation());
     Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), BlackHoleStrategy.BLACKHOLE_RADIUS, angle);
     attackData.setLocationToFollow(dest);
+    getStrategy().playAudio("blackhole.wav");
+    getStrategy().playAudio("blackhole-3.wav");
+  }
+
+  @Override
+  public void endPhase() {
+
   }
 
   @Override

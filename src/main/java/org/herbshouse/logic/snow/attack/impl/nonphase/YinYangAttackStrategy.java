@@ -3,6 +3,7 @@ package org.herbshouse.logic.snow.attack.impl.nonphase;
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
@@ -15,7 +16,8 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
 
   private final Rectangle screenBounds;
 
-  public YinYangAttackStrategy(Rectangle screenBounds) {
+  public YinYangAttackStrategy(Rectangle screenBounds, AudioPlayer audioPlayer) {
+    super(audioPlayer);
     this.screenBounds = screenBounds;
   }
 
@@ -54,11 +56,11 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
       newLoc = Utils.moveToDirection(middleScreen, radius, data.getAngle());
       data.setAngle(data.getAngle() + 0.03);
     } else {
-      int nrShapes = (int) (data.getAngle() / 50);
-      newLoc = Utils.moveToDirection(middleScreen,
-          radius + radius * Math.sin(nrShapes * data.getAngle()),
-          data.getAngle());
-      data.setAngle(data.getAngle() + 0.01);
+      int nrShapes = (int) (data.getAngle() / 30);
+      newLoc = Utils.moveToDirection(middleScreen, radius + radius * Math.sin(nrShapes * data.getAngle()), data.getAngle());
+      double step = Utils.linearInterpolation(data.getAngle(), 50, 0.01, 100, 0.005);
+      step = Math.max(step, 0.005);
+      data.setAngle(data.getAngle() + step);
     }
     return newLoc;
   }

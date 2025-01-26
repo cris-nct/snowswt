@@ -32,7 +32,12 @@ public class BlackHolePhase6 extends AbstractPhaseProcessor<AttackDataBlackHole>
     }
     snowflake.setAlpha(255);
     snowflake.setSpeed(0.5 + Math.random());
-    ((BlackHoleStrategy) getStrategy()).getBlackHoleController().playExplosion();
+    getStrategy().playAudio("explosion.wav");
+  }
+
+  @Override
+  public void endPhase() {
+    getStrategy().stopAudio("explosion.wav");
   }
 
   @Override

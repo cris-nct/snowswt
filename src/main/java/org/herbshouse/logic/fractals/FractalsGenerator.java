@@ -266,7 +266,7 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
   }
 
   @Override
-  public void changeAttackType() {
+  public void changeAttackType(int oldType, int newType) {
 
   }
 

@@ -367,10 +367,10 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.screenBounds = drawingSurface;
     this.blackHoleController = new BlackHoleModeController(this);
 
-    this.registerAttackLogic(new BigWormAttackStrategy(flagsConfiguration));
-    this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds));
-    this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds));
-    this.registerAttackLogic(new YinYangAttackStrategy(screenBounds));
+    this.registerAttackLogic(new BigWormAttackStrategy(flagsConfiguration, getLogicController().getAudioPlayer()));
+    this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer()));
+    this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer()));
+    this.registerAttackLogic(new YinYangAttackStrategy(screenBounds, getLogicController().getAudioPlayer()));
   }
 
   public Rectangle getScreenBounds() {
@@ -394,7 +394,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             snowflake.setLocation(mouseLocation);
             snowflake.setSize(7);
             snowflake.setColor(new RGB(255, 140, 0));
-            AttackStrategy<?> strategy = new FireworksStrategy(flagsConfiguration, screenBounds);
+            AttackStrategy<?> strategy = new FireworksStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
             strategy.beforeStart(List.of(snowflake));
             snowflake.setIndividualStrategy(strategy);
           }
@@ -445,9 +445,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   }
 
   @Override
-  public void changeAttackType() {
+  public void changeAttackType(int oldType, int newType) {
     try {
       if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+        AttackStrategy<?> strategy = attackStrategies.get(oldType);
+        if (strategy != null) {
+          strategy.afterEnd();
+        }
         this.cleanupSnowflakesData();
         this.getAttackStrategy().beforeStart(snowflakes);
       }
@@ -476,9 +480,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
           }
           AttackStrategy<?> strategy = null;
           switch (((int) (Math.random() * 3))) {
-            case 0 -> strategy = new BigWormAttackStrategy(flagsConfiguration);
-            case 1 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds);
-            case 2 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds);
+            case 0 -> strategy = new BigWormAttackStrategy(flagsConfiguration, getLogicController().getAudioPlayer());
+            case 1 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
+            case 2 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
           }
           if (strategy != null) {
             snowflake.setIndividualStrategy(strategy);

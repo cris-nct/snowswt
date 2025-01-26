@@ -27,6 +27,10 @@ public interface AttackStrategy<T extends AbstractAttackData> {
 
   Rectangle getScreenBounds();
 
+  void playAudio(String filename);
+
+  void stopAudio(String filename);
+
   void afterEnd();
 
   void shutdown();

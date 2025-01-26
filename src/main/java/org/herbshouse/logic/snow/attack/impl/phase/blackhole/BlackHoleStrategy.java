@@ -3,12 +3,12 @@ package org.herbshouse.logic.snow.attack.impl.phase.blackhole;
 import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.BlackHoleModeController;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
-import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBlackHole> {
 
@@ -25,8 +25,10 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   public BlackHoleStrategy(
       FlagsConfiguration flagsConfiguration,
       Rectangle screenBounds,
-      BlackHoleModeController blackHoleController
+      BlackHoleModeController blackHoleController,
+      AudioPlayer audioPlayer
   ) {
+    super(audioPlayer);
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
     this.blackHoleController = blackHoleController;
@@ -58,22 +60,15 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   }
 
   @Override
-  public AttackDataBlackHole getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData("ATTACKDATABLACKHOLE");
-    if (data == null) {
-      data = new AttackDataBlackHole();
-      snowflake.setData("ATTACKDATABLACKHOLE", data);
-      this.beforeStart(List.of(snowflake));
-    }
-    return (AttackDataBlackHole) data;
-  }
-
-  @Override
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
     alpha = 255;
     alphaDirection = -1;
-    blackHoleController.playAudio1Background();
+  }
+
+  @Override
+  public Class<AttackDataBlackHole> getDataClass() {
+    return AttackDataBlackHole.class;
   }
 
   @Override

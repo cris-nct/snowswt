@@ -2,26 +2,27 @@ package org.herbshouse.logic.snow.attack.impl.phase.parasites;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataParasites;
-import org.herbshouse.logic.snow.data.SnowflakeData;
 
 public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackDataParasites> {
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
 
-  public ParasitesAttackStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
+  public ParasitesAttackStrategy(FlagsConfiguration flagsConfiguration, Rectangle screenBounds, AudioPlayer audioPlayer) {
+    super(audioPlayer);
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
 
-    A3Phase1 phase1 = new A3Phase1(this);
-    A3Phase2 phase2 = new A3Phase2(this);
-    A3Phase3 phase3 = new A3Phase3(this);
-    A3Phase4 phase4 = new A3Phase4(this);
-    A3Phase5 phase5 = new A3Phase5(this);
+    ParasitesPhase1 phase1 = new ParasitesPhase1(this);
+    ParasitesPhase2 phase2 = new ParasitesPhase2(this);
+    ParasitesPhase3 phase3 = new ParasitesPhase3(this);
+    ParasitesPhase4 phase4 = new ParasitesPhase4(this);
+    ParasitesPhase5 phase5 = new ParasitesPhase5(this);
 
     phase1.setNextPhase(phase2);
     phase2.setNextPhase(phase3);
@@ -52,19 +53,13 @@ public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackD
   }
 
   @Override
-  public int getAttackType() {
-    return 3;
+  public Class<AttackDataParasites> getDataClass() {
+    return AttackDataParasites.class;
   }
 
   @Override
-  public AttackDataParasites getData(Snowflake snowflake) {
-    SnowflakeData data = snowflake.getData(AttackDataParasites.class.getSimpleName());
-    if (data == null) {
-      data = new AttackDataParasites();
-      snowflake.setData(data.getClass().getSimpleName(), data);
-      this.beforeStart(List.of(snowflake));
-    }
-    return (AttackDataParasites) data;
+  public int getAttackType() {
+    return 3;
   }
 
   @Override

@@ -1,6 +1,9 @@
 package org.herbshouse.logic.snow.attack.impl;
 
 import java.util.List;
+import org.herbshouse.audio.AudioPlayOrder;
+import org.herbshouse.audio.AudioPlayType;
+import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.data.AbstractAttackData;
@@ -9,6 +12,29 @@ public abstract class AbstractNoPhaseAttackStrategy<T extends AbstractAttackData
     AttackStrategy<T> {
 
   private boolean started = false;
+
+  private final AudioPlayer audioPlayer;
+
+  public AbstractNoPhaseAttackStrategy(AudioPlayer audioPlayer) {
+    this.audioPlayer = audioPlayer;
+  }
+
+  public void playAudio(String filename) {
+    this.playAudio(filename, AudioPlayType.BACKGROUND, 0.9f);
+  }
+
+  public void playAudio(String filename, AudioPlayType type, float volume) {
+    if (!audioPlayer.isPlaying("sounds/" + filename)) {
+      AudioPlayOrder order = new AudioPlayOrder("sounds/" + filename);
+      order.setType(type);
+      order.setVolume(volume);
+      audioPlayer.play(order);
+    }
+  }
+
+  public void stopAudio(String filename) {
+    audioPlayer.stop("sounds/" + filename);
+  }
 
   @Override
   public void beforeStart(List<Snowflake> snowflakeList) {

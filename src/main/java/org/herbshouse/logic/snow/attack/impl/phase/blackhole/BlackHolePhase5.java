@@ -26,7 +26,12 @@ public class BlackHolePhase5 extends AbstractPhaseProcessor<AttackDataBlackHole>
     snowflake.setColor(new RGB(201, 71, 0));
     snowflake.setSize(snowflake.getSize() / 2);
     snowflake.getSnowTail().setTailLength(100);
-    ((BlackHoleStrategy) getStrategy()).getBlackHoleController().playAudio2Background();
+    getStrategy().playAudio("blackhole-2.wav");
+  }
+
+  @Override
+  public void endPhase() {
+    getStrategy().stopAudio("blackhole-2.wav");
   }
 
   @Override
