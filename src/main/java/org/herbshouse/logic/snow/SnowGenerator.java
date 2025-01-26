@@ -459,9 +459,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   @Override
   public void switchBlackHoles() {
-    if (flagsConfiguration.isBlackHoles()) {
-      this.blackHoleController.start();
-    } else {
+    if (!flagsConfiguration.isBlackHoles()) {
       this.blackHoleController.stop();
     }
   }

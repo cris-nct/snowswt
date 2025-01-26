@@ -18,20 +18,18 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
-  private final BlackHoleModeController blackHoleModeController;
+  private final BlackHoleModeController blackHoleController;
   private double alpha = 255;
   private int alphaDirection = -1;
-  private boolean playedAudioExplosion;
-  private boolean playedSecondAudio;
 
   public BlackHoleStrategy(
       FlagsConfiguration flagsConfiguration,
       Rectangle screenBounds,
-      BlackHoleModeController blackHoleModeController
+      BlackHoleModeController blackHoleController
   ) {
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
-    this.blackHoleModeController = blackHoleModeController;
+    this.blackHoleController = blackHoleController;
 
     BlackHolePhase1 phase1 = new BlackHolePhase1(this);
     BlackHolePhase2 phase2 = new BlackHolePhase2(this);
@@ -75,10 +73,7 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     super.beforeStart(snowflakeList);
     alpha = 255;
     alphaDirection = -1;
-    playedAudioExplosion = false;
-    if (flagsConfiguration.isAttack() && flagsConfiguration.getAttackType() == 5) {
-      blackHoleModeController.start();
-    }
+    blackHoleController.playAudio1Background();
   }
 
   @Override
@@ -110,26 +105,21 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
         }
       }
 
-      if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 5 && !playedSecondAudio) {
-        blackHoleModeController.playAudio2Background();
-        playedSecondAudio = true;
-      }
-
-      if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6 && !playedAudioExplosion) {
-        blackHoleModeController.playExplosion();
-        playedAudioExplosion = true;
-      }
     }
   }
 
   @Override
   public void afterEnd() {
     super.afterEnd();
-    blackHoleModeController.stop();
+    blackHoleController.stop();
   }
 
   public int getAlpha() {
     return (int) alpha;
+  }
+
+  public BlackHoleModeController getBlackHoleController() {
+    return blackHoleController;
   }
 
   @Override

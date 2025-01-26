@@ -16,36 +16,22 @@ public class BlackHoleModeController {
     this.snowGenerator = snowGenerator;
   }
 
-  public void start() {
-    AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole.wav");
-    order.setType(AudioPlayType.BACKGROUND);
-    order.setVolume(0.9f);
-    snowGenerator.getLogicController().getAudioPlayer().play(order);
-  }
-
-  public void playAudio2Background() {
-    AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole-2.wav");
-    order.setType(AudioPlayType.BACKGROUND);
-    order.setVolume(0.9f);
-    snowGenerator.getLogicController().getAudioPlayer().play(order);
-  }
-
-  public void stop() {
-    stopBackgroundSounds();
-    for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
-      if (snowflake.getIndividualStrategy() != null) {
-        snowflake.getIndividualStrategy().shutdown();
-        snowflake.setIndividualStrategy(null);
-        snowflake.setShowTrail(false);
-        snowflake.setAlpha(255);
-        snowflake.setSize(5);
-      }
+  public void playAudio1Background() {
+    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/blackhole.wav")) {
+      AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole.wav");
+      order.setType(AudioPlayType.BACKGROUND);
+      order.setVolume(0.9f);
+      snowGenerator.getLogicController().getAudioPlayer().play(order);
     }
   }
 
-  private void stopBackgroundSounds() {
-    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole.wav");
-    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-2.wav");
+  public void playAudio2Background() {
+    if (!snowGenerator.getLogicController().getAudioPlayer().isPlaying("sounds/blackhole-2.wav")) {
+      AudioPlayOrder order = new AudioPlayOrder("sounds/blackhole-2.wav");
+      order.setType(AudioPlayType.BACKGROUND);
+      order.setVolume(0.9f);
+      snowGenerator.getLogicController().getAudioPlayer().play(order);
+    }
   }
 
   public void playExplosion() {
@@ -82,5 +68,22 @@ public class BlackHoleModeController {
     }
   }
 
+  public void stop() {
+    stopBackgroundSounds();
+    for (Snowflake snowflake : snowGenerator.getSnowflakes()) {
+      if (snowflake.getIndividualStrategy() != null) {
+        snowflake.getIndividualStrategy().shutdown();
+        snowflake.setIndividualStrategy(null);
+        snowflake.setShowTrail(false);
+        snowflake.setAlpha(255);
+        snowflake.setSize(5);
+      }
+    }
+  }
+
+  private void stopBackgroundSounds() {
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole.wav");
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-2.wav");
+  }
 
 }

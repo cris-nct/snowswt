@@ -32,6 +32,7 @@ public class BlackHolePhase6 extends AbstractPhaseProcessor<AttackDataBlackHole>
     }
     snowflake.setAlpha(255);
     snowflake.setSpeed(0.5 + Math.random());
+    ((BlackHoleStrategy) getStrategy()).getBlackHoleController().playExplosion();
   }
 
   @Override
@@ -47,11 +48,7 @@ public class BlackHolePhase6 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    if (snowflake.getIndividualStrategy() == null) {
-      return super.isFinished(snowflake);
-    } else {
-      return (System.currentTimeMillis() - startTime) > 20000;
-    }
+    return (System.currentTimeMillis() - startTime) > 20000;
   }
 
 }
