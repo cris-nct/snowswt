@@ -77,7 +77,7 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
 
   @Override
   protected int getSleepDuration() {
-    return 500;
+    return config.isNormalWind() ? 0 : 500;
   }
 
   @Override
@@ -131,7 +131,7 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
     if (counterWind > 1 || counterWind < 0) {
       counterWindDir *= -1;
     }
-    counterWind += 0.1 * counterWindDir;
+    counterWind += 0.0002 * counterWindDir;
 
     switch (type) {
       case PERFECT_DEFAULT:
