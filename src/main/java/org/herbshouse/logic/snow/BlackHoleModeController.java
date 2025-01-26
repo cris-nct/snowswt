@@ -74,8 +74,7 @@ public class BlackHoleModeController {
         AttackStrategy<?> strategy = new BlackHoleStrategy(
             snowGenerator.getFlagsConfiguration(),
             snowGenerator.getScreenBounds(),
-            this,
-            true
+            this
         );
         strategy.beforeStart(List.of(snowflake));
         snowflake.setIndividualStrategy(strategy);

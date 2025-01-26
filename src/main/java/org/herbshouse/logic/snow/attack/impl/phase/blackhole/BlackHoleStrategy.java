@@ -19,7 +19,6 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
   private final BlackHoleModeController blackHoleModeController;
-  private final boolean individualStrategy;
   private double alpha = 255;
   private int alphaDirection = -1;
   private boolean playedAudioExplosion;
@@ -28,12 +27,10 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
   public BlackHoleStrategy(
       FlagsConfiguration flagsConfiguration,
       Rectangle screenBounds,
-      BlackHoleModeController blackHoleModeController,
-      boolean individualStrategy
+      BlackHoleModeController blackHoleModeController
   ) {
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
-    this.individualStrategy = individualStrategy;
     this.blackHoleModeController = blackHoleModeController;
 
     BlackHolePhase1 phase1 = new BlackHolePhase1(this);
@@ -48,9 +45,6 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     phase3.setNextPhase(phase4);
     phase4.setNextPhase(phase5);
     phase5.setNextPhase(phase6);
-    if (individualStrategy) {
-      phase6.setNextPhase(phase6);
-    }
 
     this.addPhases(phase1, phase2, phase3, phase4, phase5, phase6);
   }

@@ -6,6 +6,7 @@ public interface AudioPlayer {
 
   void stop(String filename);
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   boolean isPlaying(String filename);
 
   void shutdown();

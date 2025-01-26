@@ -311,7 +311,6 @@ public class SnowShell extends Shell implements
       case '2':
       case '3':
       case '4':
-      case '5':
         controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
         break;
       case 'H':

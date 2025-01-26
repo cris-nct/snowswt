@@ -26,7 +26,6 @@ import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.nonphase.BigWormAttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.nonphase.FireworksStrategy;
 import org.herbshouse.logic.snow.attack.impl.nonphase.YinYangAttackStrategy;
-import org.herbshouse.logic.snow.attack.impl.phase.blackhole.BlackHoleStrategy;
 import org.herbshouse.logic.snow.attack.impl.phase.dancing.DancingSnowflakesStrategy;
 import org.herbshouse.logic.snow.attack.impl.phase.parasites.ParasitesAttackStrategy;
 import org.herbshouse.logic.snow.data.AbstractAttackData;
@@ -119,9 +118,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       }
 
       if (!snowflakes.isEmpty()) {
+        AttackStrategy<?> strategy = getAttackStrategy();
         if (flagsConfiguration.isAttack()) {
-          AttackStrategy<?> strategy = this.getAttackStrategy();
-          if (strategy.isStarted()) {
+          if (strategy.isStarted() && !strategy.isFinished()) {
             strategy.afterUpdate(snowflakes);
             AbstractAttackData data = strategy.getData(snowflakes.getFirst());
             int phase = 0;
@@ -165,9 +164,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
           snowflake.getIndividualStrategy().computeNextLocation(snowflake, prevSnowFlake));
     } else if (attackMode) {
       snowflake.setLocation(attackStrategy.computeNextLocation(snowflake, prevSnowFlake));
-      if (attackStrategy.isFinished()) {
-        getLogicController().switchAttack();
-      }
     } else if (flagsConfiguration.isHappyWind()) {
       this.moveSnowflakeHappyWind(snowflake);
     } else if (flagsConfiguration.isNormalWind()) {
@@ -375,7 +371,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.registerAttackLogic(new DancingSnowflakesStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new ParasitesAttackStrategy(flagsConfiguration, screenBounds));
     this.registerAttackLogic(new YinYangAttackStrategy(screenBounds));
-    this.registerAttackLogic(new BlackHoleStrategy(flagsConfiguration, screenBounds, blackHoleController, false));
   }
 
   public Rectangle getScreenBounds() {
@@ -482,11 +477,10 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             continue;
           }
           AttackStrategy<?> strategy = null;
-          switch (((int) (Math.random() * 4))) {
+          switch (((int) (Math.random() * 3))) {
             case 0 -> strategy = new BigWormAttackStrategy(flagsConfiguration);
-            case 1 -> strategy = new BlackHoleStrategy(flagsConfiguration, screenBounds, blackHoleController, true);
-            case 2 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds);
-            case 3 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds);
+            case 1 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds);
+            case 2 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds);
           }
           if (strategy != null) {
             snowflake.setIndividualStrategy(strategy);

@@ -32,7 +32,7 @@ class LegendDrawer {
     this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
     this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
     this.addTextToLegend(legendBuilder, "Snowflakes tail(T)", config.isObjectsTail());
-    this.addTextToLegend(legendBuilder, "Attack mode (A & 1..5)", config.isAttack());
+    this.addTextToLegend(legendBuilder, "Attack mode (A & 1..4)", config.isAttack());
     if (config.isAttack()) {
       this.addTextToLegend(legendBuilder, "Attack type", config.getAttackType());
       this.addTextToLegend(legendBuilder, "Attack phase", currentAttackPhase);
