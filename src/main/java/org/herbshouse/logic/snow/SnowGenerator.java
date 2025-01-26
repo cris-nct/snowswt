@@ -120,7 +120,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       if (!snowflakes.isEmpty()) {
         AttackStrategy<?> strategy = getAttackStrategy();
         if (flagsConfiguration.isAttack()) {
-          if (strategy.isStarted() && !strategy.isFinished()) {
+          if (strategy.isStarted()) {
             strategy.afterUpdate(snowflakes);
             AbstractAttackData data = strategy.getData(snowflakes.getFirst());
             int phase = 0;
@@ -159,7 +159,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     boolean attackMode = flagsConfiguration.isAttack() && attackStrategy.isStarted()
         && index < attackStrategy.getMaxSnowflakesInvolved();
 
-    if (snowflake.getIndividualStrategy() != null) {
+    if (snowflake.getIndividualStrategy() != null && snowflake.getIndividualStrategy().isStarted()) {
       snowflake.setLocation(
           snowflake.getIndividualStrategy().computeNextLocation(snowflake, prevSnowFlake));
     } else if (attackMode) {
