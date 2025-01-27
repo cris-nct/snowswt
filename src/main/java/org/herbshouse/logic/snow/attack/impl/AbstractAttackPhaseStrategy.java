@@ -17,16 +17,11 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     AttackStrategy<T> {
 
   private final List<PhaseProcessor<T>> phases = new ArrayList<>();
-
-  private PhaseProcessor<T> currentPhaseProcessor;
-
-  private volatile boolean allArrivedToDestination;
-
-  private boolean started = false;
-
-  private boolean finished = false;
-
   private final AudioPlayer audioPlayer;
+  private PhaseProcessor<T> currentPhaseProcessor;
+  private volatile boolean allArrivedToDestination;
+  private boolean started = false;
+  private boolean finished = false;
 
   public AbstractAttackPhaseStrategy(AudioPlayer audioPlayer) {
     this.audioPlayer = audioPlayer;

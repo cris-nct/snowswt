@@ -32,17 +32,13 @@ public class ParasitesPhase5 extends AbstractPhaseProcessor<AttackDataParasites>
   @Override
   public Point2D computeLocation(Snowflake snowflake) {
     AttackDataParasites attackData3 = getStrategy().getData(snowflake);
-    double distToTarget = Utils.distance(snowflake.getLocation(),
-        attackData3.getLocationToFollow());
-    double directionToTarget = Utils.angleOfLine(snowflake.getLocation(),
-        attackData3.getLocationToFollow());
-    Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), attackData3.getSpeedPhase1(),
-        directionToTarget);
+    double distToTarget = Utils.distance(snowflake.getLocation(), attackData3.getLocationToFollow());
+    double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), attackData3.getLocationToFollow());
+    Point2D newLoc = Utils.moveToDirection(snowflake.getLocation(), attackData3.getSpeedPhase1(), directionToTarget);
     double func = Math.sin(distToTarget * 0.030) + 1 / distToTarget;
     if (attackData3.getCounter() % 1000 == 0) {
       attackData3.setLocationToFollow(
-          new Point2D(getStrategy().getScreenBounds().width * Math.random(),
-              getStrategy().getScreenBounds().height * Math.random()));
+          new Point2D(getStrategy().getScreenBounds().width * Math.random(), getStrategy().getScreenBounds().height * Math.random()));
     }
     if (attackData3.getCounter() > 10000) {
       attackData3.setLocationToFollow(getStrategy().getFlagsConfiguration().getMouseLoc());

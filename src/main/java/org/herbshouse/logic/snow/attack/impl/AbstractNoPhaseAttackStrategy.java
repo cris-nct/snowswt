@@ -11,9 +11,8 @@ import org.herbshouse.logic.snow.data.AbstractAttackData;
 public abstract class AbstractNoPhaseAttackStrategy<T extends AbstractAttackData> implements
     AttackStrategy<T> {
 
-  private boolean started = false;
-
   private final AudioPlayer audioPlayer;
+  private boolean started = false;
 
   public AbstractNoPhaseAttackStrategy(AudioPlayer audioPlayer) {
     this.audioPlayer = audioPlayer;
