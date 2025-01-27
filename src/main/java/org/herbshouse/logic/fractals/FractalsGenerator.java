@@ -4,24 +4,36 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.gui.GuiUtils;
+import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractGenerator;
+import org.herbshouse.logic.GraphicalImageGenerator;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
+import org.herbshouse.logic.fractals.visitor.TreeBranchesVisitor;
+import org.herbshouse.logic.fractals.visitor.TreeVisitorData;
 
-public class FractalsGenerator extends AbstractGenerator<Tree> {
+public class FractalsGenerator extends AbstractGenerator<Tree> implements GraphicalImageGenerator {
 
   public static final double IMPERFECTTION_FACTOR = 0.07;
   private final Map<TreeType, Tree> trees = new HashMap<>();
-
+  private final TreeBranchesVisitor treeBranchesVisitor = new TreeBranchesVisitor();
   private FlagsConfiguration config;
   private Rectangle screenBounds;
   private boolean shutdown = false;
-  private boolean forceRedraw = false;
   private double counterWind = 0;
   private int counterWindDir = 1;
+  private Image image;
 
   @Override
   public void run() {
@@ -30,34 +42,76 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
     }
     while (!shutdown) {
       if (config.isFractals()) {
-        boolean animate = config.isNormalWind() && (config.getFractalsType() == TreeType.PERFECT_DEFAULT
-            || config.getFractalsType() == TreeType.PERFECT_FIR);
-        if (animate) {
+        if (this.isBendingTree()) {
           trees.put(config.getFractalsType(), generateTree(config.getFractalsType()));
-          forceRedraw = true;
-          Utils.sleep(getSleepDuration());
         } else {
-          Utils.sleep(getSleepDurationDoingNothing());
+          Tree tree = trees.get(config.getFractalsType());
+          if (!treeBranchesVisitor.isVisiting(tree)) {
+            treeBranchesVisitor.startVisiting(tree);
+          }
         }
+        this.createImage();
+        Utils.sleep(getSleepDuration());
       } else {
         Utils.sleep(getSleepDurationDoingNothing());
       }
+    }
+    if (image != null && !image.isDisposed()) {
+      image.dispose();
+    }
+    treeBranchesVisitor.shutdown();
+  }
+
+  private boolean isBendingTree() {
+    return config.isNormalWind()
+        && (config.getFractalsType() == TreeType.PERFECT_DEFAULT || config.getFractalsType() == TreeType.PERFECT_FIR);
+  }
+
+  public void createImage() {
+    if (image != null && !image.isDisposed()) {
+      image.dispose();
+    }
+    Display display = new Display();
+    PaletteData palette = new PaletteData(0xFF0000, 0x00FF00, 0x0000FF);
+    ImageData imageData = new ImageData(screenBounds.width, screenBounds.height, 8, palette);
+    Image imageNew = new Image(display, imageData);
+    GC newGC = new GC(imageNew);
+    newGC.setAdvanced(true);
+    newGC.setAntialias(SWT.ON);
+    newGC.setLineCap(SWT.CAP_ROUND);
+    for (Tree tree : getMoveableObjects()) {
+      TreeVisitorData visitorData = (TreeVisitorData) tree.getData("TreeFillData");
+      this.draw(newGC, tree, visitorData);
+    }
+    newGC.dispose();
+    display.dispose();
+    image = imageNew;
+  }
+
+  @Override
+  public Image getImage() {
+    return config.isFractals() ? image : null;
+  }
+
+  private void draw(GC gc, ITree tree, TreeVisitorData visitorData) {
+    Color foregroundColor = SWTResourceManager.getColor(new RGB(255, 255, 255));
+    if (visitorData != null && !isBendingTree()) {
+      if (visitorData.isVisitedBranch(tree)) {
+        foregroundColor = SWTResourceManager.getColor(new RGB(0, 255, 0));
+      } else {
+        return;
+      }
+    }
+    gc.setForeground(foregroundColor);
+    GuiUtils.drawLine(gc, tree.getStart(), tree.getEnd(), tree.getThickness());
+    for (TreeBranch branch : tree.getBranches()) {
+      draw(gc, branch, visitorData);
     }
   }
 
   @Override
   protected int getSleepDurationDoingNothing() {
     return 5000;
-  }
-
-  @Override
-  public boolean isForceRedraw() {
-    return forceRedraw;
-  }
-
-  @Override
-  public void setForceRedraw(boolean forceRedraw) {
-    this.forceRedraw = forceRedraw;
   }
 
   @Override
@@ -77,7 +131,7 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
 
   @Override
   protected int getSleepDuration() {
-    return config.isNormalWind() ? 0 : 500;
+    return 10;
   }
 
   @Override
@@ -128,10 +182,10 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
     tree.setThickness(20);
     tree.setAngle(Math.PI / 2);
 
-    if (counterWind > 1 || counterWind < 0) {
+    if (counterWind > 0.9 || counterWind < 0) {
       counterWindDir *= -1;
     }
-    counterWind += 0.0002 * counterWindDir;
+    counterWind += 0.01 * counterWindDir;
 
     switch (type) {
       case PERFECT_DEFAULT:
@@ -153,7 +207,6 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
   @Override
   public void changedFractalType() {
     trees.put(config.getFractalsType(), generateTree(config.getFractalsType()));
-    forceRedraw = true;
     counterWind = 0;
   }
 
@@ -190,6 +243,7 @@ public class FractalsGenerator extends AbstractGenerator<Tree> {
     return IMPERFECTTION_FACTOR * (2 * Math.random() - 1);
   }
 
+  @SuppressWarnings("SameParameterValue")
   private TreeBranch generateBranch(TreeBranch mainBranch, double locOnMainBranch, double angle, boolean perfect) {
     TreeBranch branch = new TreeBranch();
     double mainBranchLength = mainBranch.getLength();

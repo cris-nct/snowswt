@@ -152,8 +152,17 @@ public class Utils {
     }
   }
 
+  public static void sleep(int millis, int nanos) {
+    try {
+      Thread.sleep(millis, nanos);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt(); // restore interrupted status
+    }
+  }
+
   public static boolean isColliding(AbstractMovableObject obj1, AbstractMovableObject obj2) {
     double sumSize = (obj1.getSize() + obj2.getSize()) / 2.0 + 2;
     return distance(obj1.getLocation(), obj2.getLocation()) < sumSize;
   }
+
 }

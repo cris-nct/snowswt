@@ -168,7 +168,6 @@ public final class GuiUtils {
   public static void drawLine(GC gc, Point2D start, Point2D end, double thickness) {
     Point startScreenLoc = toScreenCoord(start);
     Point endScreenLoc = toScreenCoord(end);
-    gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     gc.setLineWidth((int) thickness);
     gc.drawLine(startScreenLoc.x, startScreenLoc.y, endScreenLoc.x, endScreenLoc.y);
     gc.setLineWidth(1);

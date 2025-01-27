@@ -43,13 +43,4 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
     viewController.resetScreenSurface();
   }
 
-  @Override
-  public boolean isForceRedraw() {
-    return true;
-  }
-
-  @Override
-  public void setForceRedraw(boolean redraw) {
-
-  }
 }

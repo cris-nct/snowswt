@@ -10,7 +10,7 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
-import org.herbshouse.logic.fractals.Tree;
+import org.herbshouse.logic.GraphicalImageGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
 public class SwtImageBuilder implements AutoCloseable {
@@ -23,7 +23,6 @@ public class SwtImageBuilder implements AutoCloseable {
   private final TextDrawer textDrawer;
   private final CountdownDrawer countdownDrawer;
   private final SnowflakesDrawer snowflakesDrawer;
-  private final FractalsDrawer fractalsDrawer;
   private final EnemyDrawer enemyDrawer;
   private final LogoDrawer logoDrawer;
   private final MinimapDrawer minimapDrawer;
@@ -38,7 +37,6 @@ public class SwtImageBuilder implements AutoCloseable {
     this.countdownDrawer = new CountdownDrawer();
     this.snowflakesDrawer = new SnowflakesDrawer(controller);
     this.enemyDrawer = new EnemyDrawer();
-    this.fractalsDrawer = new FractalsDrawer(controller);
     this.logoDrawer = new LogoDrawer();
     this.minimapDrawer = new MinimapDrawer();
   }
@@ -93,8 +91,10 @@ public class SwtImageBuilder implements AutoCloseable {
     snowflakesDrawer.draw(gcImage, generatorListener);
   }
 
-  public void drawFractals(GeneratorListener<Tree> generatorListener) {
-    fractalsDrawer.draw(gcImage, generatorListener);
+  public void drawImage(GraphicalImageGenerator generatorListener) {
+    if (generatorListener.getImage() != null && !generatorListener.getImage().isDisposed()) {
+      gcImage.drawImage(generatorListener.getImage(), 0, 0);
+    }
   }
 
   public void drawLogo() {
@@ -118,6 +118,6 @@ public class SwtImageBuilder implements AutoCloseable {
   }
 
   public void shutdown() {
-    fractalsDrawer.dispose();
+
   }
 }

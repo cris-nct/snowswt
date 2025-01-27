@@ -47,10 +47,6 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
 
   void setLogicController(DefaultLogicController logicController);
 
-  boolean isForceRedraw();
-
-  void setForceRedraw(boolean redraw);
-
   void switchBlackHoles();
 
   void switchIndividualMovements();

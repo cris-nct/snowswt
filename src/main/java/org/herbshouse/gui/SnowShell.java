@@ -34,9 +34,8 @@ import org.herbshouse.controller.ViewController;
 import org.herbshouse.gui.imageBuilder.SwtImageBuilder;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
+import org.herbshouse.logic.GraphicalImageGenerator;
 import org.herbshouse.logic.enemies.EnemyGenerator;
-import org.herbshouse.logic.fractals.FractalsGenerator;
-import org.herbshouse.logic.fractals.Tree;
 import org.herbshouse.logic.fractals.TreeType;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
@@ -190,9 +189,8 @@ public class SnowShell extends Shell implements
         } else if (listener instanceof EnemyGenerator) {
           //noinspection unchecked
           imageBuilder.drawEnemies((GeneratorListener<AbstractMovableObject>) listener);
-        } else if (listener instanceof FractalsGenerator) {
-          //noinspection unchecked
-          imageBuilder.drawFractals((GeneratorListener<Tree>) listener);
+        } else if (listener instanceof GraphicalImageGenerator) {
+          imageBuilder.drawImage((GraphicalImageGenerator) listener);
         }
       }
 
