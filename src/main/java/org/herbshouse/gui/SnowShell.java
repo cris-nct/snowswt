@@ -30,7 +30,13 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.herbshouse.SnowingApplication;
-import org.herbshouse.controller.LogicController;
+import org.herbshouse.controller.BlackholeController;
+import org.herbshouse.controller.FractalsController;
+import org.herbshouse.controller.MainController;
+import org.herbshouse.controller.MouseController;
+import org.herbshouse.controller.RedfacesController;
+import org.herbshouse.controller.SnowflakesController;
+import org.herbshouse.controller.SoundsController;
 import org.herbshouse.controller.ViewController;
 import org.herbshouse.gui.imageBuilder.SwtImageBuilder;
 import org.herbshouse.logic.AbstractMovableObject;
@@ -60,7 +66,7 @@ public class SnowShell extends Shell implements
 
   private RenderingEngine renderingEngine;
   private SwtImageBuilder swtImageBuilder;
-  private LogicController controller;
+  private MainController controller;
   private Region shellRegion;
   private Browser browser;
   private int videosIndex;
@@ -97,7 +103,7 @@ public class SnowShell extends Shell implements
     });
   }
 
-  public void setController(LogicController controller) {
+  public void setController(MainController controller) {
     this.controller = controller;
     this.swtImageBuilder = new SwtImageBuilder(controller, transform);
     this.renderingEngine = new RenderingEngine(canvas, controller.getDesiredFps());
@@ -200,7 +206,11 @@ public class SnowShell extends Shell implements
 
       imageBuilder.drawText();
       if (controller.canStart()) {
-        imageBuilder.drawLegend(this.renderingEngine.getRealFPS(), controller.getCurrentAttackPhase());
+        int attackPhase = 0;
+        if (controller instanceof SnowflakesController snowflakesController) {
+          attackPhase = snowflakesController.getCurrentAttackPhase();
+        }
+        imageBuilder.drawLegend(this.renderingEngine.getRealFPS(), attackPhase);
       }
       imageBuilder.drawLogo();
       imageBuilder.drawMinimap();
@@ -234,8 +244,8 @@ public class SnowShell extends Shell implements
 
   @Override
   public void mouseDown(MouseEvent e) {
-    if (controller.canStart()) {
-      controller.mouseDown(e.button, e.x, e.y);
+    if (controller.canStart() && controller instanceof MouseController mouseController) {
+      mouseController.mouseDown(e.button, e.x, e.y);
     }
   }
 
@@ -246,15 +256,15 @@ public class SnowShell extends Shell implements
 
   @Override
   public void mouseMove(MouseEvent e) {
-    if (controller.canStart()) {
-      controller.mouseMove(e.x, e.y);
+    if (controller.canStart() && controller instanceof MouseController mouseController) {
+      mouseController.mouseMove(e.x, e.y);
     }
   }
 
   @Override
   public void mouseScrolled(MouseEvent e) {
-    if (controller.canStart()) {
-      controller.mouseScrolled(e.count);
+    if (controller.canStart() && controller instanceof MouseController mouseController) {
+      mouseController.mouseScrolled(e.count);
     }
   }
 
@@ -263,19 +273,25 @@ public class SnowShell extends Shell implements
     if (!controller.canStart()) {
       return;
     }
-    switch (e.keyCode) {
-      case SWT.F1 -> controller.setFractalsType(TreeType.PERFECT_DEFAULT);
-      case SWT.F2 -> controller.setFractalsType(TreeType.PERFECT_FIR);
-      case SWT.F3 -> controller.setFractalsType(TreeType.RANDOM_DEFAULT);
-      case SWT.F4 -> controller.setFractalsType(TreeType.RANDOM_FIR);
+    if (controller instanceof FractalsController fractalsController) {
+      switch (e.keyCode) {
+        case SWT.F1 -> fractalsController.setFractalsType(TreeType.PERFECT_DEFAULT);
+        case SWT.F2 -> fractalsController.setFractalsType(TreeType.PERFECT_FIR);
+        case SWT.F3 -> fractalsController.setFractalsType(TreeType.RANDOM_DEFAULT);
+        case SWT.F4 -> fractalsController.setFractalsType(TreeType.RANDOM_FIR);
+      }
     }
     switch (e.character) {
       case ' ':
-        controller.switchNormalWind();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchNormalWind();
+        }
         break;
       case 'X':
       case 'x':
-        controller.switchHappyWind();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchHappyWind();
+        }
         break;
       case 'L':
       case 'l':
@@ -291,55 +307,79 @@ public class SnowShell extends Shell implements
         break;
       case 'B':
       case 'b':
-        controller.switchBigBalls();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchBigBalls();
+        }
         break;
       case 'D':
       case 'd':
-        controller.switchDebug();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchDebug();
+        }
         break;
       case 'T':
       case 't':
-        controller.switchObjectsTail();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchObjectsTail();
+        }
         break;
       case 'A':
       case 'a':
-        controller.switchAttack();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchAttack();
+        }
         break;
       case '1':
       case '2':
       case '3':
       case '4':
-        controller.setAttackType(Integer.parseInt(String.valueOf(e.character)));
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.setAttackType(Integer.parseInt(String.valueOf(e.character)));
+        }
         break;
       case 'H':
       case 'h':
-        controller.switchBlackHoles();
+        if (controller instanceof BlackholeController blackholeController) {
+          blackholeController.switchBlackHoles();
+        }
         break;
       case 'M':
       case 'm':
-        controller.switchMercedesSnowflakes();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchMercedesSnowflakes();
+        }
         break;
       case '+':
-        controller.increaseSnowLevel();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.increaseSnowLevel();
+        }
         break;
       case '-':
-        controller.decreaseSnowLevel();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.decreaseSnowLevel();
+        }
         break;
       case 'y':
       case 'Y':
-        controller.switchYoutube();
-        updateBrowser(controller.getFlagsConfiguration().isYoutube());
-        if (controller.getFlagsConfiguration().isYoutube()) {
-          playNext();
+        if (controller instanceof SoundsController soundsController) {
+          soundsController.switchYoutube();
+          updateBrowser(controller.getFlagsConfiguration().isYoutube());
+          if (controller.getFlagsConfiguration().isYoutube()) {
+            playNext();
+          }
         }
         break;
       case 'e':
       case 'E':
-        controller.switchEnemies();
+        if (controller instanceof RedfacesController redfacesController) {
+          redfacesController.switchEnemies();
+        }
         break;
       case 'I':
       case 'i':
-        controller.switchIndividualMovements();
+        if (controller instanceof SnowflakesController snowflakesController) {
+          snowflakesController.switchIndividualMovements();
+        }
         break;
       case 'n':
       case 'N':
@@ -349,18 +389,22 @@ public class SnowShell extends Shell implements
         break;
       case 'f':
       case 'F':
-        controller.switchFractals();
+        if (controller instanceof FractalsController fractalsController) {
+          fractalsController.switchFractals();
+        }
         break;
       case 'S':
       case 's':
-        if (controller.getFlagsConfiguration().isGraphicalSounds()) {
-          controller.switchGraphicalSounds();
-        } else {
-          SoundSettingsDialog dialog = new SoundSettingsDialog(this, controller.getFlagsConfiguration().getGraphicalSoundConfig());
-          int buttonPushed = dialog.open();
-          if (buttonPushed == Dialog.OK) {
-            controller.setGraphicalSound(dialog.getSoundConfig());
-            controller.switchGraphicalSounds();
+        if (controller instanceof SoundsController soundsController) {
+          if (controller.getFlagsConfiguration().isGraphicalSounds()) {
+            soundsController.switchGraphicalSounds();
+          } else {
+            SoundSettingsDialog dialog = new SoundSettingsDialog(this, controller.getFlagsConfiguration().getGraphicalSoundConfig());
+            int buttonPushed = dialog.open();
+            if (buttonPushed == Dialog.OK) {
+              soundsController.setGraphicalSound(dialog.getSoundConfig());
+              soundsController.switchGraphicalSounds();
+            }
           }
         }
         break;

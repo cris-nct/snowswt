@@ -4,15 +4,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.controller.FlagsConfiguration;
-import org.herbshouse.controller.LogicController;
+import org.herbshouse.controller.MainController;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 
 class LegendDrawer {
 
-  private final LogicController controller;
+  private final MainController controller;
 
-  public LegendDrawer(LogicController controller) {
+  public LegendDrawer(MainController controller) {
     this.controller = controller;
   }
 

@@ -1,6 +1,6 @@
 package org.herbshouse;
 
-import org.herbshouse.controller.DefaultLogicController;
+import org.herbshouse.controller.DefaultControllerImpl;
 import org.herbshouse.controller.ViewController;
 import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.Utils;
@@ -17,7 +17,7 @@ public class Tests {
 
     EnemyGenerator enemyGenerator = new EnemyGenerator();
 
-    DefaultLogicController controller = new DefaultLogicController();
+    DefaultControllerImpl controller = new DefaultControllerImpl();
     controller.setUserInfo(userInfo);
     controller.setDesiredFPS(60);
     controller.registerListener(snowGenerator);

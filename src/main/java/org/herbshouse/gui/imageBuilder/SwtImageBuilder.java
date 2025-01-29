@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
-import org.herbshouse.controller.LogicController;
+import org.herbshouse.controller.MainController;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractMovableObject;
@@ -20,7 +20,7 @@ public class SwtImageBuilder implements AutoCloseable {
 
   private static final String TEXT_MIDDLE_SCREEN = "Happy New Year!";
 
-  private final LogicController controller;
+  private final MainController controller;
   private final Transform transform;
   private final LegendDrawer legendDrawer;
   private final TextDrawer textDrawer;
@@ -33,7 +33,7 @@ public class SwtImageBuilder implements AutoCloseable {
   private GC gcImage;
   private Image image;
 
-  public SwtImageBuilder(LogicController controller, Transform transform) {
+  public SwtImageBuilder(MainController controller, Transform transform) {
     this.controller = controller;
     this.transform = transform;
     this.legendDrawer = new LegendDrawer(controller);

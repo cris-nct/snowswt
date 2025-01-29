@@ -14,7 +14,15 @@ import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.fractals.TreeType;
 
-public class DefaultLogicController implements LogicController {
+public class DefaultControllerImpl
+    implements
+    MainController,
+    MouseController,
+    SnowflakesController,
+    FractalsController,
+    SoundsController,
+    RedfacesController,
+    BlackholeController {
 
   private final FlagsConfiguration flagsConfiguration = new FlagsConfiguration();
   private final List<GeneratorListener<? extends AbstractMovableObject>> listeners = new ArrayList<>();

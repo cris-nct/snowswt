@@ -2,7 +2,7 @@ package org.herbshouse.logic;
 
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.audio.AudioPlayOrder;
-import org.herbshouse.controller.DefaultLogicController;
+import org.herbshouse.controller.DefaultControllerImpl;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.controller.GraphicalSoundConfig;
 import org.herbshouse.controller.ViewController;
@@ -16,14 +16,14 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
 
   private ViewController viewController;
 
-  private DefaultLogicController logicController;
+  private DefaultControllerImpl logicController;
 
-  public DefaultLogicController getLogicController() {
+  public DefaultControllerImpl getLogicController() {
     return logicController;
   }
 
   @Override
-  public void setLogicController(DefaultLogicController logicController) {
+  public void setLogicController(DefaultControllerImpl logicController) {
     this.logicController = logicController;
   }
 

@@ -5,7 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.controller.FlagsConfiguration;
-import org.herbshouse.controller.LogicController;
+import org.herbshouse.controller.MainController;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.Point2D;
@@ -14,9 +14,9 @@ import org.herbshouse.logic.snow.Snowflake;
 
 class SnowflakesDrawer {
 
-  private final LogicController controller;
+  private final MainController controller;
 
-  public SnowflakesDrawer(LogicController controller) {
+  public SnowflakesDrawer(MainController controller) {
     this.controller = controller;
   }
 
