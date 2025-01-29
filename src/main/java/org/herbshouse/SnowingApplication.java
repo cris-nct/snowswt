@@ -12,6 +12,7 @@ import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.UserInfo;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.fractals.FractalsGenerator;
+import org.herbshouse.logic.graphicalSounds.GraphicalSoundsGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 
 public class SnowingApplication {
@@ -28,6 +29,9 @@ public class SnowingApplication {
       snowGenerator.skipInitialAnimation();
     }
     EnemyGenerator enemyGenerator = new EnemyGenerator();
+    FractalsGenerator fractalsGenerator = new FractalsGenerator();
+    GraphicalSoundsGenerator graphicalSoundsGenerator = new GraphicalSoundsGenerator();
+
     Transform transform = null;
     DefaultAudioPlayer audioPlayer = new DefaultAudioPlayer();
     try {
@@ -41,8 +45,6 @@ public class SnowingApplication {
       SnowShell shell = new SnowShell(transform);
       enemyGenerator.setViewController(shell);
 
-      FractalsGenerator fractalsGenerator = new FractalsGenerator();
-
       DefaultLogicController controller = new DefaultLogicController();
       controller.setDesiredFPS(120);
       controller.setUserInfo(new UserInfo());
@@ -52,6 +54,7 @@ public class SnowingApplication {
       controller.registerListener(fractalsGenerator);
       controller.registerListener(snowGenerator);
       controller.registerListener(enemyGenerator);
+      controller.registerListener(graphicalSoundsGenerator);
 
       shell.setController(controller);
       shell.open();
@@ -59,6 +62,7 @@ public class SnowingApplication {
       snowGenerator.start();
       enemyGenerator.start();
       fractalsGenerator.start();
+      graphicalSoundsGenerator.start();
 
       while (!shell.isDisposed()) {
         if (!Display.getDefault().readAndDispatch()) {
@@ -71,6 +75,8 @@ public class SnowingApplication {
       }
       snowGenerator.shutdown();
       enemyGenerator.shutdown();
+      fractalsGenerator.shutdown();
+      graphicalSoundsGenerator.shutdown();
       SWTResourceManager.disposeAll();
       mbImageSmall.dispose();
     }

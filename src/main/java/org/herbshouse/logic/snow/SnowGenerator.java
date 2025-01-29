@@ -43,8 +43,6 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   private NormalWindSnowing normalWindSnowing;
   private HappyWindSnowing happyWindSnowing;
   private NoWindSnowing noWindSnowing;
-  private Rectangle screenBounds;
-  private FlagsConfiguration flagsConfiguration;
   private ImageData imageData;
   private TimerTask taskSnowing;
   private BlackHoleModeController blackHoleController;
@@ -71,12 +69,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     }
     this.resetSnowingTimer();
     while (!shutdown) {
-      this.update();
-      if (!flagsConfiguration.isAttack() && counterFreezeSnowklakes < 3000
-          && !flagsConfiguration.isDebug()) {
-        this.checkCollisions();
+      if (!getFlagsConfiguration().isPause()) {
+        this.update();
+        if (!config.isAttack() && counterFreezeSnowklakes < 3000 && !config.isDebug()) {
+          this.checkCollisions();
+        }
+        Utils.sleep(getSleepDuration());
+      } else {
+        Utils.sleep(getSleepDurationDoingNothing());
       }
-      Utils.sleep(getSleepDuration());
     }
 
     removeSnowflakes(snowflakes);
@@ -123,7 +124,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
       if (!snowflakes.isEmpty()) {
         AttackStrategy<?> strategy = getAttackStrategy();
-        if (flagsConfiguration.isAttack()) {
+        if (config.isAttack()) {
           if (strategy.isStarted()) {
             strategy.afterUpdate(snowflakes);
             AbstractAttackData data = strategy.getData(snowflakes.getFirst());
@@ -141,7 +142,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         }
       }
 
-      if (snowflakes.isEmpty() && flagsConfiguration.isDebug()) {
+      if (snowflakes.isEmpty() && config.isDebug()) {
         generateNewSnowflake(20, 1);
       }
       lockSnowflakes.unlock();
@@ -149,7 +150,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   }
 
   private AttackStrategy<?> getAttackStrategy() {
-    return attackStrategies.get(flagsConfiguration.getAttackType());
+    return attackStrategies.get(config.getAttackType());
   }
 
   @Override
@@ -160,7 +161,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   boolean move(Snowflake snowflake, Snowflake prevSnowFlake, int index) {
     snowflake.getSnowTail().registerHistoryLocation();
     AttackStrategy<?> attackStrategy = getAttackStrategy();
-    boolean attackMode = flagsConfiguration.isAttack() && attackStrategy.isStarted()
+    boolean attackMode = config.isAttack() && attackStrategy.isStarted()
         && index < attackStrategy.getMaxSnowflakesInvolved();
 
     final Point2D nextLocation;
@@ -168,9 +169,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       nextLocation = snowflake.getIndividualStrategy().computeNextLocation(snowflake, prevSnowFlake);
     } else if (attackMode) {
       nextLocation = attackStrategy.computeNextLocation(snowflake, prevSnowFlake);
-    } else if (flagsConfiguration.isHappyWind()) {
+    } else if (config.isHappyWind()) {
       nextLocation = this.happyWindSnowing.computeNextLocation(snowflake);
-    } else if (flagsConfiguration.isNormalWind()) {
+    } else if (config.isNormalWind()) {
       nextLocation = this.normalWindSnowing.computeNextLocation(snowflake);
     } else {
       nextLocation = this.noWindSnowing.computeNextLocation(snowflake);
@@ -182,13 +183,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @SuppressWarnings("UnusedReturnValue")
   public Snowflake generateNewSnowflake() {
     final int size;
-    if (flagsConfiguration.isBigBalls()) {
+    if (config.isBigBalls()) {
       size = 12 + (int) (Math.random() * 20);
     } else {
       size = 2 + (int) (Math.random() * 6);
     }
     final double speed;
-    int snowingLevel = flagsConfiguration.getSnowingLevel();
+    int snowingLevel = config.getSnowingLevel();
     if (snowingLevel < 3) {
       speed = 0.5 + Math.random();
     } else if (snowingLevel < 6) {
@@ -204,7 +205,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     snowflake.setLocation(new Point2D(Math.random() * screenBounds.width, screenBounds.height));
     snowflake.setSize(size);
     snowflake.setSpeed(speed);
-    if (flagsConfiguration.isHappyWind()) {
+    if (config.isHappyWind()) {
       happyWindSnowing.initializeSnowFlakeHappyWind(snowflake);
     }
     snowflakes.add(snowflake);
@@ -228,22 +229,8 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   }
 
   @Override
-  public void freezeMovableObjects() {
-    try {
-      if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-        for (Snowflake snowflake : snowflakes) {
-          snowflake.freeze();
-        }
-        lockSnowflakes.unlock();
-      }
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
   public void switchDebug() {
-    if (flagsConfiguration.isDebug()) {
+    if (config.isDebug()) {
       pauseSnowing = true;
       try {
         if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
@@ -295,8 +282,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   @Override
   public void init(FlagsConfiguration flagsConfiguration, Rectangle drawingSurface) {
-    this.flagsConfiguration = flagsConfiguration;
-    this.screenBounds = drawingSurface;
+    super.init(flagsConfiguration, drawingSurface);
     this.blackHoleController = new BlackHoleModeController(this);
 
     this.registerAttackLogic(new BigWormAttackStrategy(flagsConfiguration, getLogicController().getAudioPlayer()));
@@ -330,7 +316,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             snowflake.setLocation(mouseLocation);
             snowflake.setSize(7);
             snowflake.setColor(new RGB(255, 140, 0));
-            AttackStrategy<?> strategy = new FireworksStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
+            AttackStrategy<?> strategy = new FireworksStrategy(config, screenBounds, getLogicController().getAudioPlayer());
             strategy.beforeStart(List.of(snowflake));
             snowflake.setIndividualStrategy(strategy);
           }
@@ -362,7 +348,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   public void switchAttack() {
     try {
       if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
-        if (flagsConfiguration.isAttack()) {
+        if (config.isAttack()) {
           pauseSnowing = true;
           //Removed all freezed snoflakes
           removeSnowflakes(snowflakes.stream().filter(Snowflake::isFreezed).toList());
@@ -399,7 +385,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
 
   @Override
   public void switchBlackHoles() {
-    if (!flagsConfiguration.isBlackHoles()) {
+    if (!config.isBlackHoles()) {
       this.blackHoleController.stop();
     }
   }
@@ -409,16 +395,16 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     try {
       if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
         for (Snowflake snowflake : snowflakes) {
-          if (!flagsConfiguration.isIndividualMovements()) {
+          if (!config.isIndividualMovements()) {
             snowflake.setIndividualStrategy(null);
             snowflake.cleanup();
             continue;
           }
           AttackStrategy<?> strategy = null;
           switch (((int) (Math.random() * 3))) {
-            case 0 -> strategy = new BigWormAttackStrategy(flagsConfiguration, getLogicController().getAudioPlayer());
-            case 1 -> strategy = new DancingSnowflakesStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
-            case 2 -> strategy = new ParasitesAttackStrategy(flagsConfiguration, screenBounds, getLogicController().getAudioPlayer());
+            case 0 -> strategy = new BigWormAttackStrategy(config, getLogicController().getAudioPlayer());
+            case 1 -> strategy = new DancingSnowflakesStrategy(config, screenBounds, getLogicController().getAudioPlayer());
+            case 2 -> strategy = new ParasitesAttackStrategy(config, screenBounds, getLogicController().getAudioPlayer());
           }
           if (strategy != null) {
             snowflake.setIndividualStrategy(strategy);
@@ -431,12 +417,17 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       throw new RuntimeException(e);
     }
 
-    pauseSnowing = flagsConfiguration.isIndividualMovements();
+    pauseSnowing = config.isIndividualMovements();
   }
 
   @Override
   public boolean canControllerStart() {
     return skipInitialAnimation || initialAnimation.isFinished();
+  }
+
+  @Override
+  public void switchGraphicalSounds() {
+
   }
 
   private void cleanupSnowflakesData() {
@@ -448,16 +439,15 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @Override
   public void changedSnowingLevel() {
     try {
-      if (flagsConfiguration.getSnowingLevel() == 0) {
+      if (config.getSnowingLevel() == 0) {
         pauseSnowing = true;
         if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
           removeSnowflakes(snowflakes);
           lockSnowflakes.unlock();
         }
       } else {
-        pauseSnowing = flagsConfiguration.isAttack();
-        snowflakesTimeGen = (int) Utils.linearInterpolation(flagsConfiguration.getSnowingLevel(), 1,
-            100, 10, 7);
+        pauseSnowing = config.isAttack();
+        snowflakesTimeGen = (int) Utils.linearInterpolation(config.getSnowingLevel(), 1, 100, 10, 7);
         this.resetSnowingTimer();
       }
     } catch (InterruptedException e) {
@@ -480,13 +470,13 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         for (Snowflake snowflake : snowflakes) {
           if (snowflake.getIndividualStrategy() == null) {
             if (!snowflake.isFreezed()
-                && !flagsConfiguration.isIndividualMovements()
+                && !config.isIndividualMovements()
                 && snowflake.getLocation().x > screenBounds.width / 2.0d - 150
                 && snowflake.getLocation().x < screenBounds.width / 2.0d + 150
                 && this.isColliding(snowflake, imageData)) {
               snowflake.freeze();
             }
-            if (flagsConfiguration.isBlackHoles() && blackHoleController.shouldSwallowPoint(snowflake.getLocation())) {
+            if (config.isBlackHoles() && blackHoleController.shouldSwallowPoint(snowflake.getLocation())) {
               toRemove.add(snowflake);
             }
           }
@@ -520,10 +510,10 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     taskSnowing = new TimerTask() {
       @Override
       public void run() {
-        if (!pauseSnowing) {
+        if (!pauseSnowing && !getFlagsConfiguration().isPause()) {
           if (lockSnowflakes.tryLock()) {
             Snowflake snowflake = generateNewSnowflake();
-            if (flagsConfiguration.isBlackHoles()) {
+            if (config.isBlackHoles()) {
               blackHoleController.afterGenerateSnowflake(snowflake);
             }
             lockSnowflakes.unlock();
@@ -547,7 +537,4 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
     this.snowflakes.add(snowflake);
   }
 
-  public FlagsConfiguration getFlagsConfiguration() {
-    return flagsConfiguration;
-  }
 }

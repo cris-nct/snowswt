@@ -70,4 +70,9 @@ public interface LogicController {
   void switchIndividualMovements();
 
   boolean canStart();
+
+  void switchGraphicalSounds();
+
+  void setGraphicalSound(GraphicalSoundConfig graphicalSoundConfig);
+
 }

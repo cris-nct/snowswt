@@ -11,7 +11,7 @@ public class FlagsConfiguration {
   private boolean attack;
   private boolean flipImage;
   private boolean bigBalls;
-  private boolean freezeSnowflakes;
+  private boolean pause;
   private boolean mercedesSnowflakes;
   private boolean enemies = false;
   private boolean youtube;
@@ -19,11 +19,13 @@ public class FlagsConfiguration {
   private boolean fractals;
   private boolean blackHoles;
   private boolean individualMovements;
+  private boolean graphicalSounds;
 
   private int attackType = 1;
   private int snowingLevel = 5;
   private Point2D mouseLoc = new Point2D();
   private TreeType fractalsType = TreeType.PERFECT_DEFAULT;
+  private GraphicalSoundConfig graphicalSoundConfig = new GraphicalSoundConfig(963, 960, 10, false, true);
 
   void increaseSnowingLevel() {
     this.snowingLevel++;
@@ -37,8 +39,8 @@ public class FlagsConfiguration {
     this.mercedesSnowflakes = !mercedesSnowflakes;
   }
 
-  void switchFreezeSnowflakes() {
-    this.freezeSnowflakes = !freezeSnowflakes;
+  void switchPause() {
+    this.pause = !pause;
   }
 
   void switchYoutube() {
@@ -117,8 +119,8 @@ public class FlagsConfiguration {
     return bigBalls;
   }
 
-  public boolean isFreezeSnowflakes() {
-    return freezeSnowflakes;
+  public boolean isPause() {
+    return pause;
   }
 
   public int getSnowingLevel() {
@@ -173,4 +175,19 @@ public class FlagsConfiguration {
     return individualMovements;
   }
 
+  void switchGraphicalSounds() {
+    this.graphicalSounds = !graphicalSounds;
+  }
+
+  public boolean isGraphicalSounds() {
+    return graphicalSounds;
+  }
+
+  public GraphicalSoundConfig getGraphicalSoundConfig() {
+    return graphicalSoundConfig;
+  }
+
+  public void setGraphicalSoundConfig(GraphicalSoundConfig graphicalSoundConfig) {
+    this.graphicalSoundConfig = graphicalSoundConfig;
+  }
 }

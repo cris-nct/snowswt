@@ -3,6 +3,8 @@ package org.herbshouse.gui.imageBuilder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 import org.herbshouse.controller.LogicController;
@@ -11,6 +13,7 @@ import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.GraphicalImageGenerator;
+import org.herbshouse.logic.graphicalSounds.GraphicalSoundsGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
 public class SwtImageBuilder implements AutoCloseable {
@@ -26,6 +29,7 @@ public class SwtImageBuilder implements AutoCloseable {
   private final EnemyDrawer enemyDrawer;
   private final LogoDrawer logoDrawer;
   private final MinimapDrawer minimapDrawer;
+  private final SoundsDrawer soundsDrawer;
   private GC gcImage;
   private Image image;
 
@@ -39,11 +43,11 @@ public class SwtImageBuilder implements AutoCloseable {
     this.enemyDrawer = new EnemyDrawer();
     this.logoDrawer = new LogoDrawer();
     this.minimapDrawer = new MinimapDrawer();
+    this.soundsDrawer = new SoundsDrawer();
   }
 
   public SwtImageBuilder drawBaseElements() {
     initializeGraphics();
-    drawBackground();
     return this;
   }
 
@@ -55,17 +59,14 @@ public class SwtImageBuilder implements AutoCloseable {
     if (gcImage != null) {
       throw new IllegalStateException("Graphics context already initialized.");
     }
-    image = new Image(Display.getDefault(), GuiUtils.SCREEN_BOUNDS);
+    PaletteData palette = new PaletteData(0xFF0000, 0x00FF00, 0x0000FF);
+    ImageData imageData = new ImageData(GuiUtils.SCREEN_BOUNDS.width, GuiUtils.SCREEN_BOUNDS.height, 24, palette);
+    image = new Image(Display.getDefault(), imageData);
     gcImage = new GC(image);
     gcImage.setTextAntialias(SWT.ON);
     if (controller.getFlagsConfiguration().isFlipImage()) {
       gcImage.setTransform(transform);
     }
-  }
-
-  private void drawBackground() {
-    gcImage.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-    gcImage.fillRectangle(GuiUtils.SCREEN_BOUNDS);
   }
 
   public void drawText() {
@@ -85,6 +86,10 @@ public class SwtImageBuilder implements AutoCloseable {
 
   public void drawEnemies(GeneratorListener<AbstractMovableObject> generatorListener) {
     enemyDrawer.draw(gcImage, generatorListener);
+  }
+
+  public void drawSounds(GraphicalSoundsGenerator generatorListener) {
+    soundsDrawer.draw(gcImage, generatorListener);
   }
 
   public void drawSnowflakes(GeneratorListener<Snowflake> generatorListener) {

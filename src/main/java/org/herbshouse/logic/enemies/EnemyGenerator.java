@@ -20,14 +20,12 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   public static final RGB RED_COLOR = new RGB(160, 0, 0);
   public static final RGB FREE_MOVE_COLOR = new RGB(50, 180, 180);
-  private static final int ANGRY_FACE_SIZE = 150;
   private static final RGB REMOVE_BACKGROUND_COLOR = new RGB(255, 255, 255);
+  private static final int ANGRY_FACE_SIZE = 150;
 
   private final List<RedFace> redFaces = new CopyOnWriteArrayList<>();
   private final List<AnimatedGif> fireGifs = new CopyOnWriteArrayList<>();
   private AnimatedGif angryFace;
-  private FlagsConfiguration flagsConfiguration;
-  private Rectangle screenBounds;
   private boolean shutdown = false;
 
   @Override
@@ -36,7 +34,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     timer.scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        if (flagsConfiguration.isEnemies() && !shutdown) {
+        if (config.isEnemies() && !shutdown && !getFlagsConfiguration().isPause()) {
           generateRedFace();
         }
       }
@@ -44,9 +42,9 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     timer.scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        if (flagsConfiguration.isEnemies() && !shutdown) {
+        if (config.isEnemies() && !shutdown && !getFlagsConfiguration().isPause()) {
           for (RedFace redFace : redFaces) {
-            if (flagsConfiguration.isAttack()) {
+            if (config.isAttack()) {
               redFace.setState(RedFaceState.FOLLOW_MOUSE);
             }
             if (redFace.getKissingGif() == null) {
@@ -63,11 +61,15 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     }, 1000, 1000);
 
     while (!shutdown) {
-      if (flagsConfiguration.isEnemies()) {
-        this.move();
-        this.checkCollisions();
-        this.cleanupFire();
-        Utils.sleep(getSleepDuration());
+      if (config.isEnemies()) {
+        if (!getFlagsConfiguration().isPause()) {
+          this.move();
+          this.checkCollisions();
+          this.cleanupFire();
+          Utils.sleep(getSleepDuration());
+        } else {
+          Utils.sleep(getSleepDurationDoingNothing());
+        }
       } else {
         this.cleanup();
         Utils.sleep(getSleepDurationDoingNothing());
@@ -108,7 +110,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         continue;
       }
       boolean isMouseInTheBall
-          = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc())
+          = Utils.distance(redFace.getLocation(), config.getMouseLoc())
           < redFace.getSize() / 2.0d;
       if (isMouseInTheBall && redFace.getKissingGif() == null) {
         redFace.startKissing();
@@ -116,7 +118,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         redFace.stopKissing();
         if (redFace.getState() == RedFaceState.FOLLOW_MOUSE) {
           redFace.setDirection(
-              Utils.angleOfLine(redFace.getLocation(), flagsConfiguration.getMouseLoc()));
+              Utils.angleOfLine(redFace.getLocation(), config.getMouseLoc()));
         }
       } else {
         redFace.move();
@@ -145,11 +147,6 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   }
 
   @Override
-  public void freezeMovableObjects() {
-
-  }
-
-  @Override
   public void switchDebug() {
 
   }
@@ -157,9 +154,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   @Override
   public void mouseMove(Point2D mouseLocation) {
     for (RedFace redFace : redFaces) {
-      boolean isMouseInTheBall
-          = Utils.distance(redFace.getLocation(), flagsConfiguration.getMouseLoc())
-          < redFace.getSize() / 2.0d;
+      boolean isMouseInTheBall = Utils.distance(redFace.getLocation(), config.getMouseLoc()) < redFace.getSize() / 2.0d;
       if (!isMouseInTheBall && redFace.getKissingGif() != null) {
         redFace.stopKissing();
       }
@@ -168,7 +163,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   @Override
   public void mouseDown(int button, Point2D mouseLocation) {
-    if (button == 1 && flagsConfiguration.isEnemies()) {
+    if (button == 1 && config.isEnemies()) {
       AnimatedGif gif = new AnimatedGif("pictures/fire-flame.gif", 2, null);
       gif.setLocation(mouseLocation);
       gif.setSize(50);
@@ -200,8 +195,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
 
   @Override
   public void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
-    this.flagsConfiguration = flagsConfiguration;
-    this.screenBounds = screenBounds;
+    super.init(flagsConfiguration, screenBounds);
 
     this.generateRedFace();
 
@@ -234,7 +228,7 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
         enemies.add(redFace.getKissingGif());
       }
     }
-    if (angryFace != null && flagsConfiguration.isEnemies()) {
+    if (angryFace != null && config.isEnemies()) {
       enemies.add(angryFace);
     }
     enemies.addAll(fireGifs);
@@ -392,6 +386,11 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
   @Override
   public boolean canControllerStart() {
     return true;
+  }
+
+  @Override
+  public void switchGraphicalSounds() {
+
   }
 
 }

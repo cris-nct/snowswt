@@ -55,8 +55,7 @@ public final class GuiUtils {
   private static void drawLifeCounter(GC gc, RedFace redFace) {
     if (redFace.getKissingGif() == null) {
       String life = String.valueOf(redFace.getLife());
-      gc.setFont(
-          SWTResourceManager.getFont(FONT_NAME_LIFE_COUNTER, FONT_SIZE_LIFE_COUNTER, SWT.NORMAL));
+      gc.setFont(SWTResourceManager.getFont(FONT_NAME_LIFE_COUNTER, FONT_SIZE_LIFE_COUNTER, SWT.NORMAL));
       int textLength = gc.textExtent(life).x;
       gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
       Point screenLoc = toScreenCoord(redFace.getLocation());
@@ -171,6 +170,11 @@ public final class GuiUtils {
     gc.setLineWidth((int) thickness);
     gc.drawLine(startScreenLoc.x, startScreenLoc.y, endScreenLoc.x, endScreenLoc.y);
     gc.setLineWidth(1);
+  }
+
+  public static void drawDot(GC gc, Point2D dot) {
+    Point screenLoc = toScreenCoord(dot);
+    gc.drawPoint(screenLoc.x, screenLoc.y);
   }
 
 }

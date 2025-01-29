@@ -56,6 +56,7 @@ public class BlackHoleModeController {
     snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole.wav");
     snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-2.wav");
     snowGenerator.getLogicController().getAudioPlayer().stop("sounds/blackhole-3.wav");
+    snowGenerator.getLogicController().getAudioPlayer().stop("sounds/explosion.wav");
   }
 
 }

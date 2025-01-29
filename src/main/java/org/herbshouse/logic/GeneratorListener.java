@@ -5,12 +5,11 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.controller.DefaultLogicController;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.controller.GraphicalSoundConfig;
 
 public interface GeneratorListener<T extends AbstractMovableObject> {
 
   void turnOnHappyWind();
-
-  void freezeMovableObjects();
 
   void switchDebug();
 
@@ -52,4 +51,8 @@ public interface GeneratorListener<T extends AbstractMovableObject> {
   void switchIndividualMovements();
 
   boolean canControllerStart();
+
+  void changeGraphicalSound(GraphicalSoundConfig graphicalSoundConfig);
+
+  void switchGraphicalSounds();
 }

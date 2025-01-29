@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -37,6 +38,7 @@ import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.GraphicalImageGenerator;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.fractals.TreeType;
+import org.herbshouse.logic.graphicalSounds.GraphicalSoundsGenerator;
 import org.herbshouse.logic.snow.SnowGenerator;
 import org.herbshouse.logic.snow.Snowflake;
 
@@ -189,6 +191,8 @@ public class SnowShell extends Shell implements
         } else if (listener instanceof EnemyGenerator) {
           //noinspection unchecked
           imageBuilder.drawEnemies((GeneratorListener<AbstractMovableObject>) listener);
+        } else if (listener instanceof GraphicalSoundsGenerator) {
+          imageBuilder.drawSounds((GraphicalSoundsGenerator) listener);
         } else if (listener instanceof GraphicalImageGenerator) {
           imageBuilder.drawImage((GraphicalImageGenerator) listener);
         }
@@ -260,13 +264,9 @@ public class SnowShell extends Shell implements
       return;
     }
     switch (e.keyCode) {
-      //Default
       case SWT.F1 -> controller.setFractalsType(TreeType.PERFECT_DEFAULT);
-      //Fir
       case SWT.F2 -> controller.setFractalsType(TreeType.PERFECT_FIR);
-      //Random default
       case SWT.F3 -> controller.setFractalsType(TreeType.RANDOM_DEFAULT);
-      //Random fir
       case SWT.F4 -> controller.setFractalsType(TreeType.RANDOM_FIR);
     }
     switch (e.character) {
@@ -350,6 +350,19 @@ public class SnowShell extends Shell implements
       case 'f':
       case 'F':
         controller.switchFractals();
+        break;
+      case 'S':
+      case 's':
+        if (controller.getFlagsConfiguration().isGraphicalSounds()) {
+          controller.switchGraphicalSounds();
+        } else {
+          SoundSettingsDialog dialog = new SoundSettingsDialog(this, controller.getFlagsConfiguration().getGraphicalSoundConfig());
+          int buttonPushed = dialog.open();
+          if (buttonPushed == Dialog.OK) {
+            controller.setGraphicalSound(dialog.getSoundConfig());
+            controller.switchGraphicalSounds();
+          }
+        }
         break;
       case 'q':
       case 'Q':

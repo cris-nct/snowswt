@@ -30,15 +30,15 @@ class LegendDrawer {
     this.addTextToLegend(legendBuilder, "Debug(D)", config.isDebug());
     this.addTextToLegend(legendBuilder, "Flip image(L)", config.isFlipImage());
     this.addTextToLegend(legendBuilder, "Big balls(B)", config.isBigBalls());
-    this.addTextToLegend(legendBuilder, "Freeze snowflakes(P)", config.isFreezeSnowflakes());
-    this.addTextToLegend(legendBuilder, "Snowflakes tail(T)", config.isObjectsTail());
+    this.addTextToLegend(legendBuilder, "Pause (P)", config.isPause());
+    this.addTextToLegend(legendBuilder, "Tail(T)", config.isObjectsTail());
     this.addTextToLegend(legendBuilder, "Attack mode (A & 1..4)", config.isAttack());
     if (config.isAttack()) {
       this.addTextToLegend(legendBuilder, "Attack type", config.getAttackType());
       this.addTextToLegend(legendBuilder, "Attack phase", currentAttackPhase);
     }
     this.addTextToLegend(legendBuilder, "Individual movement(I)", config.isIndividualMovements());
-    this.addTextToLegend(legendBuilder, "Mercedes snowflakes(M)", config.isMercedesSnowflakes());
+    this.addTextToLegend(legendBuilder, "Mercedes logo(M)", config.isMercedesSnowflakes());
     this.addTextToLegend(legendBuilder, "Snow level(+/-)", config.getSnowingLevel());
     this.addTextToLegend(legendBuilder, "Black holes(H)", config.isBlackHoles());
     this.addTextToLegend(legendBuilder, "Enemies(E)", config.isEnemies());
@@ -53,6 +53,7 @@ class LegendDrawer {
       legendBuilder.append("Fractals default random(F3)\n");
       legendBuilder.append("Fractals default fir(F4)");
     }
+    this.addTextToLegend(legendBuilder, "Modulate frequencies(S)", config.isGraphicalSounds());
     legendBuilder.append("\n-------");
     this.addTextToLegend(legendBuilder, "Your points", controller.getUserInfo().getPoints());
     legendBuilder.append("\n-------\n");

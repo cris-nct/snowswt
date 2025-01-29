@@ -93,8 +93,7 @@ public class DefaultLogicController implements LogicController {
 
   @Override
   public void pause() {
-    flagsConfiguration.switchFreezeSnowflakes();
-    listeners.forEach(GeneratorListener::freezeMovableObjects);
+    flagsConfiguration.switchPause();
   }
 
   @Override
@@ -210,6 +209,18 @@ public class DefaultLogicController implements LogicController {
   @Override
   public boolean canStart() {
     return listeners.stream().allMatch(GeneratorListener::canControllerStart);
+  }
+
+  @Override
+  public void switchGraphicalSounds() {
+    flagsConfiguration.switchGraphicalSounds();
+    listeners.forEach(GeneratorListener::switchGraphicalSounds);
+  }
+
+  @Override
+  public void setGraphicalSound(GraphicalSoundConfig graphicalSoundConfig) {
+    flagsConfiguration.setGraphicalSoundConfig(graphicalSoundConfig);
+    listeners.forEach(l -> l.changeGraphicalSound(graphicalSoundConfig));
   }
 
   public AudioPlayer getAudioPlayer() {

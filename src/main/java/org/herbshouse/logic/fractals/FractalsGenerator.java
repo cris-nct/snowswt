@@ -11,9 +11,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.logic.AbstractGenerator;
@@ -28,8 +26,6 @@ public class FractalsGenerator extends AbstractGenerator<Tree> implements Graphi
   public static final double IMPERFECTTION_FACTOR = 0.07;
   private final Map<TreeType, Tree> trees = new HashMap<>();
   private final TreeBranchesVisitor treeBranchesVisitor = new TreeBranchesVisitor();
-  private FlagsConfiguration config;
-  private Rectangle screenBounds;
   private boolean shutdown = false;
   private double counterWind = 0;
   private int counterWindDir = 1;
@@ -42,16 +38,20 @@ public class FractalsGenerator extends AbstractGenerator<Tree> implements Graphi
     }
     while (!shutdown) {
       if (config.isFractals()) {
-        if (this.isBendingTree()) {
-          trees.put(config.getFractalsType(), generateTree(config.getFractalsType()));
-        } else {
-          Tree tree = trees.get(config.getFractalsType());
-          if (!treeBranchesVisitor.isVisiting(tree)) {
-            treeBranchesVisitor.startVisiting(tree);
+        if (!getFlagsConfiguration().isPause()) {
+          if (this.isBendingTree()) {
+            trees.put(config.getFractalsType(), generateTree(config.getFractalsType()));
+          } else {
+            Tree tree = trees.get(config.getFractalsType());
+            if (!treeBranchesVisitor.isVisiting(tree)) {
+              treeBranchesVisitor.startVisiting(tree);
+            }
           }
+          this.createImage();
+          Utils.sleep(getSleepDuration());
+        } else {
+          Utils.sleep(100);
         }
-        this.createImage();
-        Utils.sleep(getSleepDuration());
       } else {
         Utils.sleep(getSleepDurationDoingNothing());
       }
@@ -130,17 +130,17 @@ public class FractalsGenerator extends AbstractGenerator<Tree> implements Graphi
   }
 
   @Override
+  public void switchGraphicalSounds() {
+
+  }
+
+  @Override
   protected int getSleepDuration() {
     return 10;
   }
 
   @Override
   public void turnOnHappyWind() {
-
-  }
-
-  @Override
-  public void freezeMovableObjects() {
 
   }
 
@@ -167,12 +167,6 @@ public class FractalsGenerator extends AbstractGenerator<Tree> implements Graphi
   @Override
   public void reset() {
 
-  }
-
-  @Override
-  public void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
-    this.config = flagsConfiguration;
-    this.screenBounds = screenBounds;
   }
 
   private Tree generateTree(TreeType type) {

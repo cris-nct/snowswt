@@ -1,11 +1,18 @@
 package org.herbshouse.logic;
 
+import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.audio.AudioPlayOrder;
 import org.herbshouse.controller.DefaultLogicController;
+import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.controller.GraphicalSoundConfig;
 import org.herbshouse.controller.ViewController;
 
 public abstract class AbstractGenerator<T extends AbstractMovableObject>
     extends Thread implements GeneratorListener<T>, ViewController {
+
+  protected FlagsConfiguration config;
+
+  protected Rectangle screenBounds;
 
   private ViewController viewController;
 
@@ -31,6 +38,12 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
   }
 
   @Override
+  public void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
+    this.config = flagsConfiguration;
+    this.screenBounds = screenBounds;
+  }
+
+  @Override
   public void substractAreaFromShell(int[] polygon) {
     viewController.substractAreaFromShell(polygon);
     AudioPlayOrder order = new AudioPlayOrder("sounds/hole-in-the-shell.wav", 1500);
@@ -43,4 +56,16 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
     viewController.resetScreenSurface();
   }
 
+  public Rectangle getScreenBounds() {
+    return screenBounds;
+  }
+
+  public FlagsConfiguration getFlagsConfiguration() {
+    return config;
+  }
+
+  @Override
+  public void changeGraphicalSound(GraphicalSoundConfig graphicalSoundConfig) {
+
+  }
 }
