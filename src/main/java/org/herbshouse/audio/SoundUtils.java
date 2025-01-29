@@ -2,6 +2,7 @@ package org.herbshouse.audio;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
@@ -48,9 +49,12 @@ public final class SoundUtils {
     return buffer;
   }
 
-  public static void playSound(byte[] buffer, LineListener listener) throws LineUnavailableException {
+  public static void playSound(byte[] buffer, float volume, LineListener listener) throws LineUnavailableException {
     AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 2, true, true);
     try (SourceDataLine line = AudioSystem.getSourceDataLine(format)) {
+      FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+      volumeControl.setValue(
+          (volumeControl.getMaximum() - volumeControl.getMinimum()) * volume + volumeControl.getMinimum());
       line.open(format);
       if (listener != null) {
         line.addLineListener(listener);

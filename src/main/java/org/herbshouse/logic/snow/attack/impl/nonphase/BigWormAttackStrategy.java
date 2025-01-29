@@ -24,7 +24,7 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   @Override
   public void beforeStart(List<Snowflake> snowflakeList) {
     super.beforeStart(snowflakeList);
-    playAudio("big-worm.wav", AudioPlayType.BACKGROUND, 0.7f);
+    playAudio("big-worm.wav", AudioPlayType.BACKGROUND, 0.8f);
   }
 
   @Override

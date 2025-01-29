@@ -19,7 +19,7 @@ public abstract class AbstractNoPhaseAttackStrategy<T extends AbstractAttackData
   }
 
   public void playAudio(String filename) {
-    this.playAudio(filename, AudioPlayType.BACKGROUND, 0.9f);
+    this.playAudio(filename, AudioPlayType.BACKGROUND, 1f);
   }
 
   public void playAudio(String filename, AudioPlayType type, float volume) {

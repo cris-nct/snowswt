@@ -2,6 +2,7 @@ package org.herbshouse.logic.graphicalSounds.data;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import org.herbshouse.logic.CircularQueue;
@@ -13,6 +14,8 @@ public class GraphicalSoundData implements SoundData {
   private static final float SAMPLE_RATE = 44100;
 
   private static final int SAMPLE_SIZE_BYTES = 8;
+
+  private static final float VOLUME = .7f;
 
   private int currentIndex = -1;
 
@@ -36,6 +39,9 @@ public class GraphicalSoundData implements SoundData {
     try {
       line = AudioSystem.getSourceDataLine(format);
       line.open(format);
+      FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+      volumeControl.setValue(
+          (volumeControl.getMaximum() - volumeControl.getMinimum()) * VOLUME + volumeControl.getMinimum());
       line.start();
     } catch (LineUnavailableException e) {
       throw new RuntimeException(e);

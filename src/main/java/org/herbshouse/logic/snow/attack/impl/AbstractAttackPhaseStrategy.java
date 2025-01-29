@@ -31,7 +31,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     if (!audioPlayer.isPlaying("sounds/" + filename)) {
       AudioPlayOrder order = new AudioPlayOrder("sounds/" + filename);
       order.setType(AudioPlayType.BACKGROUND);
-      order.setVolume(0.9f);
+      order.setVolume(1f);
       audioPlayer.play(order);
     }
   }
