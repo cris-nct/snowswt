@@ -100,7 +100,6 @@ jobs:
         run: |
           echo "Create release branch"
           git branch release/${{inputs.name}}
-          git remote set-url origin https://crisnct:$token_push@github.com/crisnct/snowswt.git
           git push --set-upstream origin release/${{inputs.name}}
 
       - name: Create Github Release
