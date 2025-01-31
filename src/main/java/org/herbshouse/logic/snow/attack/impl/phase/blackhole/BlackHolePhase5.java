@@ -48,7 +48,7 @@ public class BlackHolePhase5 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 15000;
+    return (System.currentTimeMillis() - startTime) > 30000;
   }
 
 }

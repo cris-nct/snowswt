@@ -20,7 +20,7 @@ public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole>
   public void startPhase(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
     attackData.setAngle(Utils.angleOfLine(snowflake.getLocation(), attackData.getLocationToFollow()));
-    attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS / 2 - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - Math.random()));
+    attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS / 2 - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - 1.5 * Math.random()));
     startTime = System.currentTimeMillis();
     //yellowish
     snowflake.setColor(new RGB(255, 201, 67));
@@ -46,7 +46,7 @@ public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 20000;
+    return (System.currentTimeMillis() - startTime) > 30000;
   }
 
 }

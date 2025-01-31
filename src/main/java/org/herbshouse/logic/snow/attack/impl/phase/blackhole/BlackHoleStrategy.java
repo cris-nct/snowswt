@@ -12,7 +12,7 @@ import org.herbshouse.logic.snow.data.AttackDataBlackHole;
 
 public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBlackHole> {
 
-  public static final int BLACKHOLES_MAX_SNOWFLAKES = 100;
+  public static final int BLACKHOLES_MAX_SNOWFLAKES = 200;
   public static final double BLACKHOLE_RADIUS = 150;
   public static final double BLACKHOLE_RING_WIDTH = 30;
 
