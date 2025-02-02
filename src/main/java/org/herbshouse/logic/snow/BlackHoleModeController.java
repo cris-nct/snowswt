@@ -23,6 +23,7 @@ public class BlackHoleModeController {
     if (snowflakesBlackHole < BlackHoleStrategy.BLACKHOLES_MAX_SNOWFLAKES) {
       boolean stillOneSnowflakeToFinish = snowGenerator.getSnowflakes().stream()
           .anyMatch(s -> s.getIndividualStrategy() instanceof BlackHoleStrategy
+              && !s.getIndividualStrategy().isFinished()
               && ((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
               && !((BlackHoleStrategy) s.getIndividualStrategy()).getCurrentPhaseProcessor().isFinished(s)
           );
@@ -30,7 +31,6 @@ public class BlackHoleModeController {
         AttackStrategy<?> strategy = new BlackHoleStrategy(
             snowGenerator.getFlagsConfiguration(),
             snowGenerator.getScreenBounds(),
-            this,
             snowGenerator.getLogicController().getAudioPlayer()
         );
         strategy.beforeStart(List.of(snowflake));

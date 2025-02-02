@@ -88,6 +88,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
       snowflake.setData(data.getClass().getSimpleName(), data);
       this.beforeStart(List.of(snowflake));
     }
+    //noinspection ReassignedVariable,unchecked
     return (T) data;
   }
 
@@ -95,12 +96,21 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
 
   @Override
   public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
-    return currentPhaseProcessor.computeLocation(snowflake);
+    if (currentPhaseProcessor == null) {
+      shutdown();
+      return snowflake.getLocation();
+    } else {
+      return currentPhaseProcessor.computeLocation(snowflake);
+    }
   }
 
   @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
     allArrivedToDestination = true;
+    if (currentPhaseProcessor == null) {
+      shutdown();
+      return;
+    }
     for (Snowflake snowflake : snowflakeList) {
       T data = getData(snowflake);
       if (snowflake.isFreezed() || data.getLocationToFollow() == null) {
@@ -114,10 +124,10 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     if (allArrivedToDestination) {
       currentPhaseProcessor.endPhase();
       currentPhaseProcessor = currentPhaseProcessor.getNextPhaseProcessor();
-      if (currentPhaseProcessor == null) {
-        shutdown();
-      } else {
+      if (currentPhaseProcessor != null) {
         initPhase(snowflakeList);
+      } else {
+        shutdown();
       }
     }
   }

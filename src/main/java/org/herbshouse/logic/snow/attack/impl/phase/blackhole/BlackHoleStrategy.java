@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
-import org.herbshouse.logic.snow.BlackHoleModeController;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
@@ -18,20 +17,17 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
   private final FlagsConfiguration flagsConfiguration;
   private final Rectangle screenBounds;
-  private final BlackHoleModeController blackHoleController;
   private double alpha = 255;
   private int alphaDirection = -1;
 
   public BlackHoleStrategy(
       FlagsConfiguration flagsConfiguration,
       Rectangle screenBounds,
-      BlackHoleModeController blackHoleController,
       AudioPlayer audioPlayer
   ) {
     super(audioPlayer);
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
-    this.blackHoleController = blackHoleController;
 
     BlackHolePhase1 phase1 = new BlackHolePhase1(this);
     BlackHolePhase2 phase2 = new BlackHolePhase2(this);
@@ -102,18 +98,8 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     }
   }
 
-  @Override
-  public void shutdown() {
-    super.shutdown();
-    blackHoleController.stop();
-  }
-
   public int getAlpha() {
     return (int) alpha;
-  }
-
-  public BlackHoleModeController getBlackHoleController() {
-    return blackHoleController;
   }
 
 }

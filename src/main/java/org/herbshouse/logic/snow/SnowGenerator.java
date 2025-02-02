@@ -386,7 +386,14 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
   @Override
   public void switchBlackHoles() {
     if (!config.isBlackHoles()) {
-      this.blackHoleController.stop();
+      try {
+        if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
+          this.blackHoleController.stop();
+          lockSnowflakes.unlock();
+        }
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
