@@ -14,13 +14,16 @@ public class GraphicalSoundConfig {
 
   private final int circularSoundLevel;
 
+  private final int channels;
+
   public GraphicalSoundConfig(
       int frequency1,
       int frequency2,
       int duration,
       int speed,
       boolean multiRowsRendering,
-      int circularSoundLevel
+      int circularSoundLevel,
+      int channels
   ) {
     this.frequency1 = frequency1;
     this.frequency2 = frequency2;
@@ -28,6 +31,11 @@ public class GraphicalSoundConfig {
     this.speed = speed;
     this.multiRowsRendering = multiRowsRendering;
     this.circularSoundLevel = circularSoundLevel;
+    this.channels = channels;
+  }
+
+  public int getChannels() {
+    return channels;
   }
 
   public int getCircularSoundLevel() {

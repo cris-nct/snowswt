@@ -19,7 +19,7 @@ import org.herbshouse.controller.GraphicalSoundConfig;
 public class SoundSettingsDialog extends Dialog {
 
   private static final int DIALOG_WIDTH = 350;
-  private static final int DIALOG_HEIGHT = 250;
+  private static final int DIALOG_HEIGHT = 300;
   private static final Color RED_COLOR = SWTResourceManager.getColor(new RGB(255, 150, 150));
 
   private GraphicalSoundConfig soundConfig;
@@ -28,6 +28,7 @@ public class SoundSettingsDialog extends Dialog {
   private Text durationTxt;
   private Spinner speedSpn;
   private Spinner circularSoundSpn;
+  private Spinner channelsSpn;
   private Button multiRowsBtn;
 
   public SoundSettingsDialog(Shell parent, GraphicalSoundConfig soundConfig) {
@@ -65,11 +66,14 @@ public class SoundSettingsDialog extends Dialog {
     );
     durationTxt.setText(String.valueOf(soundConfig.getDuration()));
 
-    speedSpn = this.addSpinnerProperty(parent, "Speed:");
+    speedSpn = this.addSpinnerProperty(parent, "Speed:", 1, 10);
     speedSpn.setSelection(soundConfig.getSpeed());
 
-    circularSoundSpn = this.addSpinnerProperty(parent, "Circular sound level:");
+    circularSoundSpn = this.addSpinnerProperty(parent, "Circular sound level:", 1, 10);
     circularSoundSpn.setSelection(soundConfig.getCircularSoundLevel());
+
+    channelsSpn = this.addSpinnerProperty(parent, "Channels:", 1, 2);
+    channelsSpn.setSelection(soundConfig.getChannels());
 
     multiRowsBtn = this.addButtonProperty(parent, "Multiple rows:");
     multiRowsBtn.setSelection(soundConfig.isMultiRowsRendering());
@@ -88,7 +92,7 @@ public class SoundSettingsDialog extends Dialog {
     return text;
   }
 
-  private Spinner addSpinnerProperty(Composite settingsShell, String labelText) {
+  private Spinner addSpinnerProperty(Composite settingsShell, String labelText, int min, int max) {
     CLabel label = new CLabel(settingsShell, SWT.NONE);
     label.setText(labelText);
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -97,8 +101,8 @@ public class SoundSettingsDialog extends Dialog {
     spinner.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
     spinner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     spinner.setIncrement(1);
-    spinner.setMinimum(1);
-    spinner.setMaximum(10);
+    spinner.setMinimum(min);
+    spinner.setMaximum(max);
 
     return spinner;
   }
@@ -120,7 +124,8 @@ public class SoundSettingsDialog extends Dialog {
         Integer.parseInt(durationTxt.getText()),
         speedSpn.getSelection(),
         multiRowsBtn.getSelection(),
-        circularSoundSpn.getSelection()
+        circularSoundSpn.getSelection(),
+        channelsSpn.getSelection()
     );
     super.okPressed();
   }

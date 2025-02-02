@@ -6,10 +6,15 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import org.herbshouse.controller.GraphicalSoundConfig;
+import org.herbshouse.logic.Utils;
 
 public final class SoundUtils {
 
-  private static final float SAMPLE_RATE = 44100;
+  public static final float SAMPLE_RATE = 44100;
+  public static final boolean SIGNED = true;
+  public static final boolean BIG_ENDIAN = false;
+  public static final int SAMPLE_SIZE_BYTES = 16;
 
   private SoundUtils() {
 
@@ -29,42 +34,52 @@ public final class SoundUtils {
     return buffer;
   }
 
-  public static byte[] circularSound(int durationSec, float step, int frequency1, int frequency2) {
-    byte[] buffer = new byte[(int) (SAMPLE_RATE * durationSec * 4)]; // 2 channels, 2 bytes per sample
-
-    float maxVolume = 1.0f;
-    float leftVolume = maxVolume;
-    float dirLeft = -1;
-
+  public static byte[] modulateFrequencies(GraphicalSoundConfig config) {
+    byte[] buffer = new byte[(int) (SAMPLE_RATE * config.getDuration() * config.getChannels() * 2)]; // 2 channels, 2 bytes per sample
+    boolean circularVolume = (config.getCircularSoundLevel() > 1);
     float minVolume = 0.0f;
-    float rightVolume = minVolume;
+    float maxVolume = 1.0f;
+    float leftVolume = circularVolume ? maxVolume : 1.0f;
+    float dirLeft = -1;
+    float rightVolume = circularVolume ? minVolume : 1.0f;
     float dirRight = 1;
+    float step = (float) Utils.linearInterpolation(config.getCircularSoundLevel(), 2, 0.00001, 10, 0.001);
 
-    for (int i = 0; i < buffer.length / 4; i++) {
-      // Left channel
-      double angleLeft = 2.0 * Math.PI * frequency1 * i / SAMPLE_RATE;
-      double sampleLeft = leftVolume * Math.sin(angleLeft);
-      short valueLeft = (short) (sampleLeft * Short.MAX_VALUE);
+    for (int i = 0; i < buffer.length / (config.getChannels() * 2); i++) {
+      double angleLeft = 2 * Math.PI * config.getFrequency1() * i / SAMPLE_RATE;
+      double angleRight = 2 * Math.PI * config.getFrequency2() * i / SAMPLE_RATE;
 
-      // Right channel
-      double angleRight = 2.0 * Math.PI * frequency2 * i / SAMPLE_RATE;
-      double sampleRight = rightVolume * Math.sin(angleRight);
-      short valueRight = (short) (sampleRight * Short.MAX_VALUE);
+      switch (config.getChannels()) {
+        case 1:
+          double sample = leftVolume * (Math.sin(angleLeft) + Math.sin(angleRight)) / 2;
+          short value = (short) (sample * Short.MAX_VALUE);
+          buffer[config.getChannels() * 2 * i] = (byte) (value & 0xFF);
+          buffer[config.getChannels() * 2 * i + 1] = (byte) ((value >> 8) & 0xFF);
+          break;
+        case 2:
+          double sampleLeft = leftVolume * Math.sin(angleLeft);
+          short valueLeft = (short) (sampleLeft * Short.MAX_VALUE);
+          double sampleRight = rightVolume * Math.sin(angleRight);
+          short valueRight = (short) (sampleRight * Short.MAX_VALUE);
 
-      buffer[4 * i] = (byte) (valueLeft & 0xFF);
-      buffer[4 * i + 1] = (byte) ((valueLeft >> 8) & 0xFF);
-      buffer[4 * i + 2] = (byte) (valueRight & 0xFF);
-      buffer[4 * i + 3] = (byte) ((valueRight >> 8) & 0xFF);
+          buffer[config.getChannels() * 2 * i] = (byte) (valueLeft & 0xFF);
+          buffer[config.getChannels() * 2 * i + 1] = (byte) ((valueLeft >> 8) & 0xFF);
+          buffer[config.getChannels() * 2 * i + 2] = (byte) (valueRight & 0xFF);
+          buffer[config.getChannels() * 2 * i + 3] = (byte) ((valueRight >> 8) & 0xFF);
+          break;
+      }
 
       // Update volumes
-      if (leftVolume < minVolume || leftVolume > maxVolume) {
-        dirLeft = -dirLeft;
+      if (circularVolume) {
+        if (leftVolume < minVolume || leftVolume > maxVolume) {
+          dirLeft = -dirLeft;
+        }
+        if (rightVolume < minVolume || rightVolume > maxVolume) {
+          dirRight = -dirRight;
+        }
+        leftVolume += dirLeft * step;
+        rightVolume += dirRight * step;
       }
-      if (rightVolume < minVolume || rightVolume > maxVolume) {
-        dirRight = -dirRight;
-      }
-      leftVolume += dirLeft * step;
-      rightVolume += dirRight * step;
     }
     return buffer;
   }
@@ -94,8 +109,7 @@ public final class SoundUtils {
     AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 2, true, true);
     try (SourceDataLine line = AudioSystem.getSourceDataLine(format)) {
       FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-      volumeControl.setValue(
-          (volumeControl.getMaximum() - volumeControl.getMinimum()) * volume + volumeControl.getMinimum());
+      volumeControl.setValue((volumeControl.getMaximum() - volumeControl.getMinimum()) * volume + volumeControl.getMinimum());
       line.open(format);
       if (listener != null) {
         line.addLineListener(listener);

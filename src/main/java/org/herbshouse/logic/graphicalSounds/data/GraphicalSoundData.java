@@ -5,19 +5,14 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import org.herbshouse.audio.SoundUtils;
 import org.herbshouse.logic.CircularQueue;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.graphicalSounds.GraphicalSound;
 
 public class GraphicalSoundData implements SoundData {
 
-  public static final int CHANNELS = 2;
-  public static final boolean SIGNED = true;
-  public static final boolean BIG_ENDIAN = false;
-
-  private static final float SAMPLE_RATE = 44100;
   private static final boolean BALANCE_HIGH_LEVEL = false;
-  private static final int SAMPLE_SIZE_BYTES = 16;
   private static final float VOLUME = 0.8f;
 
   private int currentIndex = -1;
@@ -40,8 +35,14 @@ public class GraphicalSoundData implements SoundData {
 
   public GraphicalSoundData(GraphicalSound sound, int size) {
     this.sound = sound;
-    this.visiblePoints = new CircularQueue<>(size / CHANNELS);
-    AudioFormat format = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BYTES, CHANNELS, SIGNED, BIG_ENDIAN);
+    this.visiblePoints = new CircularQueue<>(size / getStepVisualPoints());
+    AudioFormat format = new AudioFormat(
+        SoundUtils.SAMPLE_RATE,
+        SoundUtils.SAMPLE_SIZE_BYTES,
+        sound.getConfig().getChannels(),
+        SoundUtils.SIGNED,
+        SoundUtils.BIG_ENDIAN
+    );
     bytesToFlush = new byte[format.getFrameSize()];
     try {
       line = AudioSystem.getSourceDataLine(format);
@@ -51,6 +52,10 @@ public class GraphicalSoundData implements SoundData {
     } catch (LineUnavailableException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private int getStepVisualPoints() {
+    return sound.getConfig().getChannels() * 2;
   }
 
   public void setVolume(float volume) {
@@ -65,7 +70,7 @@ public class GraphicalSoundData implements SoundData {
   }
 
   public void addPoint(Point2D point) {
-    if (currentIndex % CHANNELS == 0) {
+    if (currentIndex % getStepVisualPoints() == 0) {
       visiblePoints.offer(point);
     }
     currentIndex++;
