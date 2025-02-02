@@ -110,7 +110,9 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
     phaseIncrement = initialMinPhase;
   }
 
+  @Override
   public void shutdown() {
+    super.shutdown();
     resetTimers();
     timer.cancel();
     timer.purge();

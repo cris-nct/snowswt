@@ -46,6 +46,13 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
   }
 
   @Override
+  public void shutdown() {
+    for (PhaseProcessor<T> phase : phases) {
+      phase.endPhase();
+    }
+  }
+
+  @Override
   public void beforeStart(List<Snowflake> snowflakeList) {
     this.currentPhaseProcessor = phases.getFirst();
     this.initPhase(snowflakeList);

@@ -20,8 +20,7 @@ public class ParasitesPhase4 extends AbstractPhaseProcessor<AttackDataParasites>
   public void startPhase(Snowflake snowflake) {
     AttackDataParasites attackData = getStrategy().getData(snowflake);
     attackData.setLocationToFollow(
-        new Point2D(getStrategy().getScreenBounds().width * Math.random(),
-            getStrategy().getScreenBounds().height * Math.random()));
+        new Point2D(getStrategy().getScreenBounds().width * Math.random(), getStrategy().getScreenBounds().height * Math.random()));
   }
 
   @Override

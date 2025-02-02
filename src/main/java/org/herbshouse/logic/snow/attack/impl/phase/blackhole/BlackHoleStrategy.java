@@ -117,8 +117,4 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     return blackHoleController;
   }
 
-  @Override
-  public void shutdown() {
-
-  }
 }

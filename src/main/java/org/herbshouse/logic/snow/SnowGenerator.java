@@ -481,7 +481,9 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
             }
           }
         }
-        removeSnowflakes(toRemove);
+        if (!toRemove.isEmpty()) {
+          removeSnowflakes(toRemove);
+        }
         lockSnowflakes.unlock();
       }
     } catch (InterruptedException e) {

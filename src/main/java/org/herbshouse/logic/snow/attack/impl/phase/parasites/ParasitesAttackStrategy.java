@@ -34,11 +34,6 @@ public class ParasitesAttackStrategy extends AbstractAttackPhaseStrategy<AttackD
   }
 
   @Override
-  public void shutdown() {
-
-  }
-
-  @Override
   public int getMaxSnowflakesInvolved() {
     return 20;
   }
