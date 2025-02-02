@@ -99,13 +99,12 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
           snowflake.setShowTrail(false);
         }
       }
-
     }
   }
 
   @Override
-  public void afterEnd() {
-    super.afterEnd();
+  public void shutdown() {
+    super.shutdown();
     blackHoleController.stop();
   }
 

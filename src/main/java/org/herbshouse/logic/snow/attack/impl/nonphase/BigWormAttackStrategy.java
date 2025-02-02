@@ -28,8 +28,7 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   }
 
   @Override
-  public void afterEnd() {
-    super.afterEnd();
+  public void shutdown() {
     stopAudio("big-worm.wav");
   }
 
@@ -61,11 +60,6 @@ public class BigWormAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
 
   @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
-
-  }
-
-  @Override
-  public void shutdown() {
 
   }
 

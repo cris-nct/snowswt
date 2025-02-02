@@ -91,12 +91,12 @@ public class YinYangAttackStrategy extends AbstractNoPhaseAttackStrategy<AttackD
   }
 
   @Override
-  public void afterUpdate(List<Snowflake> snowflakeList) {
+  public void shutdown() {
 
   }
 
   @Override
-  public void shutdown() {
+  public void afterUpdate(List<Snowflake> snowflakeList) {
 
   }
 

@@ -31,8 +31,6 @@ public interface AttackStrategy<T extends AbstractAttackData> {
 
   void stopAudio(String filename);
 
-  void afterEnd();
-
   void shutdown();
 
   boolean isFinished();

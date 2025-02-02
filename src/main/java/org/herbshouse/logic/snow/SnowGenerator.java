@@ -357,7 +357,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
         } else {
           pauseSnowing = false;
           this.cleanupSnowflakesData();
-          this.getAttackStrategy().afterEnd();
+          this.getAttackStrategy().shutdown();
         }
         lockSnowflakes.unlock();
       }
@@ -372,7 +372,7 @@ public class SnowGenerator extends AbstractGenerator<Snowflake> {
       if (lockSnowflakes.tryLock(10, TimeUnit.SECONDS)) {
         AttackStrategy<?> strategy = attackStrategies.get(oldType);
         if (strategy != null) {
-          strategy.afterEnd();
+          strategy.shutdown();
         }
         this.cleanupSnowflakesData();
         this.getAttackStrategy().beforeStart(snowflakes);

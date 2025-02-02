@@ -93,5 +93,4 @@ public class FireworksStrategy extends AbstractNoPhaseAttackStrategy<AttackDataF
   public void shutdown() {
 
   }
-
 }

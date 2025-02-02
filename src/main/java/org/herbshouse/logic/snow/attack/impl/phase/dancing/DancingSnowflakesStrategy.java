@@ -113,6 +113,7 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
   @Override
   public void shutdown() {
     super.shutdown();
+    stopAudio("dancing.wav");
     resetTimers();
     timer.cancel();
     timer.purge();
@@ -143,9 +144,4 @@ public class DancingSnowflakesStrategy extends AbstractAttackPhaseStrategy<Attac
     return screenBounds;
   }
 
-  @Override
-  public void afterEnd() {
-    super.afterEnd();
-    stopAudio("dancing.wav");
-  }
 }
