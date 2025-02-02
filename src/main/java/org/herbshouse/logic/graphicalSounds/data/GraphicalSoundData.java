@@ -11,11 +11,14 @@ import org.herbshouse.logic.graphicalSounds.GraphicalSound;
 
 public class GraphicalSoundData implements SoundData {
 
+  public static final int CHANNELS = 2;
+  public static final boolean SIGNED = true;
+  public static final boolean BIG_ENDIAN = false;
+
   private static final float SAMPLE_RATE = 44100;
-
-  private static final int SAMPLE_SIZE_BYTES = 8;
-
-  private static final float VOLUME = .7f;
+  private static final boolean BALANCE_HIGH_LEVEL = false;
+  private static final int SAMPLE_SIZE_BYTES = 16;
+  private static final float VOLUME = 0.8f;
 
   private int currentIndex = -1;
 
@@ -31,34 +34,60 @@ public class GraphicalSoundData implements SoundData {
 
   private int byteToFlashCounter = 0;
 
+  private float balance = 0f;
+
+  private float balanceDir = 1;
+
   public GraphicalSoundData(GraphicalSound sound, int size) {
     this.sound = sound;
-    this.visiblePoints = new CircularQueue<>(size);
-    AudioFormat format = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BYTES, 2, true, true);
+    this.visiblePoints = new CircularQueue<>(size / CHANNELS);
+    AudioFormat format = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BYTES, CHANNELS, SIGNED, BIG_ENDIAN);
     bytesToFlush = new byte[format.getFrameSize()];
     try {
       line = AudioSystem.getSourceDataLine(format);
       line.open(format);
-      FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-      volumeControl.setValue(
-          (volumeControl.getMaximum() - volumeControl.getMinimum()) * VOLUME + volumeControl.getMinimum());
+      this.setVolume(VOLUME);
       line.start();
     } catch (LineUnavailableException e) {
       throw new RuntimeException(e);
     }
   }
 
+  public void setVolume(float volume) {
+    FloatControl volumeControl = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+    volumeControl.setValue(
+        (volumeControl.getMaximum() - volumeControl.getMinimum()) * volume + volumeControl.getMinimum());
+  }
+
+  public void setBalance(float balance) {
+    FloatControl balanceControl = (FloatControl) line.getControl(FloatControl.Type.BALANCE);
+    balanceControl.setValue(balance);
+  }
+
   public void addPoint(Point2D point) {
-    visiblePoints.offer(point);
+    if (currentIndex % CHANNELS == 0) {
+      visiblePoints.offer(point);
+    }
     currentIndex++;
     bytesToFlush[byteToFlashCounter++] = sound.getAudioBuffer()[currentIndex];
     if (byteToFlashCounter == bytesToFlush.length) {
       byteToFlashCounter = 0;
       line.write(bytesToFlush, 0, bytesToFlush.length);
     }
+
     if (currentIndex + 1 >= sound.getAudioBuffer().length) {
       line.drain();
       line.close();
+    }
+
+    if (BALANCE_HIGH_LEVEL) {
+      float stepBalance = 0.0001f;
+      balance += balanceDir * stepBalance;
+      if (balance < -1 || balance > 1) {
+        balanceDir = -balanceDir;
+      } else {
+        setBalance(balance);
+      }
     }
   }
 

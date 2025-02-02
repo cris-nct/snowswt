@@ -3,7 +3,9 @@ package org.herbshouse.logic.graphicalSounds;
 import java.util.HashMap;
 import java.util.Map;
 import org.herbshouse.audio.SoundUtils;
+import org.herbshouse.controller.GraphicalSoundConfig;
 import org.herbshouse.logic.AbstractMovableObject;
+import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.graphicalSounds.data.GraphicalSoundData;
 import org.herbshouse.logic.graphicalSounds.data.SoundData;
 
@@ -21,18 +23,16 @@ public class GraphicalSound extends AbstractMovableObject {
 
   private final byte[] audioBuffer;
 
-  public GraphicalSound(int durationSec, int frequency) {
-    this.durationSec = durationSec;
-    this.frequency1 = frequency;
-    this.frequency2 = -1;
-    this.audioBuffer = SoundUtils.modulateFrequencies(durationSec, frequency);
-  }
-
-  public GraphicalSound(int durationSec, int frequency1, int frequency2) {
-    this.durationSec = durationSec;
-    this.frequency1 = frequency1;
-    this.frequency2 = frequency2;
-    this.audioBuffer = SoundUtils.modulateFrequencies(durationSec, frequency1, frequency2);
+  public GraphicalSound(GraphicalSoundConfig config) {
+    this.durationSec = config.getDuration();
+    this.frequency1 = config.getFrequency1();
+    this.frequency2 = config.getFrequency2();
+    if (config.getCircularSoundLevel() == 1) {
+      this.audioBuffer = SoundUtils.modulateFrequencies(durationSec, frequency1, frequency2, 1.0f, 1.0f);
+    } else {
+      float step = (float) Utils.linearInterpolation(config.getCircularSoundLevel(), 2, 0.00001, 10, 0.001);
+      this.audioBuffer = SoundUtils.circularSound(durationSec, step, frequency1, frequency2);
+    }
   }
 
   public GraphicalSound(int durationSec, int step, int frequency1, int frequency2) {
@@ -45,6 +45,14 @@ public class GraphicalSound extends AbstractMovableObject {
     this.frequency1 = frequency1;
     this.frequency2 = frequency2;
     this.audioBuffer = SoundUtils.modulateTwoFrequencies(durationSec, step, frequency1, frequency2);
+  }
+
+  public int getFrequency1() {
+    return frequency1;
+  }
+
+  public int getFrequency2() {
+    return frequency2;
   }
 
   public int getDurationSec() {

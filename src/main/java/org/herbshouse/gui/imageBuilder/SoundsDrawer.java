@@ -34,7 +34,8 @@ public class SoundsDrawer {
         GuiUtils.drawLine(gc, lastPoint, point, 1);
         lastPoint = point;
       }
-      if (generator.getFlagsConfiguration().getGraphicalSoundConfig().isSlowPlay()) {
+
+      if (generator.getFlagsConfiguration().getGraphicalSoundConfig().getSpeed() < 5) {
         gc.setBackground(SWTResourceManager.getColor(new RGB(255, 0, 0)));
         GuiUtils.drawFillOval(gc, lastPoint, 20, 20);
       }

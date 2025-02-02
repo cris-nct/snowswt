@@ -10,7 +10,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.herbshouse.controller.GraphicalSoundConfig;
 
@@ -24,7 +26,8 @@ public class SoundSettingsDialog extends Dialog {
   private Text frequency1Txt;
   private Text frequency2Txt;
   private Text durationTxt;
-  private Button slowPlayBtn;
+  private Spinner speedSpn;
+  private Spinner circularSoundSpn;
   private Button multiRowsBtn;
 
   public SoundSettingsDialog(Shell parent, GraphicalSoundConfig soundConfig) {
@@ -62,8 +65,11 @@ public class SoundSettingsDialog extends Dialog {
     );
     durationTxt.setText(String.valueOf(soundConfig.getDuration()));
 
-    slowPlayBtn = this.addButtonProperty(parent, "Slow play:");
-    slowPlayBtn.setSelection(soundConfig.isSlowPlay());
+    speedSpn = this.addSpinnerProperty(parent, "Speed:");
+    speedSpn.setSelection(soundConfig.getSpeed());
+
+    circularSoundSpn = this.addSpinnerProperty(parent, "Circular sound level:");
+    circularSoundSpn.setSelection(soundConfig.getCircularSoundLevel());
 
     multiRowsBtn = this.addButtonProperty(parent, "Multiple rows:");
     multiRowsBtn.setSelection(soundConfig.isMultiRowsRendering());
@@ -82,6 +88,21 @@ public class SoundSettingsDialog extends Dialog {
     return text;
   }
 
+  private Spinner addSpinnerProperty(Composite settingsShell, String labelText) {
+    CLabel label = new CLabel(settingsShell, SWT.NONE);
+    label.setText(labelText);
+    label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+    Spinner spinner = new Spinner(settingsShell, SWT.READ_ONLY);
+    spinner.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+    spinner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    spinner.setIncrement(1);
+    spinner.setMinimum(1);
+    spinner.setMaximum(10);
+
+    return spinner;
+  }
+
   private Button addButtonProperty(Composite settingsShell, String labelText) {
     CLabel label = new CLabel(settingsShell, SWT.NONE);
     label.setText(labelText);
@@ -97,8 +118,9 @@ public class SoundSettingsDialog extends Dialog {
     soundConfig = new GraphicalSoundConfig(Integer.parseInt(frequency1Txt.getText()),
         Integer.parseInt(frequency2Txt.getText()),
         Integer.parseInt(durationTxt.getText()),
-        slowPlayBtn.getSelection(),
-        multiRowsBtn.getSelection()
+        speedSpn.getSelection(),
+        multiRowsBtn.getSelection(),
+        circularSoundSpn.getSelection()
     );
     super.okPressed();
   }

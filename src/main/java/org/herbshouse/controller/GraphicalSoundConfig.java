@@ -8,16 +8,30 @@ public class GraphicalSoundConfig {
 
   private final int duration;
 
-  private final boolean slowPlay;
+  private final int speed;
 
   private final boolean multiRowsRendering;
 
-  public GraphicalSoundConfig(int frequency1, int frequency2, int duration, boolean slowPlay, boolean multiRowsRendering) {
+  private final int circularSoundLevel;
+
+  public GraphicalSoundConfig(
+      int frequency1,
+      int frequency2,
+      int duration,
+      int speed,
+      boolean multiRowsRendering,
+      int circularSoundLevel
+  ) {
     this.frequency1 = frequency1;
     this.frequency2 = frequency2;
     this.duration = duration;
-    this.slowPlay = slowPlay;
+    this.speed = speed;
     this.multiRowsRendering = multiRowsRendering;
+    this.circularSoundLevel = circularSoundLevel;
+  }
+
+  public int getCircularSoundLevel() {
+    return circularSoundLevel;
   }
 
   public boolean isMultiRowsRendering() {
@@ -36,7 +50,7 @@ public class GraphicalSoundConfig {
     return duration;
   }
 
-  public boolean isSlowPlay() {
-    return slowPlay;
+  public int getSpeed() {
+    return speed;
   }
 }

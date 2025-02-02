@@ -22,7 +22,7 @@ public class GraphicalSoundsGenerator extends AbstractGenerator<GraphicalSound> 
 
   private AbstractGraphicalSoundUpdater updater;
 
-  private boolean slowPlay;
+  private int slowCounter;
 
   @Override
   public void init(FlagsConfiguration flagsConfiguration, Rectangle screenBounds) {
@@ -31,7 +31,7 @@ public class GraphicalSoundsGenerator extends AbstractGenerator<GraphicalSound> 
   }
 
   private void generateSound(GraphicalSoundConfig config) {
-    sound = new GraphicalSound(config.getDuration(), config.getFrequency1(), config.getFrequency2());
+    sound = new GraphicalSound(config);
     sound.setSize(150);
     sound.setLocation(new Point2D(0, screenBounds.height / 2.0));
     sound.setColor(new RGB(255, 255, 0));
@@ -47,8 +47,15 @@ public class GraphicalSoundsGenerator extends AbstractGenerator<GraphicalSound> 
         }
         if (sound == null) {
           Utils.sleep(1000);
-        } else if (slowPlay) {
-          Utils.sleep(0, 1000);
+        } else if (getFlagsConfiguration().getGraphicalSoundConfig().getSpeed() < 10) {
+          slowCounter++;
+          int slowCounterStep = (int) Utils.linearInterpolation(getFlagsConfiguration().getGraphicalSoundConfig().getSpeed(),
+              1, 5, 9, 400
+          );
+          if (slowCounter % slowCounterStep == 0) {
+            Utils.sleep(0, 1000);
+            slowCounter = 0;
+          }
         }
       } else {
         Utils.sleep(getSleepDurationDoingNothing());
@@ -88,7 +95,7 @@ public class GraphicalSoundsGenerator extends AbstractGenerator<GraphicalSound> 
 
   @Override
   public void reset() {
-
+    slowCounter = 0;
   }
 
   @Override
@@ -134,7 +141,6 @@ public class GraphicalSoundsGenerator extends AbstractGenerator<GraphicalSound> 
   @Override
   public void changeGraphicalSound(GraphicalSoundConfig graphicalSoundConfig) {
     generateSound(graphicalSoundConfig);
-    this.slowPlay = graphicalSoundConfig.isSlowPlay();
     this.selectUpdater();
   }
 
