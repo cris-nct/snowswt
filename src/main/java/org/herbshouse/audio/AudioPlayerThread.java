@@ -48,6 +48,7 @@ class AudioPlayerThread extends Thread {
             Utils.sleep(order.getMilliseconds());
           }
           clip.stop();
+          clip.close();
           if (order.getCallback() != null) {
             order.getCallback().run();
           }
@@ -88,6 +89,7 @@ class AudioPlayerThread extends Thread {
   public void interrupt() {
     if (clip != null && clip.isRunning()) {
       clip.stop();
+      clip.close();
     }
     super.interrupt();
   }

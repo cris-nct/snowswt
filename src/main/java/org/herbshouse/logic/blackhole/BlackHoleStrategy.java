@@ -1,17 +1,18 @@
-package org.herbshouse.logic.snow.attack.impl.phase.blackhole;
+package org.herbshouse.logic.blackhole;
 
 import java.util.List;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.herbshouse.audio.AudioPlayer;
 import org.herbshouse.controller.FlagsConfiguration;
+import org.herbshouse.logic.Point2D;
+import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
 
 public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBlackHole> {
 
-  public static final int BLACKHOLES_MAX_SNOWFLAKES = 200;
+  public static final int BLACKHOLES_MAX_SNOWFLAKES = 500;
   public static final double BLACKHOLE_RADIUS = 150;
   public static final double BLACKHOLE_RING_WIDTH = 30;
 
@@ -29,12 +30,12 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     this.flagsConfiguration = flagsConfiguration;
     this.screenBounds = screenBounds;
 
-    BlackHolePhase1 phase1 = new BlackHolePhase1(this);
-    BlackHolePhase2 phase2 = new BlackHolePhase2(this);
-    BlackHolePhase3 phase3 = new BlackHolePhase3(this);
-    BlackHolePhase4 phase4 = new BlackHolePhase4(this);
-    BlackHolePhase5 phase5 = new BlackHolePhase5(this);
-    BlackHolePhase6 phase6 = new BlackHolePhase6(this);
+    BlackHolePhase1BornToWhite phase1 = new BlackHolePhase1BornToWhite(this);
+    BlackHolePhase2WhiteRing phase2 = new BlackHolePhase2WhiteRing(this);
+    BlackHolePhase3WhiteToYellow phase3 = new BlackHolePhase3WhiteToYellow(this);
+    BlackHolePhase4YellowRing phase4 = new BlackHolePhase4YellowRing(this);
+    BlackHolePhase5RedRing phase5 = new BlackHolePhase5RedRing(this);
+    BlackHolePhase6Explosion phase6 = new BlackHolePhase6Explosion(this);
 
     phase1.setNextPhase(phase2);
     phase2.setNextPhase(phase3);
@@ -84,18 +85,13 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
     if (alpha < 50 || alpha >= 255) {
       alphaDirection = -alphaDirection;
     }
+  }
 
-    if (getCurrentPhaseProcessor() != null) {
-      for (Snowflake snowflake : snowflakeList) {
-        if (getCurrentPhaseProcessor().getCurrentPhaseIndex() == 6
-            && getCurrentPhaseProcessor().isFinished(snowflake)) {
-          snowflake.setIndividualStrategy(null);
-          snowflake.setColor(new RGB(255, 255, 255));
-          snowflake.setSize(5);
-          snowflake.setShowTrail(false);
-        }
-      }
-    }
+  public Point2D generateRandomPointOutside() {
+    Point2D loc = new Point2D(Math.random() * screenBounds.width, Math.random() * screenBounds.height);
+    double dist = Utils.distance(0, 0, screenBounds.width, screenBounds.height);
+    loc = Utils.moveToDirection(loc, dist, Math.toRadians(Math.random() * 360));
+    return loc;
   }
 
   public int getAlpha() {

@@ -48,7 +48,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
   @Override
   public void shutdown() {
     for (PhaseProcessor<T> phase : phases) {
-      phase.endPhase();
+      phase.endPhase(null);
     }
     finished = true;
   }
@@ -122,7 +122,7 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
       }
     }
     if (allArrivedToDestination) {
-      currentPhaseProcessor.endPhase();
+      currentPhaseProcessor.endPhase(snowflakeList);
       currentPhaseProcessor = currentPhaseProcessor.getNextPhaseProcessor();
       if (currentPhaseProcessor != null) {
         initPhase(snowflakeList);

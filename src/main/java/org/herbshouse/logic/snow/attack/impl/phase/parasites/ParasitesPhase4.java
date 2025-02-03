@@ -1,5 +1,6 @@
 package org.herbshouse.logic.snow.attack.impl.phase.parasites;
 
+import java.util.List;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
@@ -24,7 +25,7 @@ public class ParasitesPhase4 extends AbstractPhaseProcessor<AttackDataParasites>
   }
 
   @Override
-  public void endPhase() {
+  public void endPhase(List<Snowflake> snowflakeList) {
 
   }
 

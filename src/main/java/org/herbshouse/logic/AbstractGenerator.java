@@ -23,6 +23,9 @@ public abstract class AbstractGenerator<T extends AbstractMovableObject>
   }
 
   @Override
+  public abstract void run();
+
+  @Override
   public void setLogicController(DefaultControllerImpl logicController) {
     this.logicController = logicController;
   }

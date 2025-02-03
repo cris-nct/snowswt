@@ -1,5 +1,6 @@
-package org.herbshouse.logic.snow.attack.impl.phase.blackhole;
+package org.herbshouse.logic.blackhole;
 
+import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
@@ -8,11 +9,11 @@ import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
 
-public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole> {
+public class BlackHolePhase4YellowRing extends AbstractPhaseProcessor<AttackDataBlackHole> {
 
   private long startTime = 0;
 
-  protected BlackHolePhase4(AttackStrategy<AttackDataBlackHole> strategy) {
+  protected BlackHolePhase4YellowRing(AttackStrategy<AttackDataBlackHole> strategy) {
     super(strategy);
   }
 
@@ -27,7 +28,7 @@ public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole>
   }
 
   @Override
-  public void endPhase() {
+  public void endPhase(List<Snowflake> snowflakeList) {
     getStrategy().stopAudio("blackhole.wav");
     getStrategy().stopAudio("blackhole-3.wav");
   }
@@ -46,7 +47,7 @@ public class BlackHolePhase4 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 30000;
+    return (System.currentTimeMillis() - startTime) > 20000;
   }
 
 }

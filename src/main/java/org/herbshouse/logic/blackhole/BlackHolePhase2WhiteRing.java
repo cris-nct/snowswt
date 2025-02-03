@@ -1,5 +1,6 @@
-package org.herbshouse.logic.snow.attack.impl.phase.blackhole;
+package org.herbshouse.logic.blackhole;
 
+import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
@@ -8,11 +9,11 @@ import org.herbshouse.logic.snow.attack.AttackStrategy;
 import org.herbshouse.logic.snow.attack.impl.AbstractPhaseProcessor;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
 
-public class BlackHolePhase5 extends AbstractPhaseProcessor<AttackDataBlackHole> {
+public class BlackHolePhase2WhiteRing extends AbstractPhaseProcessor<AttackDataBlackHole> {
 
   private long startTime = 0;
 
-  protected BlackHolePhase5(AttackStrategy<AttackDataBlackHole> strategy) {
+  protected BlackHolePhase2WhiteRing(AttackStrategy<AttackDataBlackHole> strategy) {
     super(strategy);
   }
 
@@ -20,18 +21,18 @@ public class BlackHolePhase5 extends AbstractPhaseProcessor<AttackDataBlackHole>
   public void startPhase(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
     attackData.setAngle(Utils.angleOfLine(snowflake.getLocation(), attackData.getLocationToFollow()));
-    attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS / 4 - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - Math.random()));
+    attackData.setLocationToFollow(new Point2D(99999, 99999));
+    attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - Math.random()));
+    snowflake.setShowTrail(true);
+    snowflake.getSnowTail().setTailLength(50);
+    snowflake.setShowHead(false);
+    snowflake.setColor(new RGB(255, 255, 255));
     startTime = System.currentTimeMillis();
-    //redish
-    snowflake.setColor(new RGB(201, 71, 0));
-    snowflake.setSize(snowflake.getSize() / 2);
-    snowflake.getSnowTail().setTailLength(100);
-    getStrategy().playAudio("blackhole-2.wav");
   }
 
   @Override
-  public void endPhase() {
-    getStrategy().stopAudio("blackhole-2.wav");
+  public void endPhase(List<Snowflake> snowflakeList) {
+
   }
 
   @Override
@@ -43,12 +44,12 @@ public class BlackHolePhase5 extends AbstractPhaseProcessor<AttackDataBlackHole>
 
   @Override
   public int getCurrentPhaseIndex() {
-    return 5;
+    return 2;
   }
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 30000;
+    return (System.currentTimeMillis() - startTime) > 20000;
   }
 
 }

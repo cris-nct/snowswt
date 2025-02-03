@@ -10,6 +10,7 @@ import org.herbshouse.gui.GuiUtils;
 import org.herbshouse.gui.SWTResourceManager;
 import org.herbshouse.gui.SnowShell;
 import org.herbshouse.logic.UserInfo;
+import org.herbshouse.logic.blackhole.BlackholeGenerator;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.fractals.FractalsGenerator;
 import org.herbshouse.logic.graphicalSounds.GraphicalSoundsGenerator;
@@ -31,6 +32,7 @@ public class SnowingApplication {
     EnemyGenerator enemyGenerator = new EnemyGenerator();
     FractalsGenerator fractalsGenerator = new FractalsGenerator();
     GraphicalSoundsGenerator graphicalSoundsGenerator = new GraphicalSoundsGenerator();
+    BlackholeGenerator blackholeGenerator = new BlackholeGenerator();
 
     Transform transform = null;
     DefaultAudioPlayer audioPlayer = new DefaultAudioPlayer();
@@ -50,11 +52,11 @@ public class SnowingApplication {
       controller.setUserInfo(new UserInfo());
       controller.setTransform(transform);
       controller.setAudio(audioPlayer);
-
       controller.registerListener(fractalsGenerator);
       controller.registerListener(snowGenerator);
       controller.registerListener(enemyGenerator);
       controller.registerListener(graphicalSoundsGenerator);
+      controller.registerListener(blackholeGenerator);
 
       shell.setController(controller);
       shell.open();
@@ -63,6 +65,7 @@ public class SnowingApplication {
       enemyGenerator.start();
       fractalsGenerator.start();
       graphicalSoundsGenerator.start();
+      blackholeGenerator.start();
 
       while (!shell.isDisposed()) {
         if (!Display.getDefault().readAndDispatch()) {
@@ -77,6 +80,7 @@ public class SnowingApplication {
       enemyGenerator.shutdown();
       fractalsGenerator.shutdown();
       graphicalSoundsGenerator.shutdown();
+      blackholeGenerator.shutdown();
       SWTResourceManager.disposeAll();
       mbImageSmall.dispose();
     }

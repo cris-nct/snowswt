@@ -42,6 +42,7 @@ import org.herbshouse.gui.imageBuilder.SwtImageBuilder;
 import org.herbshouse.logic.AbstractMovableObject;
 import org.herbshouse.logic.GeneratorListener;
 import org.herbshouse.logic.GraphicalImageGenerator;
+import org.herbshouse.logic.blackhole.BlackholeGenerator;
 import org.herbshouse.logic.enemies.EnemyGenerator;
 import org.herbshouse.logic.fractals.TreeType;
 import org.herbshouse.logic.graphicalSounds.GraphicalSoundsGenerator;
@@ -180,6 +181,7 @@ public class SnowShell extends Shell implements
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void paintControl(PaintEvent paintEvent) {
     GC gc = paintEvent.gc;
     //Draw background
@@ -190,12 +192,12 @@ public class SnowShell extends Shell implements
       //Draw objects from each listener
       for (GeneratorListener<? extends AbstractMovableObject> listener : controller.getListeners()) {
         if (listener instanceof SnowGenerator) {
-          //noinspection unchecked
           GeneratorListener<Snowflake> generatorListener = (GeneratorListener<Snowflake>) listener;
           imageBuilder.drawSnowflakes(generatorListener);
           imageBuilder.drawCountDown(generatorListener);
+        } else if (listener instanceof BlackholeGenerator) {
+          imageBuilder.drawSnowflakes((GeneratorListener<Snowflake>) listener);
         } else if (listener instanceof EnemyGenerator) {
-          //noinspection unchecked
           imageBuilder.drawEnemies((GeneratorListener<AbstractMovableObject>) listener);
         } else if (listener instanceof GraphicalSoundsGenerator) {
           imageBuilder.drawSounds((GraphicalSoundsGenerator) listener);
