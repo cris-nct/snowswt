@@ -115,6 +115,7 @@ jobs:
             - ${{inputs.release_notes}}
             Download executable jar from:
             https://github.com/crisnct/snowswt/releases/download/${{inputs.name}}/snowswt-${{inputs.name}}-jar-with-dependencies.jar
+            (after download then double-click on the file to start the game)
             ---------------------------------------------------------------------
             In order to execute it you must have at least java 22 on your pc.
             (https://adoptium.net/temurin/releases/?os=windows&arch=x64&package=jre&version=22)
