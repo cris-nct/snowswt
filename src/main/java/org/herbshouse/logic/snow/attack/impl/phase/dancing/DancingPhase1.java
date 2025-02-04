@@ -1,6 +1,7 @@
 package org.herbshouse.logic.snow.attack.impl.phase.dancing;
 
 import java.util.List;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
@@ -22,7 +23,7 @@ public class DancingPhase1 extends DancingAbstract {
     Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), 250,
         Math.toRadians(Math.random() * 360));
     attackData.setLocationToFollow(dest);
-    getStrategy().playAudio("dancing.wav");
+    getStrategy().playAudio("dancing.wav", AudioPlayType.BACKGROUND, 1f);
   }
 
   @Override

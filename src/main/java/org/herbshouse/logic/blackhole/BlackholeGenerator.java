@@ -110,7 +110,6 @@ public class BlackholeGenerator extends AbstractGenerator<Snowflake> {
     final Snowflake snowflake = new Snowflake();
     snowflake.setLocation(new Point2D(-1, -1));
     snowflake.setColor(new RGB(255, 255, 0));
-    snowflake.setSpeed(0.3 + Math.random() * 0.7);
     final int size;
     if (config.isBigBalls()) {
       size = 12 + (int) (Math.random() * 20);

@@ -18,10 +18,6 @@ public abstract class AbstractNoPhaseAttackStrategy<T extends AbstractAttackData
     this.audioPlayer = audioPlayer;
   }
 
-  public void playAudio(String filename) {
-    this.playAudio(filename, AudioPlayType.BACKGROUND, 1f);
-  }
-
   public void playAudio(String filename, AudioPlayType type, float volume) {
     if (!audioPlayer.isPlaying("sounds/" + filename)) {
       AudioPlayOrder order = new AudioPlayOrder("sounds/" + filename);

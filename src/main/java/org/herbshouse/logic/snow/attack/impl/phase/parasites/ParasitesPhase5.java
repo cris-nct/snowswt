@@ -1,6 +1,7 @@
 package org.herbshouse.logic.snow.attack.impl.phase.parasites;
 
 import java.util.List;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
@@ -22,7 +23,7 @@ public class ParasitesPhase5 extends AbstractPhaseProcessor<AttackDataParasites>
     AttackDataParasites attackData = getStrategy().getData(snowflake);
     attackData.setSpeedPhase1(1);
     attackData.setLocationToFollow(getStrategy().getFlagsConfiguration().getMouseLoc());
-    getStrategy().playAudio("worms.wav");
+    getStrategy().playAudio("worms.wav", AudioPlayType.BACKGROUND, 1f);
   }
 
   @Override

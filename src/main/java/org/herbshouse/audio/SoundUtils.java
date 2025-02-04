@@ -12,26 +12,11 @@ import org.herbshouse.logic.Utils;
 public final class SoundUtils {
 
   public static final float SAMPLE_RATE = 44100;
+  public static final int SAMPLE_SIZE_BYTES = 16;
   public static final boolean SIGNED = true;
   public static final boolean BIG_ENDIAN = false;
-  public static final int SAMPLE_SIZE_BYTES = 16;
 
   private SoundUtils() {
-
-  }
-
-  public static byte[] modulateTwoFrequencies(int durationSec, int step, int frequency1, int frequency2) {
-    int countTotal = 4 * step * step;
-    byte[] buffer = new byte[(int) (SAMPLE_RATE * durationSec)];
-    int counter = 0;
-    for (int i = frequency1 - step; i < frequency1 + step; i++) {
-      for (int j = frequency2 - step; j < frequency2 + step; j++) {
-        byte[] intermediateBuffer = modulateFrequencies((double) durationSec / countTotal / 2, i, j, 1, 1);
-        System.arraycopy(intermediateBuffer, 0, buffer, counter, intermediateBuffer.length);
-        counter += intermediateBuffer.length;
-      }
-    }
-    return buffer;
   }
 
   public static byte[] modulateFrequencies(GraphicalSoundConfig config) {

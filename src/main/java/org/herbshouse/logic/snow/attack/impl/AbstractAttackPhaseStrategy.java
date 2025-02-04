@@ -19,7 +19,6 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
   private final List<PhaseProcessor<T>> phases = new ArrayList<>();
   private final AudioPlayer audioPlayer;
   private PhaseProcessor<T> currentPhaseProcessor;
-  private volatile boolean allArrivedToDestination;
   private boolean started = false;
   private boolean finished = false;
 
@@ -27,11 +26,12 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
     this.audioPlayer = audioPlayer;
   }
 
-  public void playAudio(String filename) {
+  @Override
+  public void playAudio(String filename, AudioPlayType type, float volume) {
     if (!audioPlayer.isPlaying("sounds/" + filename)) {
       AudioPlayOrder order = new AudioPlayOrder("sounds/" + filename);
-      order.setType(AudioPlayType.BACKGROUND);
-      order.setVolume(1f);
+      order.setType(type);
+      order.setVolume(volume);
       audioPlayer.play(order);
     }
   }
@@ -106,11 +106,17 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
 
   @Override
   public void afterUpdate(List<Snowflake> snowflakeList) {
-    allArrivedToDestination = true;
     if (currentPhaseProcessor == null) {
       shutdown();
       return;
     }
+    if (this.canStartNextPhase(snowflakeList)) {
+      this.startNextPhase(snowflakeList);
+    }
+  }
+
+  protected boolean canStartNextPhase(List<Snowflake> snowflakeList) {
+    boolean allArrivedToDestination = true;
     for (Snowflake snowflake : snowflakeList) {
       T data = getData(snowflake);
       if (snowflake.isFreezed() || data.getLocationToFollow() == null) {
@@ -121,14 +127,16 @@ public abstract class AbstractAttackPhaseStrategy<T extends AbstractPhaseAttackD
         break;
       }
     }
-    if (allArrivedToDestination) {
-      currentPhaseProcessor.endPhase(snowflakeList);
-      currentPhaseProcessor = currentPhaseProcessor.getNextPhaseProcessor();
-      if (currentPhaseProcessor != null) {
-        initPhase(snowflakeList);
-      } else {
-        shutdown();
-      }
+    return allArrivedToDestination;
+  }
+
+  protected void startNextPhase(List<Snowflake> snowflakeList) {
+    currentPhaseProcessor.endPhase(snowflakeList);
+    currentPhaseProcessor = currentPhaseProcessor.getNextPhaseProcessor();
+    if (currentPhaseProcessor != null) {
+      initPhase(snowflakeList);
+    } else {
+      shutdown();
     }
   }
 

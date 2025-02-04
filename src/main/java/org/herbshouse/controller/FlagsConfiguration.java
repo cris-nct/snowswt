@@ -26,7 +26,7 @@ public class FlagsConfiguration {
   private Point2D mouseLoc = new Point2D();
   private TreeType fractalsType = TreeType.PERFECT_DEFAULT;
   private GraphicalSoundConfig graphicalSoundConfig
-      = new GraphicalSoundConfig(963, 960, 30, 10, true, 5, 2);
+      = new GraphicalSoundConfig(75, 77, 30, 10, true, 5, 2, 4);
 
   void increaseSnowingLevel() {
     this.snowingLevel++;

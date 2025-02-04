@@ -8,6 +8,8 @@ public class AttackDataBlackHole extends AbstractPhaseAttackData {
 
   private double angle;
 
+  private boolean startedWhiteRing;
+
   public double getAngle() {
     return angle = angle + 0.03;
   }
@@ -24,4 +26,11 @@ public class AttackDataBlackHole extends AbstractPhaseAttackData {
     this.radius = radius;
   }
 
+  public void setStartedWhiteRing(boolean startedWhiteRing) {
+    this.startedWhiteRing = startedWhiteRing;
+  }
+
+  public boolean isStartedWhiteRing() {
+    return startedWhiteRing;
+  }
 }

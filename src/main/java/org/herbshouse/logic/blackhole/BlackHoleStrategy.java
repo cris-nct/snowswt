@@ -7,6 +7,7 @@ import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
+import org.herbshouse.logic.snow.attack.PhaseProcessor;
 import org.herbshouse.logic.snow.attack.impl.AbstractAttackPhaseStrategy;
 import org.herbshouse.logic.snow.data.AttackDataBlackHole;
 
@@ -96,6 +97,25 @@ public class BlackHoleStrategy extends AbstractAttackPhaseStrategy<AttackDataBla
 
   public int getAlpha() {
     return (int) alpha;
+  }
+
+  @Override
+  public Point2D computeNextLocation(Snowflake snowflake, Snowflake prevSnowFlake) {
+    if (getCurrentPhaseProcessor() != null
+        && getCurrentPhaseProcessor().getCurrentPhaseIndex() == 1
+        && getCurrentPhaseProcessor().isFinished(snowflake)
+    ) {
+      PhaseProcessor<AttackDataBlackHole> nextPhase = getCurrentPhaseProcessor().getNextPhaseProcessor();
+      AttackDataBlackHole data = getData(snowflake);
+      if (!data.isStartedWhiteRing()) {
+        data.setPhase(nextPhase.getCurrentPhaseIndex());
+        data.setStartedWhiteRing(true);
+        nextPhase.startPhase(snowflake);
+      }
+      return nextPhase.computeLocation(snowflake);
+    } else {
+      return super.computeNextLocation(snowflake, prevSnowFlake);
+    }
   }
 
 }

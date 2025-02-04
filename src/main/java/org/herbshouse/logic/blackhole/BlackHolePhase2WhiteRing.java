@@ -20,7 +20,7 @@ public class BlackHolePhase2WhiteRing extends AbstractPhaseProcessor<AttackDataB
   @Override
   public void startPhase(Snowflake snowflake) {
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
-    attackData.setAngle(Utils.angleOfLine(snowflake.getLocation(), attackData.getLocationToFollow()));
+    attackData.setAngle(Utils.angleOfLine(snowflake.getLocation(), getStrategy().getFlagsConfiguration().getMouseLoc()));
     attackData.setLocationToFollow(new Point2D(99999, 99999));
     attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - Math.random()));
     snowflake.setShowTrail(true);
@@ -49,7 +49,7 @@ public class BlackHolePhase2WhiteRing extends AbstractPhaseProcessor<AttackDataB
 
   @Override
   public boolean isFinished(Snowflake snowflake) {
-    return (System.currentTimeMillis() - startTime) > 20000;
+    return (System.currentTimeMillis() - startTime) > 10000;
   }
 
 }

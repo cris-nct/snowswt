@@ -125,7 +125,8 @@ public class SoundSettingsDialog extends Dialog {
         speedSpn.getSelection(),
         multiRowsBtn.getSelection(),
         circularSoundSpn.getSelection(),
-        channelsSpn.getSelection()
+        channelsSpn.getSelection(),
+        4
     );
     super.okPressed();
   }

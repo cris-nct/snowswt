@@ -1,6 +1,7 @@
 package org.herbshouse.logic.blackhole;
 
 import java.util.List;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
@@ -21,16 +22,20 @@ public class BlackHolePhase1BornToWhite extends AbstractPhaseProcessor<AttackDat
     double angle = Utils.angleOfLine(getStrategy().getFlagsConfiguration().getMouseLoc(), snowflake.getLocation());
     Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), BlackHoleStrategy.BLACKHOLE_RADIUS, angle);
     attackData.setLocationToFollow(dest);
-    getStrategy().playAudio("blackhole.wav");
-    getStrategy().playAudio("blackhole-3.wav");
+    getStrategy().playAudio("blackhole.wav", AudioPlayType.BACKGROUND, 1f);
+    getStrategy().playAudio("blackhole-3.wav", AudioPlayType.BACKGROUND, 1f);
     snowflake.setShowTrail(true);
+    snowflake.setSpeed(0.3 + Math.random() * 0.3);
     snowflake.getSnowTail().setTailLength(50);
   }
 
   @Override
   public void endPhase(List<Snowflake> snowflakeList) {
     if (snowflakeList != null) {
-      snowflakeList.forEach(s -> s.setShowTrail(false));
+      snowflakeList.forEach(snowflake -> {
+        snowflake.setShowTrail(false);
+        snowflake.setSpeed(0.3 + Math.random() * 0.7);
+      });
     }
   }
 
@@ -41,7 +46,11 @@ public class BlackHolePhase1BornToWhite extends AbstractPhaseProcessor<AttackDat
       snowflake.setShowHead(false);
       return snowflake.getLocation();
     } else {
-      double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), getStrategy().getData(snowflake).getLocationToFollow());
+      double angle = Utils.angleOfLine(getStrategy().getFlagsConfiguration().getMouseLoc(), snowflake.getLocation());
+      Point2D dest = Utils.moveToDirection(getStrategy().getFlagsConfiguration().getMouseLoc(), BlackHoleStrategy.BLACKHOLE_RADIUS, angle);
+      AttackDataBlackHole attackData = getStrategy().getData(snowflake);
+      attackData.setLocationToFollow(dest);
+      double directionToTarget = Utils.angleOfLine(snowflake.getLocation(), dest);
       return Utils.moveToDirection(snowflake.getLocation(), snowflake.getSpeed(), directionToTarget);
     }
   }
@@ -51,5 +60,8 @@ public class BlackHolePhase1BornToWhite extends AbstractPhaseProcessor<AttackDat
     return 1;
   }
 
-
+  @Override
+  public boolean isFinished(Snowflake snowflake) {
+    return super.isFinished(snowflake) || getStrategy().getData(snowflake).isStartedWhiteRing();
+  }
 }

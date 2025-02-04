@@ -10,6 +10,8 @@ public class GraphicalSoundConfig {
 
   private final int speed;
 
+  private final int step;
+
   private final boolean multiRowsRendering;
 
   private final int circularSoundLevel;
@@ -23,7 +25,8 @@ public class GraphicalSoundConfig {
       int speed,
       boolean multiRowsRendering,
       int circularSoundLevel,
-      int channels
+      int channels,
+      int step
   ) {
     this.frequency1 = frequency1;
     this.frequency2 = frequency2;
@@ -32,6 +35,11 @@ public class GraphicalSoundConfig {
     this.multiRowsRendering = multiRowsRendering;
     this.circularSoundLevel = circularSoundLevel;
     this.channels = channels;
+    this.step = 4;
+  }
+
+  public int getStep() {
+    return step;
   }
 
   public int getChannels() {

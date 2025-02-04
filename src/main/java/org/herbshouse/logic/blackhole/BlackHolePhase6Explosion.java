@@ -1,6 +1,8 @@
 package org.herbshouse.logic.blackhole;
 
 import java.util.List;
+import org.eclipse.swt.graphics.RGB;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.Utils;
 import org.herbshouse.logic.snow.Snowflake;
@@ -22,7 +24,11 @@ public class BlackHolePhase6Explosion extends AbstractPhaseProcessor<AttackDataB
     AttackDataBlackHole attackData = getStrategy().getData(snowflake);
     attackData.setLocationToFollow(((BlackHoleStrategy) getStrategy()).generateRandomPointOutside());
     snowflake.setAlpha(255);
-    getStrategy().playAudio("explosion.wav");
+    snowflake.setSpeed(0.1 + Math.random() * 0.7);
+    snowflake.setSize(snowflake.getSize() * 2);
+    snowflake.setColor(new RGB(255, 255, 0));
+    snowflake.getSnowTail().setTailLength(100);
+    getStrategy().playAudio("explosion.wav", AudioPlayType.EFFECT, 1f);
   }
 
   @Override

@@ -2,6 +2,7 @@ package org.herbshouse.logic.snow.attack;
 
 import java.util.List;
 import org.eclipse.swt.graphics.Rectangle;
+import org.herbshouse.audio.AudioPlayType;
 import org.herbshouse.controller.FlagsConfiguration;
 import org.herbshouse.logic.Point2D;
 import org.herbshouse.logic.snow.Snowflake;
@@ -27,7 +28,7 @@ public interface AttackStrategy<T extends AbstractAttackData> {
 
   Rectangle getScreenBounds();
 
-  void playAudio(String filename);
+  void playAudio(String filename, AudioPlayType type, float volume);
 
   void stopAudio(String filename);
 
