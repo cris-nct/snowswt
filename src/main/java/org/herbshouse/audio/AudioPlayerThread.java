@@ -47,8 +47,7 @@ class AudioPlayerThread extends Thread {
           } else {
             Utils.sleep(order.getMilliseconds());
           }
-          clip.stop();
-          clip.close();
+          stopAudio();
           if (order.getCallback() != null) {
             order.getCallback().run();
           }
@@ -87,15 +86,22 @@ class AudioPlayerThread extends Thread {
 
   @Override
   public void interrupt() {
-    if (clip != null && clip.isRunning()) {
-      clip.stop();
-      clip.close();
-    }
+    stopAudio();
     super.interrupt();
   }
 
+  private void stopAudio() {
+    if (clip != null) {
+      if (clip.isRunning()) {
+        clip.stop();
+      }
+      clip.close();
+      clip = null;
+    }
+  }
+
   public boolean isPlaying() {
-    return this.isAlive() || (clip != null && clip.isRunning());
+    return this.isAlive() || clip != null;
   }
 
 }

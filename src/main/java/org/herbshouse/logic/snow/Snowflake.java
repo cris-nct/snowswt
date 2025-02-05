@@ -25,11 +25,11 @@ public class Snowflake extends AbstractMovableObject {
     return individualStrategy;
   }
 
-  public void setIndividualStrategy(AttackStrategy<?> individualStrategy) {
-    if (individualStrategy == null && this.individualStrategy != null) {
+  public void setIndividualStrategy(AttackStrategy<?> newStrategy) {
+    if (newStrategy == null && this.individualStrategy != null) {
       this.individualStrategy.shutdown();
     }
-    this.individualStrategy = individualStrategy;
+    this.individualStrategy = newStrategy;
   }
 
   public SnowTail getSnowTail() {
