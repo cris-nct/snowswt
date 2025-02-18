@@ -24,7 +24,7 @@ public class BlackHolePhase5RedRing extends AbstractPhaseProcessor<AttackDataBla
     attackData.setAngle(Utils.angleOfLine(snowflake.getLocation(), getStrategy().getFlagsConfiguration().getMouseLoc()));
     attackData.setRadius(BlackHoleStrategy.BLACKHOLE_RADIUS / 4 - BlackHoleStrategy.BLACKHOLE_RING_WIDTH * (1 - Math.random()));
     startTime = System.currentTimeMillis();
-    //redish
+    //reddish
     snowflake.setColor(new RGB(201, 71, 0));
     snowflake.setSize(snowflake.getSize() / 2);
     snowflake.getSnowTail().setTailLength(50);

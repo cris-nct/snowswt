@@ -346,26 +346,33 @@ public class EnemyGenerator extends AbstractGenerator<AbstractMovableObject> {
     double x = redFace.getLocation().x;
     double y = redFace.getLocation().y;
 
+    boolean colision = false;
     // Check for collision with the left or right bounds
     if (x - radius < 0) {
       x = radius; // Correct position
       vel.x = -vel.x; // Reverse the horizontal direction
+      colision = true;
     } else if (x + radius > screenBounds.width) {
       x = screenBounds.width - radius; // Correct position
-      vel.y = -vel.y; // Reverse the horizontal direction
+      vel.x = -vel.x; // Reverse the horizontal direction
+      colision = true;
     }
 
     // Check for collision with the top or bottom bounds
     if (y - radius < 0) {
       y = radius;// Correct position
       vel.y = -vel.y; // Reverse the vertical direction
+      colision = true;
     } else if (y + radius > screenBounds.height) {
       y = screenBounds.height - radius; // Correct position
       vel.y = -vel.y; // Reverse the vertical direction
+      colision = true;
     }
 
-    redFace.setLocation(new Point2D(x, y));
-    redFace.setDirection(Math.atan2(vel.y, vel.x));
+    if (colision) {
+      redFace.setLocation(new Point2D(x, y));
+      redFace.setDirection(Math.atan2(vel.y, vel.x));
+    }
   }
 
   @Override
